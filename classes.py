@@ -102,9 +102,36 @@ class Database:
 
         except sqlite3.IntegrityError:
             return "Error: prerequisite already exists"
+#9/14
+
+    def UpdateRequires(self, course_code, old_prereq, new_prereq):
+        """ يعدّل شرطًا مسبقًا (Prerequisite) لمادة معينة.
+             المعاملات:
+             - course_code : كود المادة الأساسية (مثال: 'EE201')
+             - old_prereq  : المادة المسبق القديم الذي نريد تغييره
+             - new_prereq  : المادة المسبق الجديد الذي نريد وضعه بدلاً من القديم """
+
+        # نغيّر الـ prereq_code من old_prereq → new_prereq
+        # بشرط أن يكون السطر تابعًا لنفس course_code
+        self.cur.execute("UPDATE requires SET prereq_code=? WHERE course_code=? AND prereq_code=?",(new_prereq, course_code, old_prereq) )
+        self.commit()
+        return "Prerequisite updated successfully"
 
 
-    def UpdateRequires(self):
+    def DeleteRequires(self, course_code, prereq_code):
+        """ يحذف شرطًا مسبقًا (Prerequisite) محدد لمادة معينة.
+        المعاملات:
+        - course_code: كود المادة الأساسية (مثال: EE201)
+        - prereq_code: كود المادة المطلوبة كشرط مسبق (مثال: EE101)
+        """
+        # تنفيذ أمر الحذف باستخدام الشرطين:
+        # 1) course_code  → المادة نفسها
+        # 2) prereq_code  → المادة المطلوبة كـ prerequisite
+   
+        self.cur.execute("DELETE FROM requires WHERE course_code=? AND prereq_code=?",(course_code, prereq_code))
+        self.commit()
+        return "Prerequisite deleted successfully"
+
 
 
 
@@ -192,6 +219,66 @@ class Admin:
             print(f"Prerequisites for {course_code}:")
             for (prereq_code,) in rows:
                 print("-", prereq_code)
+    def AdminUpdateRequires(self):
+        # نعرض كل المواد الموجودة عشان المستخدم يعرف الكود اللي يبغى يعدّل شروطه
+        courses = self.db.ListCourses()
+        for code, name, credits in courses:
+            print(code, name, credits)
+
+        # نطلب من المستخدم كود المادة اللي بيعدّل شروطها
+        course_code = input("Enter course code: ").strip()
+
+        # نعرض الشروط المسبقة الحالية للمادة
+        print("\nCurrent prerequisites:")
+        rows = self.db.ListRequires(course_code)
+        for (r,) in rows:
+            print("-", r)
+
+        # نطلب من المستخدم الشرط القديم اللي يبغى يغيّره
+        old = input("Enter old prerequisite to change: ").strip()
+
+        # نطلب الشرط الجديد اللي بنحطّه بدل القديم
+        new = input("Enter new prerequisite: ").strip()
+
+        # نستخدم دالة قاعدة البيانات لتحديث الشرط
+        msg = self.db.UpdateRequires(course_code, old, new)
+
+        # نعرض النتيجة النهائية (نجحت/فشلت)
+        print(msg)
+
+    def AdminDeleteRequires(self):
+        # أول شي: نعرض كل المواد عشان المستخدم يعرف الكود اللي يبغى يحذف منه
+        courses = self.db.ListCourses()
+        for code, name, credits in courses:
+            print(code, name, credits)
+
+        # نطلب من المستخدم كود المادة اللي نبي نحذف من شروطها المسبقة
+        course_code = input("Enter course code: ").strip()
+
+        # نجيب كل الـ prerequisites للمادة
+        rows = self.db.ListRequires(course_code)
+
+        # لو ما عندها أي شرط مسبق → نطلع رسالة ونوقف
+        if not rows:
+            print("This course has no prerequisites.")
+            return
+
+        # نعرض كل الشروط المسبقة حق المادة
+        print("\nPrerequisites:")
+        for (r,) in rows:
+            print("-", r)
+
+        # نطلب من المستخدم أي شرط مسبق يبغى يحذفه
+        prereq = input("Enter prerequisite to delete: ").strip()
+
+        # نحذف الشرط باستخدام دالة قاعدة البيانات
+        msg = self.db.DeleteRequires(course_code, prereq)
+
+        # نعرض النتيجة
+        print(msg)
+
+
+
 
 
 
