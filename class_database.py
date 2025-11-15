@@ -134,20 +134,9 @@ class Database:
     def AddSection(self, course_code, doctor_id, days, time_start, time_end, room, capacity, semester, state="open"):
 
         self.cur.execute("""
-            INSERT INTO sections(
-                course_code,
-                doctor_id,
-                days,
-                time_start,
-                time_end,
-                room,
-                capacity,
-                enrolled,
-                semester,
-                state
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?)
-        """, (course_code,doctor_id,days,time_start,time_end,room,capacity,semester,state))
+            INSERT INTO sections(course_code,doctor_id,days,time_start,time_end,room,capacity,enrolled,semester,state)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?)""",
+                (course_code,doctor_id,days,time_start,time_end,room,capacity,semester,state))
         self.commit()
         return "Section added successfully"
 
@@ -155,43 +144,33 @@ class Database:
     def ListSections(self, course_code=None, semester=None):
 
         sql = """
-        SELECT section_id,
-               course_code,
-               doctor_id,
-               days,
-               time_start,
-               time_end,
-               room,
-               capacity,
-               enrolled,
-               semester,
-               state
+        SELECT section_id,course_code,doctor_id,days,time_start,time_end,room,capacity,enrolled,semester,state
         FROM sections
         """
 
-        # القيم اللي تروح مكان ?
+        # وش فايدتها ذي بالضبط؟ نحنا ما نعرف هل المستخدم دخل انه يبغا يشوف شعب سمستر او لا فا تكون فاضيه حاليا
         params = []
 
-        # الشروط اللي تروح في WHERE
+        # نفس فوق بس الفرق هنا اسم المتغير نفسه لانه ديفول معرف ب none ا لو الادمن عرف المتغير رح نضيفه هنا
         conds = []
 
-        # لو المستخدم حدد مادة معيّنة
+        # لو المستخدم حدد مادة معينة
         if course_code is not None:
             conds.append("course_code = ?")
             params.append(course_code)
 
-        # لو المستخدم حدد ترم معيّن
+        # لو المستخدم حدد ترم معين
         if semester is not None:
             conds.append("semester = ?")
             params.append(semester)
 
-        # لو فيه شروط نركب WHERE
+        # هنا يقلك انه اذا كان الكوندشنز مو فارغ رح نظيف where معه لان ذي الكلمه هي جزء من سينتاكس ال sql اللي تسوي الشروط
         if conds:
-            sql += " WHERE " + " AND ".join(conds)
+            sql += " where " + " and ".join(conds)
 
-        # ترتيب الناتج (ما عاد عندنا section_number فنرتب بالـ id)
+        # ترتيب الناتج
         sql += " ORDER BY course_code, section_id"
-
+        # شكل النتائج بيطلع كذا اذا تحقق الشروط اللي فوق SELECT * FROM sections WHERE course_code = ? AND semester = ? ORDER BY course_code, section_id
         # تنفيذ الاستعلام
         self.cur.execute(sql, params)
 
@@ -200,8 +179,8 @@ class Database:
 
     def UpdateSection(self,section_id,doctor_id=None,days=None,time_start=None,
                       time_end=None,room=None,capacity=None,semester=None,state=None):
-        sets = []
-        vals = []
+        sets = [] #نفس فكرة اللي فوق نحنا حاليا ما نعرف المستخدم وش بيعدل بالضبط فا بنعبي ذا المتغير حسب هو وش اختار يعدل
+        vals = [] # نفسه بس هنا نحفظ الارقام
 
         if doctor_id is not None:
             sets.append("doctor_id=?")
@@ -257,23 +236,7 @@ class Database:
 
         return "Section deleted successfully" if self.cur.rowcount else "Section not found"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 db = Database(con, cur)
-
 
 class Admin:
     def __init__(self, db):
@@ -412,28 +375,34 @@ class Admin:
         # نعرض النتيجة
         print(msg)
 
-    #*****************************************************************************************************************
+    # *****************************************************************************************************************
     def AdminAddSection(self):
-
+        # نستعرض المواد
         courses = self.db.ListCourses()
         for code, name, credits in courses:
-            print(code, name, credits)
-
-        course_code = input("Enter course code for the sections: ").strip()
+            print(code, name)
+        # نحدد المادة اللي نبغا نسوي لها سكاشن
+        course_code = input("Enter course code for the sections: ")
+        # عدد السكاشن اللي ابغا اسويها
         count = int(input("How many sections do you want to add for this course? "))
 
+        # نسوي لوب بحيث لو دخل انه يبغا 3 شعب اللوب يصير ثلاث دورات عشان بكل دوره ندخل معلومات الشعبه
         for i in range(count):
 
-            doctor_id_input = input("Enter doctor user_id (or press Enter for none): ").strip()
-            doctor_id = int(doctor_id_input) if doctor_id_input else None
+            doctor_id = input(
+                "Enter doctor user_id (or press Enter for none): ").strip()  # رح نحذفه وقت ما نسوي ال gui
+            if doctor_id:
+                doctor_id = int(doctor_id)
 
-            days = input("Enter lecture days ").strip()
-            time_start = input("Enter start time  ").strip()
-            time_end = input("Enter end time  ").strip()
-            room = input("Enter room  ").strip()
-            capacity = int(input("Enter capacity: ").strip())
-            semester = input("Enter semester  ").strip()
+            else:
+                doctor_id = None
 
+            days = input("Enter lecture days ").strip()  # رح نحذفه وقت ما نسوي ال gui
+            time_start = input("Enter start time  ").strip()  # رح نحذفه وقت ما نسوي ال gui
+            time_end = input("Enter end time  ").strip()  # رح نحذفه وقت ما نسوي ال gui
+            room = input("Enter room  ").strip()  # رح نحذفه وقت ما نسوي ال gui
+            capacity = int(input("Enter capacity: ").strip())  # رح نحذفه وقت ما نسوي ال gui
+            semester = input("Enter semester  ").strip()  # رح نحذفه وقت ما نسوي ال gui
             msg = self.db.AddSection(
                 course_code=course_code,
                 doctor_id=doctor_id,
@@ -443,28 +412,37 @@ class Admin:
                 room=room,
                 capacity=capacity,
                 semester=semester,
-                state="open"
-            )
+                state="open")
             print(msg)
 
-
     def AdminListSections(self):
+        # اذا يبغا يشوف شعب مادة معينه يكتبها واذا يبغا يشوف شعب كل المواد يسيبه فاضي
+        course_code = input(
+            "Filter by course code (or press Enter for all): ").strip()  # رح نحذفه وقت ما نسوي ال gui
+        # اذا يبغا يشوف شعب ترم معين يكتبه واذا يبغا يشوف شعب كل الاترام يسيبه فاضي
+        semester = input("Filter by semester (or press Enter for all): ").strip()  # رح نحذفه وقت ما نسوي ال gui
 
-        course_code_input = input("Filter by course code (or press Enter for all): ").strip()
-        semester_input = input("Filter by semester (or press Enter for all): ").strip()
+        # هنا اذا خلاه فاضي رح يروح للجداول ويشيل معاه اني حطيته فاضي وفاضي ذا بالفعل يعتبر عدد او اوبجكت فا لازم نرجع نخليه none
+        if course_code:
 
-        # لو فاضي = None عشان ما نضيف شرط في SQL
-        course_code = course_code_input if course_code_input else None
-        semester = semester_input if semester_input else None
+            course_code = course_code
+        else:
+            course_code = None
+        if semester:
 
+            semester = semester
+        else:
+            semester = None
+
+        # هنا نروح ل فنكشن اللي تظهر شعب المواد
         rows = self.db.ListSections(course_code=course_code, semester=semester)
-
+        # هنا نشوف اذا كان في شعب بالمادة اللي حددناها ولا مافي
         if not rows:
             print("No sections found.")
             return
 
-        for (section_id,course_code,doctor_id,days,time_start,time_end,room,capacity,enrolled,semester,state) in rows:
-
+        for (section_id, course_code, doctor_id, days, time_start, time_end, room, capacity, enrolled, semester,
+             state) in rows:
             print(
                 f"ID:{section_id} | "
                 f"{course_code} | "
@@ -473,9 +451,9 @@ class Admin:
                 f"Room:{room} | "
                 f"{enrolled}/{capacity} | "
                 f"Sem:{semester} | "
-                f"State:{state}" )
-    def AdminUpdateSection(self):
+                f"State:{state}")
 
+    def AdminUpdateSection(self):
 
         # نجيب كل الشعب بدون فلترة
         rows = self.db.ListSections()
@@ -484,7 +462,8 @@ class Admin:
             print("No sections found.")
             return
 
-        for (section_id,course_code,doctor_id,days,time_start,time_end,room,capacity,enrolled,semester,state) in rows:
+        for (section_id, course_code, doctor_id, days, time_start, time_end, room, capacity, enrolled, semester,
+             state) in rows:
             print(
                 f"ID:{section_id} | "
                 f"{course_code} | "
@@ -497,22 +476,20 @@ class Admin:
             )
 
         # نطلب من الأدمن يختار رقم الشعبة
-        section_id = input("\nEnter section ID to update: ").strip()
-        if not section_id:
-            print("No section ID entered.")
-            return
-
+        section_id = input("Enter section ID to update: ").strip()  # رح نحذفه وقت ما نسوي ال gui
         section_id = int(section_id)
 
         # نسأل وش الأشياء اللي يبغى يغيّرها
-        change_doc = input("Change doctor? (yes/no): ").strip().lower() == 'yes'
+        change_doc = input("Change doctor? (yes/no): ").strip().lower() == 'yes'  # رح نحذفه وقت ما نسوي ال gui
         change_days = input("Change days? (yes/no): ").strip().lower() == 'yes'
-        change_start = input("Change start time? (yes/no): ").strip().lower() == 'yes'
-        change_end = input("Change end time? (yes/no): ").strip().lower() == 'yes'
-        change_room = input("Change room? (yes/no): ").strip().lower() == 'yes'
-        change_cap = input("Change capacity? (yes/no): ").strip().lower() == 'yes'
-        change_sem = input("Change semester? (yes/no): ").strip().lower() == 'yes'
-        change_state = input("Change state (open/closed)? (yes/no): ").strip().lower() == 'yes'
+        change_start = input(
+            "Change start time? (yes/no): ").strip().lower() == 'yes'  # رح نحذفه وقت ما نسوي ال gui
+        change_end = input("Change end time? (yes/no): ").strip().lower() == 'yes'  # رح نحذفه وقت ما نسوي ال gui
+        change_room = input("Change room? (yes/no): ").strip().lower() == 'yes'  # رح نحذفه وقت ما نسوي ال gui
+        change_cap = input("Change capacity? (yes/no): ").strip().lower() == 'yes'  # رح نحذفه وقت ما نسوي ال gui
+        change_sem = input("Change semester? (yes/no): ").strip().lower() == 'yes'  # رح نحذفه وقت ما نسوي ال gui
+        change_state = input(
+            "Change state (open/closed)? (yes/no): ").strip().lower() == 'yes'  # رح نحذفه وقت ما نسوي ال gui
 
         # القيم الجديدة (None = ما نغيّره)
         new_doctor_id = None
@@ -525,29 +502,33 @@ class Admin:
         new_state = None
 
         if change_doc:
-            doc_input = input("New doctor user_id (or press Enter for none): ").strip()
-            new_doctor_id = int(doc_input) if doc_input else None
+            doc_input = input(
+                "New doctor user_id (or press Enter for none): ").strip()  # رح نحذفه وقت ما نسوي ال gui
+            if doc_input:
+                new_doctor_id = int(doc_input)
+            else:
+                new_doctor_id = None
 
         if change_days:
-            new_days = input("New days ").strip()
+            new_days = input("New days ").strip()  # رح نحذفه وقت ما نسوي ال gui
 
         if change_start:
-            new_start = input("New start time ").strip()
+            new_start = input("New start time ").strip()  # رح نحذفه وقت ما نسوي ال gui
 
         if change_end:
-            new_end = input("New end time ").strip()
+            new_end = input("New end time ").strip()  # رح نحذفه وقت ما نسوي ال gui
 
         if change_room:
-            new_room = input("New room ").strip()
+            new_room = input("New room ").strip()  # رح نحذفه وقت ما نسوي ال gui
 
         if change_cap:
-            new_capacity = int(input("New capacity: ").strip())
+            new_capacity = int(input("New capacity: ").strip())  # رح نحذفه وقت ما نسوي ال gui
 
         if change_sem:
-            new_semester = input("New semester ").strip()
+            new_semester = input("New semester ").strip()  # رح نحذفه وقت ما نسوي ال gui
 
         if change_state:
-            new_state = input("New state ").strip()
+            new_state = input("New state ").strip()  # رح نحذفه وقت ما نسوي ال gui
 
         # نستدعي دالة الداتا بيس
         msg = self.db.UpdateSection(
@@ -559,8 +540,7 @@ class Admin:
             room=new_room,
             capacity=new_capacity,
             semester=new_semester,
-            state=new_state
-        )
+            state=new_state)
 
         print(msg)
 
@@ -571,8 +551,8 @@ class Admin:
             print("No sections found.")
             return
 
-        for (section_id,course_code,doctor_id,days,time_start,
-            time_end,room,capacity,enrolled,semester,state) in rows:
+        for (section_id, course_code, doctor_id, days, time_start,
+             time_end, room, capacity, enrolled, semester, state) in rows:
             print(
                 f"ID:{section_id} | "
                 f"{course_code} | "
@@ -581,7 +561,7 @@ class Admin:
                 f"Room:{room} | "
                 f"{enrolled}/{capacity} | "
                 f"Sem:{semester} | "
-                f"State:{state}" )
+                f"State:{state}")
 
         section_id = input("\nEnter section ID to delete: ").strip()
         if not section_id:
@@ -601,4 +581,9 @@ class Admin:
 
 
 
-   
+
+
+
+
+
+
