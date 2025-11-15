@@ -2,7 +2,7 @@ import sqlite3
 
 con = sqlite3.connect("university.db")
 cur = con.cursor()
-
+cur.execute("PRAGMA foreign_keys = ON;")
 
 class Database:
 
@@ -26,12 +26,13 @@ class Database:
         # إدخال المادة الجديدة في جدول المواد
         try:
             self.cur.execute(
-            "INSERT INTO courses(code, name, credits) VALUES(?, ?, ?)",
-            (code, name, credits))
+                "INSERT INTO courses(code, name, credits) VALUES(?, ?, ?)",
+                (code, name, credits))
             self.commit()
             return "Course added successfully"
         except sqlite3.IntegrityError:
             return "course already added"
+
     def UpdateCourse(self, current_code, new_code=None, new_name=None, new_credits=None):
         """
     يا الشيخ، أول شي: **راح ندور على المادة باستخدام كودها الحالي**.
@@ -68,9 +69,7 @@ class Database:
         self.cur.execute(f"UPDATE courses SET {', '.join(sets)} WHERE code=?", vals)
         self.commit()
 
-
         return "Course updated successfully"
-
 
     def ListCourses(self):
         """ترجع قائمة بجميع المواد (الكود، الاسم، الساعات)."""
@@ -85,24 +84,23 @@ class Database:
 
         return "Course deleted successfully"
 
-
-
-    #*********************************************************************************
+    # *********************************************************************************
     def ListRequires(self, course_code):
         self.cur.execute(
-            "slect prereq_code from requires where course_code = ? order by prereq_code",(course_code,))
+            "select prereq_code from requires where course_code = ? order by prereq_code", (course_code,))
         return self.cur.fetchall()
 
     def AddPrerequisite(self, course_code, prereq_code):
 
         try:
-            self.cur.execute("INSERT INTO requires(course_code, prereq_code) VALUES(?, ?)",(course_code, prereq_code))
+            self.cur.execute("INSERT INTO requires(course_code, prereq_code) VALUES(?, ?)", (course_code, prereq_code))
             self.commit()
             return "Prerequisite added successfully"
 
         except sqlite3.IntegrityError:
             return "Error: prerequisite already exists"
-#9/14
+
+    # 9/14
 
     def UpdateRequires(self, course_code, old_prereq, new_prereq):
         """ يعدّل شرطًا مسبقًا (Prerequisite) لمادة معينة.
@@ -113,10 +111,10 @@ class Database:
 
         # نغيّر الـ prereq_code من old_prereq → new_prereq
         # بشرط أن يكون السطر تابعًا لنفس course_code
-        self.cur.execute("UPDATE requires SET prereq_code=? WHERE course_code=? AND prereq_code=?",(new_prereq, course_code, old_prereq) )
+        self.cur.execute("UPDATE requires SET prereq_code=? WHERE course_code=? AND prereq_code=?",
+                         (new_prereq, course_code, old_prereq))
         self.commit()
         return "Prerequisite updated successfully"
-
 
     def DeleteRequires(self, course_code, prereq_code):
         """ يحذف شرطًا مسبقًا (Prerequisite) محدد لمادة معينة.
@@ -127,10 +125,145 @@ class Database:
         # تنفيذ أمر الحذف باستخدام الشرطين:
         # 1) course_code  → المادة نفسها
         # 2) prereq_code  → المادة المطلوبة كـ prerequisite
-   
-        self.cur.execute("DELETE FROM requires WHERE course_code=? AND prereq_code=?",(course_code, prereq_code))
+
+        self.cur.execute("DELETE FROM requires WHERE course_code=? AND prereq_code=?", (course_code, prereq_code))
         self.commit()
         return "Prerequisite deleted successfully"
+    #********************************************************************************************************************
+
+    def AddSection(self, course_code, doctor_id, days, time_start, time_end, room, capacity, semester, state="open"):
+
+        self.cur.execute("""
+            INSERT INTO sections(
+                course_code,
+                doctor_id,
+                days,
+                time_start,
+                time_end,
+                room,
+                capacity,
+                enrolled,
+                semester,
+                state
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?)
+        """, (course_code,doctor_id,days,time_start,time_end,room,capacity,semester,state))
+        self.commit()
+        return "Section added successfully"
+
+
+    def ListSections(self, course_code=None, semester=None):
+
+        sql = """
+        SELECT section_id,
+               course_code,
+               doctor_id,
+               days,
+               time_start,
+               time_end,
+               room,
+               capacity,
+               enrolled,
+               semester,
+               state
+        FROM sections
+        """
+
+        # القيم اللي تروح مكان ?
+        params = []
+
+        # الشروط اللي تروح في WHERE
+        conds = []
+
+        # لو المستخدم حدد مادة معيّنة
+        if course_code is not None:
+            conds.append("course_code = ?")
+            params.append(course_code)
+
+        # لو المستخدم حدد ترم معيّن
+        if semester is not None:
+            conds.append("semester = ?")
+            params.append(semester)
+
+        # لو فيه شروط نركب WHERE
+        if conds:
+            sql += " WHERE " + " AND ".join(conds)
+
+        # ترتيب الناتج (ما عاد عندنا section_number فنرتب بالـ id)
+        sql += " ORDER BY course_code, section_id"
+
+        # تنفيذ الاستعلام
+        self.cur.execute(sql, params)
+
+        # إعادة النتائج
+        return self.cur.fetchall()
+
+    def UpdateSection(self,section_id,doctor_id=None,days=None,time_start=None,
+                      time_end=None,room=None,capacity=None,semester=None,state=None):
+        sets = []
+        vals = []
+
+        if doctor_id is not None:
+            sets.append("doctor_id=?")
+            vals.append(doctor_id)
+
+        if days is not None:
+            sets.append("days=?")
+            vals.append(days)
+
+        if time_start is not None:
+            sets.append("time_start=?")
+            vals.append(time_start)
+
+        if time_end is not None:
+            sets.append("time_end=?")
+            vals.append(time_end)
+
+        if room is not None:
+            sets.append("room=?")
+            vals.append(room)
+
+        if capacity is not None:
+            sets.append("capacity=?")
+            vals.append(capacity)
+
+        if semester is not None:
+            sets.append("semester=?")
+            vals.append(semester)
+
+        if state is not None:
+            sets.append("state=?")
+            vals.append(state)
+
+        # لو ما فيه أي شيء نعدّله
+        if not sets:
+            return "Nothing to update"
+
+        # نضيف section_id لآخر القيم عشان شرط الـ WHERE
+        vals.append(section_id)
+
+        sql = f"UPDATE sections SET {', '.join(sets)} WHERE section_id=?"
+        self.cur.execute(sql, vals)
+        self.commit()
+
+        # rowcount = كم صف تأثّر (0 يعني ما لقينا الشعبة)
+        return "Section updated successfully" if self.cur.rowcount else "Section not found"
+
+    def DeleteSection(self, section_id):
+
+
+        self.cur.execute("DELETE FROM sections WHERE section_id=?", (section_id,))
+        self.commit()
+
+        return "Section deleted successfully" if self.cur.rowcount else "Section not found"
+
+
+
+
+
+
+
+
 
 
 
@@ -140,6 +273,7 @@ class Database:
 
 
 db = Database(con, cur)
+
 
 class Admin:
     def __init__(self, db):
@@ -191,7 +325,7 @@ class Admin:
         msg = self.db.DeleteCourse(code)  # يحذف المادة
         print(msg)
 
-    #***************************************************************************************************
+    # ***************************************************************************************************
     def AdminAddPrerequisite(self):
         courses = self.db.ListCourses()
         for code, name, credits in courses:
@@ -201,7 +335,7 @@ class Admin:
         tims = input("enter how many requires course for this course:")
         for i in range(int(tims)):
             requires = input("enter requires course code: ")
-            m= self.db.AddPrerequisite(originalcourse, requires)
+            m = self.db.AddPrerequisite(originalcourse, requires)
             print(m)
 
     def AdminListRequires(self):
@@ -219,6 +353,7 @@ class Admin:
             print(f"Prerequisites for {course_code}:")
             for (prereq_code,) in rows:
                 print("-", prereq_code)
+
     def AdminUpdateRequires(self):
         # نعرض كل المواد الموجودة عشان المستخدم يعرف الكود اللي يبغى يعدّل شروطه
         courses = self.db.ListCourses()
@@ -277,9 +412,193 @@ class Admin:
         # نعرض النتيجة
         print(msg)
 
+    #*****************************************************************************************************************
+    def AdminAddSection(self):
+
+        courses = self.db.ListCourses()
+        for code, name, credits in courses:
+            print(code, name, credits)
+
+        course_code = input("Enter course code for the sections: ").strip()
+        count = int(input("How many sections do you want to add for this course? "))
+
+        for i in range(count):
+
+            doctor_id_input = input("Enter doctor user_id (or press Enter for none): ").strip()
+            doctor_id = int(doctor_id_input) if doctor_id_input else None
+
+            days = input("Enter lecture days ").strip()
+            time_start = input("Enter start time  ").strip()
+            time_end = input("Enter end time  ").strip()
+            room = input("Enter room  ").strip()
+            capacity = int(input("Enter capacity: ").strip())
+            semester = input("Enter semester  ").strip()
+
+            msg = self.db.AddSection(
+                course_code=course_code,
+                doctor_id=doctor_id,
+                days=days,
+                time_start=time_start,
+                time_end=time_end,
+                room=room,
+                capacity=capacity,
+                semester=semester,
+                state="open"
+            )
+            print(msg)
+
+
+    def AdminListSections(self):
+
+        course_code_input = input("Filter by course code (or press Enter for all): ").strip()
+        semester_input = input("Filter by semester (or press Enter for all): ").strip()
+
+        # لو فاضي = None عشان ما نضيف شرط في SQL
+        course_code = course_code_input if course_code_input else None
+        semester = semester_input if semester_input else None
+
+        rows = self.db.ListSections(course_code=course_code, semester=semester)
+
+        if not rows:
+            print("No sections found.")
+            return
+
+        for (section_id,course_code,doctor_id,days,time_start,time_end,room,capacity,enrolled,semester,state) in rows:
+
+            print(
+                f"ID:{section_id} | "
+                f"{course_code} | "
+                f"Doc:{doctor_id} | "
+                f"{days} {time_start}-{time_end} | "
+                f"Room:{room} | "
+                f"{enrolled}/{capacity} | "
+                f"Sem:{semester} | "
+                f"State:{state}" )
+    def AdminUpdateSection(self):
+
+
+        # نجيب كل الشعب بدون فلترة
+        rows = self.db.ListSections()
+
+        if not rows:
+            print("No sections found.")
+            return
+
+        for (section_id,course_code,doctor_id,days,time_start,time_end,room,capacity,enrolled,semester,state) in rows:
+            print(
+                f"ID:{section_id} | "
+                f"{course_code} | "
+                f"Doc:{doctor_id} | "
+                f"{days} {time_start}-{time_end} | "
+                f"Room:{room} | "
+                f"{enrolled}/{capacity} | "
+                f"Sem:{semester} | "
+                f"State:{state}"
+            )
+
+        # نطلب من الأدمن يختار رقم الشعبة
+        section_id = input("\nEnter section ID to update: ").strip()
+        if not section_id:
+            print("No section ID entered.")
+            return
+
+        section_id = int(section_id)
+
+        # نسأل وش الأشياء اللي يبغى يغيّرها
+        change_doc = input("Change doctor? (yes/no): ").strip().lower() == 'yes'
+        change_days = input("Change days? (yes/no): ").strip().lower() == 'yes'
+        change_start = input("Change start time? (yes/no): ").strip().lower() == 'yes'
+        change_end = input("Change end time? (yes/no): ").strip().lower() == 'yes'
+        change_room = input("Change room? (yes/no): ").strip().lower() == 'yes'
+        change_cap = input("Change capacity? (yes/no): ").strip().lower() == 'yes'
+        change_sem = input("Change semester? (yes/no): ").strip().lower() == 'yes'
+        change_state = input("Change state (open/closed)? (yes/no): ").strip().lower() == 'yes'
+
+        # القيم الجديدة (None = ما نغيّره)
+        new_doctor_id = None
+        new_days = None
+        new_start = None
+        new_end = None
+        new_room = None
+        new_capacity = None
+        new_semester = None
+        new_state = None
+
+        if change_doc:
+            doc_input = input("New doctor user_id (or press Enter for none): ").strip()
+            new_doctor_id = int(doc_input) if doc_input else None
+
+        if change_days:
+            new_days = input("New days ").strip()
+
+        if change_start:
+            new_start = input("New start time ").strip()
+
+        if change_end:
+            new_end = input("New end time ").strip()
+
+        if change_room:
+            new_room = input("New room ").strip()
+
+        if change_cap:
+            new_capacity = int(input("New capacity: ").strip())
+
+        if change_sem:
+            new_semester = input("New semester ").strip()
+
+        if change_state:
+            new_state = input("New state ").strip()
+
+        # نستدعي دالة الداتا بيس
+        msg = self.db.UpdateSection(
+            section_id=section_id,
+            doctor_id=new_doctor_id,
+            days=new_days,
+            time_start=new_start,
+            time_end=new_end,
+            room=new_room,
+            capacity=new_capacity,
+            semester=new_semester,
+            state=new_state
+        )
+
+        print(msg)
+
+    def AdminDeleteSection(self):
+        rows = self.db.ListSections()
+
+        if not rows:
+            print("No sections found.")
+            return
+
+        for (section_id,course_code,doctor_id,days,time_start,
+            time_end,room,capacity,enrolled,semester,state) in rows:
+            print(
+                f"ID:{section_id} | "
+                f"{course_code} | "
+                f"Doc:{doctor_id} | "
+                f"{days} {time_start}-{time_end} | "
+                f"Room:{room} | "
+                f"{enrolled}/{capacity} | "
+                f"Sem:{semester} | "
+                f"State:{state}" )
+
+        section_id = input("\nEnter section ID to delete: ").strip()
+        if not section_id:
+            print("No section ID entered.")
+            return
+
+        section_id = int(section_id)
+
+        msg = self.db.DeleteSection(section_id)
+        print(msg)
 
 
 
 
 
 
+
+
+
+   
