@@ -1,62 +1,27 @@
 def get_user_info():
-    # خريطة لأخطاء الدومينات وتصحيحها تلقائياً
-    typo_domains = {
-        # Gmail
-        "gamil.com": "gmail.com",
-        "gmial.com": "gmail.com",
-        "gmai.com": "gmail.com",
-        "gmal.com": "gmail.com",
-        "gmaiil.com": "gmail.com",
-        "gmail.co": "gmail.com",
-        "gmail.con": "gmail.com",
-        "gnail.com": "gmail.com",
-        "gmail.comm": "gmail.com",
-
-        # Hotmail
-        "hotmil.com": "hotmail.com",
-        "hotmal.com": "hotmail.com",
-        "hotmial.com": "hotmail.com",
-        "hotmai.com": "hotmail.com",
-        "hotnail.com": "hotmail.com",
-        "homtail.com": "hotmail.com",
-
-        # Outlook
-        "outlok.com": "outlook.com",
-        "outllok.com": "outlook.com",
-        "ootlook.com": "outlook.com",
-        "outloook.com": "outlook.com",
-        "outloo.com": "outlook.com",
-    }
-
     while True:
-        # -------- Username --------
-        username = input("Enter username: ").strip()
+        # -------- Student ID --------
+        student_id = input("Enter your Student ID: ").strip()
 
-        if not username:
-            print("Error: username is required.")
+        # لا يكون فاضي
+        if not student_id:
+            print("Error: Student ID is required.")
             continue
 
-        if " " in username:
-            print("Error: username cannot contain spaces.")
+        # بدون مسافات
+        if " " in student_id:
+            print("Error: Student ID cannot contain spaces.")
             continue
 
-        if len(username) < 3:
-            print("Error: username must be at least 3 characters.")
-            continue
-        if len(username) > 20:
-            print("Error: username is too long (max 20 characters).")
+        # لازم يكون أرقام فقط
+        if not student_id.isdigit():
+            print("Error: Student ID must contain numbers only.")
             continue
 
-        if username[0].isdigit():
-            print("Error: username cannot start with a number.")
+        # طول ID = 7 أرقام
+        if len(student_id) != 7:
+            print("Error: Student ID must be 7 digits.")
             continue
-
-        allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
-        if any(ch not in allowed for ch in username):
-            print("Error: username can only contain letters, numbers, and _")
-            continue
-
-        username = username.lower()
 
         # -------- Email --------
         email = input("Enter email: ").strip()
@@ -91,18 +56,27 @@ def get_user_info():
             print("Error: invalid email format.")
             continue
 
-        #  تصحيح تلقائي بدون إعلام المستخدم
-        domain_lower = domain.lower()
-        if domain_lower in typo_domains:
-            domain = typo_domains[domain_lower]
+        # قائمة الدومينات الخاطئة التي يتم رفضها
+        wrong_domains = {
+            "gamil.com", "gmial.com", "gmai.com", "gmal.com",
+            "gmaiil.com", "gmail.co", "gmail.con", "gnail.com",
+            "gmail.comm", "gmai.con",
+            "hotmil.com", "hotmal.com", "hotmial.com",
+            "hotmai.com", "hotnail.com", "homtail.com",
+            "outlok.com", "outllok.com", "ootlook.com",
+            "outloook.com", "outloo.com",
+        }
 
-        # إعادة تركيب الإيميل
+        if domain.lower() in wrong_domains:
+            print("Error: invalid email format.")
+            continue
+
         email = f"{local}@{domain}".lower()
 
         print("\nSaved successfully!")
-        print("Username:", username)
+        print("Student ID:", student_id)
         print("Email:", email)
-        return username, email
+        return student_id, email
 
 
 # Run
