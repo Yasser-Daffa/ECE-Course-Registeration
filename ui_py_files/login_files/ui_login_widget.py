@@ -282,16 +282,16 @@ class Ui_LoginWidget(object):
         self.verticalLayout_Buttons = QtWidgets.QVBoxLayout()
         self.verticalLayout_Buttons.setSpacing(10)
         self.verticalLayout_Buttons.setObjectName("verticalLayout_Buttons")
-        self.loginButton = QtWidgets.QPushButton(parent=self.loginPanel)
+        self.buttonLogin = QtWidgets.QPushButton(parent=self.loginPanel)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.loginButton.sizePolicy().hasHeightForWidth())
-        self.loginButton.setSizePolicy(sizePolicy)
-        self.loginButton.setMinimumSize(QtCore.QSize(220, 45))
-        self.loginButton.setMaximumSize(QtCore.QSize(16777215, 55))
-        self.loginButton.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.loginButton.setStyleSheet("QPushButton#loginButton {\n"
+        sizePolicy.setHeightForWidth(self.buttonLogin.sizePolicy().hasHeightForWidth())
+        self.buttonLogin.setSizePolicy(sizePolicy)
+        self.buttonLogin.setMinimumSize(QtCore.QSize(220, 45))
+        self.buttonLogin.setMaximumSize(QtCore.QSize(16777215, 55))
+        self.buttonLogin.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonLogin.setStyleSheet("QPushButton#buttonLogin {\n"
 "    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #667EEA, stop:1 #764BA2);\n"
 "    color: white;\n"
 "    border: none;\n"
@@ -301,31 +301,31 @@ class Ui_LoginWidget(object):
 "    font-weight: bold;\n"
 "}\n"
 "\n"
-"QPushButton#loginButton:hover {\n"
+"QPushButton#buttonLogin:hover {\n"
 "    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #4F63C6, stop:1 #5D3F9E);\n"
 "    padding-top: 8px;\n"
 "    padding-bottom: 12px;\n"
 "}\n"
 "\n"
-"QPushButton#loginButton:pressed {\n"
+"QPushButton#buttonLogin:pressed {\n"
 "    background: #3C4A99;\n"
 "    padding-top: 12px;\n"
 "    padding-bottom: 8px;\n"
 "}\n"
 "")
-        self.loginButton.setObjectName("loginButton")
-        self.verticalLayout_Buttons.addWidget(self.loginButton, 0, QtCore.Qt.AlignmentFlag.AlignHCenter)
-        self.createAccountButton = QtWidgets.QPushButton(parent=self.loginPanel)
+        self.buttonLogin.setObjectName("buttonLogin")
+        self.verticalLayout_Buttons.addWidget(self.buttonLogin, 0, QtCore.Qt.AlignmentFlag.AlignHCenter)
+        self.buttonCreateAccount = QtWidgets.QPushButton(parent=self.loginPanel)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.createAccountButton.sizePolicy().hasHeightForWidth())
-        self.createAccountButton.setSizePolicy(sizePolicy)
-        self.createAccountButton.setMinimumSize(QtCore.QSize(220, 45))
-        self.createAccountButton.setMaximumSize(QtCore.QSize(16777215, 55))
-        self.createAccountButton.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.createAccountButton.setTabletTracking(False)
-        self.createAccountButton.setStyleSheet("QPushButton#createAccountButton {\n"
+        sizePolicy.setHeightForWidth(self.buttonCreateAccount.sizePolicy().hasHeightForWidth())
+        self.buttonCreateAccount.setSizePolicy(sizePolicy)
+        self.buttonCreateAccount.setMinimumSize(QtCore.QSize(220, 45))
+        self.buttonCreateAccount.setMaximumSize(QtCore.QSize(16777215, 55))
+        self.buttonCreateAccount.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonCreateAccount.setTabletTracking(False)
+        self.buttonCreateAccount.setStyleSheet("QPushButton#buttonCreateAccount {\n"
 "    background: white;\n"
 "    color: #667EEA;\n"
 "    border: 2px solid #667EEA;\n"
@@ -335,20 +335,20 @@ class Ui_LoginWidget(object):
 "    font-weight: bold;\n"
 "}\n"
 "\n"
-"QPushButton#createAccountButton:hover {\n"
+"QPushButton#buttonCreateAccount:hover {\n"
 "    background: #f0f2ff;       /* light purple/blue tint */\n"
 "    padding-top: 8px;\n"
 "    padding-bottom: 12px;       /* 3D lift effect */\n"
 "}\n"
 "\n"
-"QPushButton#createAccountButton:pressed {\n"
+"QPushButton#buttonCreateAccount:pressed {\n"
 "    background: #e0e4ff;       /* darker when pressed */\n"
 "    padding-top: 12px;\n"
 "    padding-bottom: 8px;       /* pressed down effect */\n"
 "}\n"
 "")
-        self.createAccountButton.setObjectName("createAccountButton")
-        self.verticalLayout_Buttons.addWidget(self.createAccountButton, 0, QtCore.Qt.AlignmentFlag.AlignHCenter)
+        self.buttonCreateAccount.setObjectName("buttonCreateAccount")
+        self.verticalLayout_Buttons.addWidget(self.buttonCreateAccount, 0, QtCore.Qt.AlignmentFlag.AlignHCenter)
         self.gridLayout_4.addLayout(self.verticalLayout_Buttons, 3, 0, 1, 1)
         spacerItem2 = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Minimum)
         self.gridLayout_4.addItem(spacerItem2, 4, 0, 1, 1)
@@ -378,5 +378,5 @@ class Ui_LoginWidget(object):
         self.labelRemember.setText(_translate("LoginWidget", "Remember me"))
         self.labelForgotPassword.setText(_translate("LoginWidget", "Forgot Password? "))
         self.buttonResetPassword.setText(_translate("LoginWidget", "Reset here"))
-        self.loginButton.setText(_translate("LoginWidget", "Sign In"))
-        self.createAccountButton.setText(_translate("LoginWidget", "Create Account"))
+        self.buttonLogin.setText(_translate("LoginWidget", "Sign In"))
+        self.buttonCreateAccount.setText(_translate("LoginWidget", "Create Account"))
