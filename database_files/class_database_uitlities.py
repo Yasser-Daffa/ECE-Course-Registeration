@@ -370,3 +370,48 @@ class DatabaseUtilities:
         self.commit()
         return "Grade updated successfully"
 
+
+    def add_course_to_plan(self, program, course_code, level):
+        try:
+            self.cur.execute("""
+                INSERT INTO program_plans(program, course_code, level)
+                VALUES (?, ?, ?)
+            """, (program, course_code, level))
+            self.commit()
+            return "Course added to plan successfully"
+        except sqlite3.IntegrityError:
+            return "This course is already in this plan"
+
+    def delete_course_from_plan(self, program, course_code):
+        self.cur.execute("""
+            DELETE FROM program_plans
+            WHERE program=? AND course_code=?
+        """, (program, course_code))
+
+        self.commit()
+
+        if self.cur.rowcount > 0:
+            return "✓ Course removed from plan successfully"
+        return "✗ Course not found in this plan"
+
+    def list_plan_courses(self, program=None):
+        if program is None:
+            self.cur.execute("""
+                SELECT p.program, c.code, c.name, c.credits, p.level
+                FROM program_plans p
+                JOIN courses c ON p.course_code = c.code
+                ORDER BY p.program, p.level, c.code
+            """)
+        else:
+            self.cur.execute("""
+                SELECT p.program, c.code, c.name, c.credits, p.level
+                FROM program_plans p
+                JOIN courses c ON p.course_code = c.code
+                WHERE p.program=?
+                ORDER BY p.level, c.code
+            """, (program,))
+
+        return self.cur.fetchall()
+
+
+
