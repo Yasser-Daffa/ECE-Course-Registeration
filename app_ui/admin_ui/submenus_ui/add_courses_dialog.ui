@@ -188,7 +188,26 @@
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true">padding: 10px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; background-color: white;</string>
+            <string notr="true">QLineEdit {
+    border: 2px solid #E0E0E0;
+    border-radius: 10px;
+    padding: 8px 10px;
+    background: rgba(250, 250, 250, 200); /* slightly transparent soft white */
+    font-size: 11pt;
+    color: #111111;                         /* user text color */
+    font-style: normal;                      /* ensures user text is not italic */
+}
+
+QLineEdit:focus {
+    border: 2px solid #667EEA;
+    background: rgba(250, 250, 250, 220);   /* slightly brighter on focus */
+}
+
+QLineEdit::placeholder {
+    color: rgba(50, 50, 50, 200);           /* placeholder text color */
+    font-style: italic;                      /* placeholder remains italic */
+}
+</string>
            </property>
            <property name="placeholderText">
             <string>e.g., ECE 101</string>
@@ -204,7 +223,26 @@
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true">padding: 10px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; background-color: white;</string>
+            <string notr="true">QLineEdit {
+    border: 2px solid #E0E0E0;
+    border-radius: 10px;
+    padding: 8px 10px;
+    background: rgba(250, 250, 250, 200); /* slightly transparent soft white */
+    font-size: 11pt;
+    color: #111111;                         /* user text color */
+    font-style: normal;                      /* ensures user text is not italic */
+}
+
+QLineEdit:focus {
+    border: 2px solid #667EEA;
+    background: rgba(250, 250, 250, 220);   /* slightly brighter on focus */
+}
+
+QLineEdit::placeholder {
+    color: rgba(50, 50, 50, 200);           /* placeholder text color */
+    font-style: italic;                      /* placeholder remains italic */
+}
+</string>
            </property>
            <property name="placeholderText">
             <string>e.g., Digital Logic Design</string>
@@ -250,7 +288,26 @@
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true">padding: 10px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; background-color: white;</string>
+            <string notr="true">QLineEdit {
+    border: 2px solid #E0E0E0;
+    border-radius: 10px;
+    padding: 8px 10px;
+    background: rgba(250, 250, 250, 200); /* slightly transparent soft white */
+    font-size: 11pt;
+    color: #111111;                         /* user text color */
+    font-style: normal;                      /* ensures user text is not italic */
+}
+
+QLineEdit:focus {
+    border: 2px solid #667EEA;
+    background: rgba(250, 250, 250, 220);   /* slightly brighter on focus */
+}
+
+QLineEdit::placeholder {
+    color: rgba(50, 50, 50, 200);           /* placeholder text color */
+    font-style: italic;                      /* placeholder remains italic */
+}
+</string>
            </property>
            <property name="placeholderText">
             <string>e.g., Dr. John Smith</string>

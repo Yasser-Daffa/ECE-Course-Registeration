@@ -5,11 +5,13 @@ from PyQt6 import QtWidgets
 from database_files.class_database_uitlities import DatabaseUtilities
 from database_files.initialize_database import initialize_database
 
-# Subpage controllers and UI imports
-from app_ui.admin_ui.ui_admin_dashboard import Ui_AdminDashboard
-
+# Subpage controllers
 from app_ui.admin_ui.submenus_ui.ui_all_students import Ui_AllStudents
 from admin.submenus.class_all_students import AllStudentsController
+# from app_ui.admin_ui.submenus_ui.ui_pending_requests import Ui_PendingRequestsWidget
+# from admin.submenus.class_pending_requests import PendingRequestsController
+
+from app_ui.admin_ui.ui_admin_dashboard import Ui_AdminDashboard
 
 
 class AdminDashboard(QtWidgets.QMainWindow):
@@ -22,56 +24,47 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.db = db
 
         # ------------------------
-        # 1 Initialize all pages
+        # Initialize all subpages
         # ------------------------
         self.init_sub_pages()
 
         # ------------------------
-        # 2 Add pages to stacked widget
+        # Map buttons to pages
         # ------------------------
-        self.ui.stackedWidget.addWidget(self.all_students_page)
-        self.ui.stackedWidget.addWidget(self.pending_requests_page)
-        # Add more pages here as needed:
-        # self.ui.stackedWidget.addWidget(self.courses_page)
+        self.page_mapping = {
+            self.ui.buttonAllStudents: self.all_students_page,
+            # self.ui.buttonPendingRequests: self.pending_requests_page,
+            # Add more buttons → pages here
+        }
 
         # ------------------------
-        # 3 Connect submenu buttons
+        # Connect buttons properly
         # ------------------------
-        for i, button in enumerate(self.ui.buttonGroupSubmenus.buttons()):
-            self.ui.buttonGroupSubmenus.setId(button, i)
-        self.ui.buttonGroupSubmenus.idClicked.connect(self.change_page)
+        for button, page in self.page_mapping.items():
+            button.clicked.connect(lambda checked, p=page: self.ui.stackedWidget.setCurrentWidget(p))
 
-        # Show first page by default
+        # Show default page
         self.ui.stackedWidget.setCurrentIndex(0)
 
     # -------------------------------
-    # Initialize all sub-pages
+    # Initialize sub-pages
     # -------------------------------
     def init_sub_pages(self):
-        # All Students page
+        # --- All Students Page ---
         self.all_students_page = QtWidgets.QWidget()
         self.all_students_ui = Ui_AllStudents()
         self.all_students_ui.setupUi(self.all_students_page)
         self.all_students_controller = AllStudentsController(self.all_students_ui, self.db)
 
-        # Pending Requests page
-        self.pending_requests_page = QtWidgets.QWidget()
-        self.pending_requests_ui = Ui_PendingRequestsWidget()
-        self.pending_requests_ui.setupUi(self.pending_requests_page)
-        self.pending_requests_controller = PendingRequestsController(self.pending_requests_ui, self.db)
+        # Add to stackedWidget
+        self.ui.stackedWidget.addWidget(self.all_students_page)
 
-        # Example: Courses page could be added here similarly
-        # self.courses_page = QtWidgets.QWidget()
-        # self.courses_ui = Ui_Courses()
-        # self.courses_ui.setupUi(self.courses_page)
-        # self.courses_controller = CoursesController(self.courses_ui, self.db)
-
-    # -------------------------------
-    # Change page
-    # -------------------------------
-    def change_page(self, button_id):
-        print(f"Switching to page index: {button_id}")
-        self.ui.stackedWidget.setCurrentIndex(button_id)
+        # --- Pending Requests Page (example) ---
+        # self.pending_requests_page = QtWidgets.QWidget()
+        # self.pending_requests_ui = Ui_PendingRequestsWidget()
+        # self.pending_requests_ui.setupUi(self.pending_requests_page)
+        # self.pending_requests_controller = PendingRequestsController(self.pending_requests_ui, self.db)
+        # self.ui.stackedWidget.addWidget(self.pending_requests_page)
 
 
 if __name__ == "__main__":

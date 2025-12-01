@@ -64,12 +64,50 @@ class Ui_AddCourseDialog(object):
         self.formGrid.addWidget(self.pushButton, 10, 2, 1, 1)
         self.lineEditCourseCode = QtWidgets.QLineEdit(parent=self.scrollContent)
         self.lineEditCourseCode.setMinimumSize(QtCore.QSize(0, 45))
-        self.lineEditCourseCode.setStyleSheet("padding: 10px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; background-color: white;")
+        self.lineEditCourseCode.setStyleSheet("QLineEdit {\n"
+"    border: 2px solid #E0E0E0;\n"
+"    border-radius: 10px;\n"
+"    padding: 8px 10px;\n"
+"    background: rgba(250, 250, 250, 200); /* slightly transparent soft white */\n"
+"    font-size: 11pt;\n"
+"    color: #111111;                         /* user text color */\n"
+"    font-style: normal;                      /* ensures user text is not italic */\n"
+"}\n"
+"\n"
+"QLineEdit:focus {\n"
+"    border: 2px solid #667EEA;\n"
+"    background: rgba(250, 250, 250, 220);   /* slightly brighter on focus */\n"
+"}\n"
+"\n"
+"QLineEdit::placeholder {\n"
+"    color: rgba(50, 50, 50, 200);           /* placeholder text color */\n"
+"    font-style: italic;                      /* placeholder remains italic */\n"
+"}\n"
+"")
         self.lineEditCourseCode.setObjectName("lineEditCourseCode")
         self.formGrid.addWidget(self.lineEditCourseCode, 1, 0, 1, 1)
         self.lineEditCourseName = QtWidgets.QLineEdit(parent=self.scrollContent)
         self.lineEditCourseName.setMinimumSize(QtCore.QSize(0, 45))
-        self.lineEditCourseName.setStyleSheet("padding: 10px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; background-color: white;")
+        self.lineEditCourseName.setStyleSheet("QLineEdit {\n"
+"    border: 2px solid #E0E0E0;\n"
+"    border-radius: 10px;\n"
+"    padding: 8px 10px;\n"
+"    background: rgba(250, 250, 250, 200); /* slightly transparent soft white */\n"
+"    font-size: 11pt;\n"
+"    color: #111111;                         /* user text color */\n"
+"    font-style: normal;                      /* ensures user text is not italic */\n"
+"}\n"
+"\n"
+"QLineEdit:focus {\n"
+"    border: 2px solid #667EEA;\n"
+"    background: rgba(250, 250, 250, 220);   /* slightly brighter on focus */\n"
+"}\n"
+"\n"
+"QLineEdit::placeholder {\n"
+"    color: rgba(50, 50, 50, 200);           /* placeholder text color */\n"
+"    font-style: italic;                      /* placeholder remains italic */\n"
+"}\n"
+"")
         self.lineEditCourseName.setObjectName("lineEditCourseName")
         self.formGrid.addWidget(self.lineEditCourseName, 1, 2, 1, 1)
         self.labelCourseName = QtWidgets.QLabel(parent=self.scrollContent)
@@ -86,7 +124,26 @@ class Ui_AddCourseDialog(object):
         self.formGrid.addWidget(self.labelCreditHours, 2, 0, 1, 1)
         self.lineEditCreditHours = QtWidgets.QLineEdit(parent=self.scrollContent)
         self.lineEditCreditHours.setMinimumSize(QtCore.QSize(0, 45))
-        self.lineEditCreditHours.setStyleSheet("padding: 10px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; background-color: white;")
+        self.lineEditCreditHours.setStyleSheet("QLineEdit {\n"
+"    border: 2px solid #E0E0E0;\n"
+"    border-radius: 10px;\n"
+"    padding: 8px 10px;\n"
+"    background: rgba(250, 250, 250, 200); /* slightly transparent soft white */\n"
+"    font-size: 11pt;\n"
+"    color: #111111;                         /* user text color */\n"
+"    font-style: normal;                      /* ensures user text is not italic */\n"
+"}\n"
+"\n"
+"QLineEdit:focus {\n"
+"    border: 2px solid #667EEA;\n"
+"    background: rgba(250, 250, 250, 220);   /* slightly brighter on focus */\n"
+"}\n"
+"\n"
+"QLineEdit::placeholder {\n"
+"    color: rgba(50, 50, 50, 200);           /* placeholder text color */\n"
+"    font-style: italic;                      /* placeholder remains italic */\n"
+"}\n"
+"")
         self.lineEditCreditHours.setObjectName("lineEditCreditHours")
         self.formGrid.addWidget(self.lineEditCreditHours, 10, 0, 1, 1)
         self.contentLayout.addLayout(self.formGrid)
