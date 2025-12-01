@@ -5,14 +5,10 @@ from PyQt6 import QtWidgets
 from database_files.class_database_uitlities import DatabaseUtilities
 from database_files.initialize_database import initialize_database
 
-# Subpage controllers
+# Subpage UI & Controller imports
+from app_ui.admin_ui.ui_admin_dashboard import Ui_AdminDashboard
 from app_ui.admin_ui.submenus_ui.ui_all_students import Ui_AllStudents
 from admin.submenus.class_all_students import AllStudentsController
-# from app_ui.admin_ui.submenus_ui.ui_pending_requests import Ui_PendingRequestsWidget
-# from admin.submenus.class_pending_requests import PendingRequestsController
-
-from app_ui.admin_ui.ui_admin_dashboard import Ui_AdminDashboard
-
 
 class AdminDashboard(QtWidgets.QMainWindow):
     def __init__(self, db: DatabaseUtilities):
@@ -24,49 +20,59 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.db = db
 
         # ------------------------
-        # Initialize all subpages
+        # 1. Initialize all pages
         # ------------------------
         self.init_sub_pages()
 
         # ------------------------
-        # Map buttons to pages
+        # 2. Add pages to stacked widget
+        # ------------------------
+        self.ui.stackedWidget.addWidget(self.all_students_page)
+        self.ui.stackedWidget.addWidget(self.pending_requests_page)
+        # Add more pages here as needed
+
+        # ------------------------
+        # 3. Map buttons to pages
         # ------------------------
         self.page_mapping = {
             self.ui.buttonAllStudents: self.all_students_page,
-            # self.ui.buttonPendingRequests: self.pending_requests_page,
-            # Add more buttons → pages here
+            self.ui.buttonPendingRequests: self.pending_requests_page,
+            # Add more button → page mappings here
         }
 
-        # ------------------------
-        # Connect buttons properly
-        # ------------------------
-        for button, page in self.page_mapping.items():
-            button.clicked.connect(lambda checked, p=page: self.ui.stackedWidget.setCurrentWidget(p))
+        # Connect buttons
+        for button in self.page_mapping.keys():
+            button.clicked.connect(lambda checked, b=button: self.switch_to_page(b))
 
         # Show default page
-        self.ui.stackedWidget.setCurrentIndex(0)
+        self.ui.stackedWidget.setCurrentWidget(self.all_students_page)
 
     # -------------------------------
-    # Initialize sub-pages
+    # Initialize all sub-pages
     # -------------------------------
     def init_sub_pages(self):
-        # --- All Students Page ---
+        # All Students page
         self.all_students_page = QtWidgets.QWidget()
         self.all_students_ui = Ui_AllStudents()
         self.all_students_ui.setupUi(self.all_students_page)
         self.all_students_controller = AllStudentsController(self.all_students_ui, self.db)
 
-        # Add to stackedWidget
-        self.ui.stackedWidget.addWidget(self.all_students_page)
-
-        # --- Pending Requests Page (example) ---
-        # self.pending_requests_page = QtWidgets.QWidget()
+        # Pending Requests page
+        self.pending_requests_page = QtWidgets.QWidget()
         # self.pending_requests_ui = Ui_PendingRequestsWidget()
         # self.pending_requests_ui.setupUi(self.pending_requests_page)
         # self.pending_requests_controller = PendingRequestsController(self.pending_requests_ui, self.db)
-        # self.ui.stackedWidget.addWidget(self.pending_requests_page)
 
+    # -------------------------------
+    # Switch page by button
+    # -------------------------------
+    def switch_to_page(self, button):
+        page = self.page_mapping.get(button)
+        if page:
+            self.ui.stackedWidget.setCurrentWidget(page)
+            print(f"Switched to page: {button.text()}")
 
+# ------------------------------- MAIN APP -------------------------------
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
 
