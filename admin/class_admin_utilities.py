@@ -1,17 +1,16 @@
 
-from StudentClass import AdminRegistration
+from student.students_utilities import AdminRegistration
+from database_files.class_database_uitlities import DatabaseUtilities
 
-db = Database(con, cur)
-
-
-con, cur = initialize_database("university_database.db")
+from database_files.initialize_database import initialize_database
+con, cur = initialize_database("../university_database.db")
 db = DatabaseUtilities(con, cur)
 
 
 class AdminUtilities:
     def __init__(self, db):
         self.db = db
-        self.email_sender = EmailSender()
+
 
     # ========================= ADD COURSE =========================
     def add_course(self, code: str, name: str, credits: int) -> str:
@@ -463,4 +462,4 @@ class AdminUtilities:
             self.reg_manager.close_registration(sem)
 
 
-admin = Admin(db)
+admin = AdminUtilities(db)
