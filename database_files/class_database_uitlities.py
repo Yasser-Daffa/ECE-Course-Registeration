@@ -1,13 +1,8 @@
+import random  # نحتاجه للأكواد العشوائية
+
 import sqlite3
-import os
 
-# مسار هذا الملف (DataClass.py)
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-# ملف ال DB موجود في مجلد واحد فوق:
-DB_PATH = os.path.join(BASE_DIR, "..", "university.db")
-
-con = sqlite3.connect(DB_PATH)
+con = sqlite3.connect("../university_database.db")
 cur = con.cursor()
 cur.execute("PRAGMA foreign_keys = ON;")
 

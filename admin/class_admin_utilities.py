@@ -1,9 +1,8 @@
 from student.students_utilities import AdminRegistration
 from database_files.class_database_uitlities import DatabaseUtilities
-from database_files.class_database_uitlities import con
-from database_files.class_database_uitlities import cur
 
-
+from database_files.initialize_database import initialize_database
+con, cur = initialize_database("../university_database.db")
 db = DatabaseUtilities(con, cur)
 
 
