@@ -16,13 +16,6 @@ from database_files.initialize_database import initialize_database
 from database_files.class_database_uitlities import DatabaseUtilities
 
 
-import os, sys, functools
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
-
-
-
-
-
 class AllCoursesController:
 
     def __init__(self, ui, db: DatabaseUtilities):

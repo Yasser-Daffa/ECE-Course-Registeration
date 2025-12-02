@@ -1,4 +1,6 @@
-import sys
+import os, sys, functools
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+
 from PyQt6.QtWidgets import QApplication, QDialog, QMessageBox
 
 # واجهة إضافة الكورس (مولدة من Qt Designer)
@@ -61,7 +63,7 @@ class AddCourseDialog(QDialog, BaseLoginForm):
                 color: black;
                 padding: 6px 14px;
             }
-        """)
+            """)
 
         box.exec()
 
