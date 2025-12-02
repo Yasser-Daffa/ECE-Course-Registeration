@@ -133,7 +133,7 @@ class DatabaseUtilities:
         return "Prerequisite deleted successfully"
     #********************************************************************************************************************
 
-    def AddSection(self, course_code, doctor_id, days, time_start, time_end, room, capacity, semester, state="open"):
+    def add_section(self, course_code, doctor_id, days, time_start, time_end, room, capacity, semester, state="open"):
 
         self.cur.execute("""
             INSERT INTO sections(course_code,doctor_id,days,time_start,time_end,room,capacity,enrolled,semester,state)
@@ -143,7 +143,7 @@ class DatabaseUtilities:
         return "Section added successfully"
 
 
-    def ListSections(self, course_code=None, semester=None):
+    def list_sections(self, course_code=None, semester=None):
 
         sql = """
         SELECT section_id,course_code,doctor_id,days,time_start,time_end,room,capacity,enrolled,semester,state
@@ -179,7 +179,7 @@ class DatabaseUtilities:
         # إعادة النتائج
         return self.cur.fetchall()
 
-    def UpdateSection(self,section_id,doctor_id=None,days=None,time_start=None,
+    def update_section(self,section_id,doctor_id=None,days=None,time_start=None,
                       time_end=None,room=None,capacity=None,semester=None,state=None):
         sets = [] #نفس فكرة اللي فوق نحنا حاليا ما نعرف المستخدم وش بيعدل بالضبط فا بنعبي ذا المتغير حسب هو وش اختار يعدل
         vals = [] # نفسه بس هنا نحفظ الارقام
@@ -229,7 +229,7 @@ class DatabaseUtilities:
 
         return "Section updated successfully" if self.cur.rowcount else "Section not found"
 
-    def DeleteSection(self, section_id):
+    def delete_section(self, section_id):
 
 
         self.cur.execute("DELETE FROM sections WHERE section_id=?", (section_id,))
