@@ -166,7 +166,7 @@ QPushButton:disabled {
         <item>
          <widget class="QLabel" name="labelTotalSectionsCount">
           <property name="styleSheet">
-           <string notr="true">font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;</string>
+           <string notr="true">font-size: 26px; font-weight: bold; color: #2c3e50; background: transparent;</string>
           </property>
           <property name="text">
            <string>85</string>
@@ -250,7 +250,7 @@ QPushButton:disabled {
         <item>
          <widget class="QLabel" name="labelOpenSectionsCount">
           <property name="styleSheet">
-           <string notr="true">font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;</string>
+           <string notr="true">font-size: 26px; font-weight: bold; color: #2c3e50; background: transparent;</string>
           </property>
           <property name="text">
            <string>62</string>
@@ -334,7 +334,7 @@ QPushButton:disabled {
         <item>
          <widget class="QLabel" name="labelFullSectionsCount">
           <property name="styleSheet">
-           <string notr="true">font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;</string>
+           <string notr="true">font-size: 26px; font-weight: bold; color: #2c3e50; background: transparent;</string>
           </property>
           <property name="text">
            <string>18</string>
@@ -418,7 +418,7 @@ QPushButton:disabled {
         <item>
          <widget class="QLabel" name="labelClosedSectionsCount">
           <property name="styleSheet">
-           <string notr="true">font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;</string>
+           <string notr="true">font-size: 26px; font-weight: bold; color: #2c3e50; background: transparent;</string>
           </property>
           <property name="text">
            <string>5</string>
