@@ -1,12 +1,6 @@
-import os, sys, io
+import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 
-# Enable UTF-8 in Windows console
-if os.name == 'nt':
-    import ctypes
-    ctypes.windll.kernel32.SetConsoleOutputCP(65001)
-    
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 from PyQt6 import QtWidgets
 from database_files.class_database_uitlities import DatabaseUtilities
