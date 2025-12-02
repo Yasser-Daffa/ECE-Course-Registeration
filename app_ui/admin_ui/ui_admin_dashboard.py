@@ -133,22 +133,7 @@ class Ui_AdminDashboard(object):
         self.headerLayout.addWidget(self.profileFrame)
         self.sidebarLayout.addWidget(self.headerWidget)
         self.navScrollArea = QtWidgets.QScrollArea(parent=self.sidebarFrame)
-        self.navScrollArea.setStyleSheet("/* ===== ScrollArea Transparent Background ===== */\n"
-"QScrollArea#scrollAreaCreateAcc {\n"
-"    background: transparent;\n"
-"    border: none;\n"
-"    padding-right: 3px; /* leaves space for the scrollbar to appear offset */\n"
-"}\n"
-"\n"
-"QScrollArea#scrollAreaCreateAcc > QWidget {\n"
-"    background: transparent;\n"
-"}\n"
-"\n"
-"QScrollArea#scrollAreaCreateAcc > QWidget > QWidget {\n"
-"    background: transparent;\n"
-"}\n"
-"\n"
-"/* ===== VERTICAL SCROLLBAR ===== */\n"
+        self.navScrollArea.setStyleSheet("/* ===== VERTICAL SCROLLBAR ===== */\n"
 "QScrollBar:vertical {\n"
 "    width: 12px;\n"
 "    background: rgba(255, 255, 255, 0.05);  /* subtle track */\n"
@@ -191,7 +176,7 @@ class Ui_AdminDashboard(object):
         self.navScrollArea.setWidgetResizable(True)
         self.navScrollArea.setObjectName("navScrollArea")
         self.navScrollContent = QtWidgets.QWidget()
-        self.navScrollContent.setGeometry(QtCore.QRect(0, -20, 284, 719))
+        self.navScrollContent.setGeometry(QtCore.QRect(0, 0, 284, 719))
         self.navScrollContent.setStyleSheet("background-color: white;")
         self.navScrollContent.setObjectName("navScrollContent")
         self.navMainLayout = QtWidgets.QVBoxLayout(self.navScrollContent)
@@ -496,47 +481,21 @@ class Ui_AdminDashboard(object):
         self.breadcrumbLabel.setObjectName("breadcrumbLabel")
         self.verticalLayout_2.addWidget(self.breadcrumbLabel)
         self.gridLayout_2.addLayout(self.verticalLayout_2, 0, 1, 1, 1)
+        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
+        self.gridLayout_2.addItem(spacerItem4, 0, 4, 1, 1)
         self.btnSettings = QtWidgets.QPushButton(parent=self.topBarFrame)
         self.btnSettings.setMinimumSize(QtCore.QSize(48, 48))
         self.btnSettings.setMaximumSize(QtCore.QSize(48, 48))
         self.btnSettings.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         self.btnSettings.setStyleSheet("QPushButton { background-color: #f8f9fa; border: none; border-radius: 12px; font-size: 20px; } QPushButton:hover { background-color: #e8ecf1; }")
         self.btnSettings.setObjectName("btnSettings")
-        self.gridLayout_2.addWidget(self.btnSettings, 0, 7, 1, 1)
-        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
-        self.gridLayout_2.addItem(spacerItem4, 0, 4, 1, 1)
+        self.gridLayout_2.addWidget(self.btnSettings, 0, 5, 1, 1)
         spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.gridLayout_2.addItem(spacerItem5, 0, 3, 1, 1)
         spacerItem6 = QtWidgets.QSpacerItem(10, 20, QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Minimum)
         self.gridLayout_2.addItem(spacerItem6, 0, 0, 1, 1)
-        self.btnNotifications = QtWidgets.QPushButton(parent=self.topBarFrame)
-        self.btnNotifications.setMinimumSize(QtCore.QSize(48, 48))
-        self.btnNotifications.setMaximumSize(QtCore.QSize(48, 48))
-        self.btnNotifications.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.btnNotifications.setStyleSheet("QPushButton { background-color: #f8f9fa; border: none; border-radius: 12px; font-size: 20px; } QPushButton:hover { background-color: #e8ecf1; }")
-        self.btnNotifications.setObjectName("btnNotifications")
-        self.gridLayout_2.addWidget(self.btnNotifications, 0, 5, 1, 1)
-        self.btnMessages = QtWidgets.QPushButton(parent=self.topBarFrame)
-        self.btnMessages.setMinimumSize(QtCore.QSize(48, 48))
-        self.btnMessages.setMaximumSize(QtCore.QSize(48, 48))
-        self.btnMessages.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.btnMessages.setStyleSheet("QPushButton { background-color: #f8f9fa; border: none; border-radius: 12px; font-size: 20px; } QPushButton:hover { background-color: #e8ecf1; }")
-        self.btnMessages.setObjectName("btnMessages")
-        self.gridLayout_2.addWidget(self.btnMessages, 0, 6, 1, 1)
         self.mainContentLayout.addWidget(self.topBarFrame)
-        self.contentScrollArea = QtWidgets.QScrollArea(parent=self.mainContentWidget)
-        self.contentScrollArea.setStyleSheet("background-color: #f5f7fa; border: none;")
-        self.contentScrollArea.setWidgetResizable(True)
-        self.contentScrollArea.setObjectName("contentScrollArea")
-        self.scrollContent = QtWidgets.QWidget()
-        self.scrollContent.setGeometry(QtCore.QRect(0, 0, 900, 745))
-        self.scrollContent.setStyleSheet("background-color: #f5f7fa;")
-        self.scrollContent.setObjectName("scrollContent")
-        self.scrollContentLayout = QtWidgets.QVBoxLayout(self.scrollContent)
-        self.scrollContentLayout.setContentsMargins(40, 38, 40, 38)
-        self.scrollContentLayout.setSpacing(32)
-        self.scrollContentLayout.setObjectName("scrollContentLayout")
-        self.frame = QtWidgets.QFrame(parent=self.scrollContent)
+        self.frame = QtWidgets.QFrame(parent=self.mainContentWidget)
         self.frame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)
         self.frame.setObjectName("frame")
@@ -563,9 +522,7 @@ class Ui_AdminDashboard(object):
         self.page5ManageSections.setObjectName("page5ManageSections")
         self.stackedWidget.addWidget(self.page5ManageSections)
         self.verticalLayout_3.addWidget(self.stackedWidget)
-        self.scrollContentLayout.addWidget(self.frame)
-        self.contentScrollArea.setWidget(self.scrollContent)
-        self.mainContentLayout.addWidget(self.contentScrollArea)
+        self.mainContentLayout.addWidget(self.frame)
         self.mainHorizontalLayout.addWidget(self.mainContentWidget)
         AdminDashboard.setCentralWidget(self.centralwidget)
 
@@ -576,7 +533,7 @@ class Ui_AdminDashboard(object):
     def retranslateUi(self, AdminDashboard):
         _translate = QtCore.QCoreApplication.translate
         AdminDashboard.setWindowTitle(_translate("AdminDashboard", "Admin Dashboard - ECE Registration System"))
-        self.logoIconLabel.setText(_translate("AdminDashboard", "⚙️"))
+        self.logoIconLabel.setText(_translate("AdminDashboard", "🛠️"))
         self.logoTitleLabel.setText(_translate("AdminDashboard", "Admin Panel"))
         self.logoSubtitleLabel.setText(_translate("AdminDashboard", "ECE Registration System"))
         self.labelAdminName.setText(_translate("AdminDashboard", "Admin User"))
@@ -596,5 +553,3 @@ class Ui_AdminDashboard(object):
         self.pageTitleLabel.setText(_translate("AdminDashboard", "Dashboard Overview"))
         self.breadcrumbLabel.setText(_translate("AdminDashboard", "🏠 Home • Dashboard"))
         self.btnSettings.setText(_translate("AdminDashboard", "⚙️"))
-        self.btnNotifications.setText(_translate("AdminDashboard", "🔔"))
-        self.btnMessages.setText(_translate("AdminDashboard", "💬"))

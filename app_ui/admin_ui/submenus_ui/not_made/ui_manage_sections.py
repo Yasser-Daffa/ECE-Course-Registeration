@@ -373,7 +373,7 @@ class Ui_ManageSectionsWidget(object):
         self.tableHeaderLayout.addWidget(self.comboBoxStatusFilter)
         self.sectionsTableMainLayout.addWidget(self.tableHeader)
         self.tableSections = QtWidgets.QTableWidget(parent=self.sectionsTableFrame)
-        self.tableSections.setMinimumSize(QtCore.QSize(0, 400))
+        self.tableSections.setMinimumSize(QtCore.QSize(0, 300))
         self.tableSections.setStyleSheet("QTableWidget {\n"
 "    border: none;\n"
 "    background-color: white;\n"
@@ -436,21 +436,67 @@ class Ui_ManageSectionsWidget(object):
 "QTableWidget::indicator:checked::after {\n"
 "    content: \"\";\n"
 "    image: url(\"\"); /* no default checkmark */\n"
-"}")
-        self.tableSections.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
+"}\n"
+"\n"
+"/* ===== SCROLLBARS (VERTICAL & HORIZONTAL) ===== */\n"
+"\n"
+"/* Track */\n"
+"QScrollBar:vertical, QScrollBar:horizontal {\n"
+"    background: rgba(255, 255, 255, 0.05);  /* subtle track */\n"
+"    border-radius: 6px;\n"
+"    margin: 0px;  /* remove extra space */\n"
+"}\n"
+"\n"
+"/* Handle / Thumb */\n"
+"QScrollBar::handle:vertical, QScrollBar::handle:horizontal {\n"
+"    background: rgba(120, 120, 120, 0.35);  /* glassy thumb */\n"
+"    border-radius: 6px;\n"
+"    border: 1px solid rgba(255, 255, 255, 0.2); /* subtle highlight */\n"
+"    min-height: 30px; /* vertical */\n"
+"    min-width: 30px;  /* horizontal */\n"
+"}\n"
+"\n"
+"QScrollBar::handle:vertical:hover,\n"
+"QScrollBar::handle:horizontal:hover {\n"
+"    background: rgba(120, 120, 120, 0.55);\n"
+"}\n"
+"\n"
+"/* Buttons (up/down or left/right) */\n"
+"QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical,\n"
+"QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {\n"
+"    width: 16px;  /* horizontal buttons width */\n"
+"    height: 16px; /* vertical buttons height */\n"
+"    background: rgba(180, 180, 180, 0.35);\n"
+"    border-radius: 4px;\n"
+"}\n"
+"\n"
+"/* Arrow icons */\n"
+"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical,\n"
+"QScrollBar::left-arrow:horizontal, QScrollBar::right-arrow:horizontal {\n"
+"    width: 6px;\n"
+"    height: 6px;\n"
+"    background: transparent;\n"
+"}\n"
+"\n"
+"/* Remove blank areas */\n"
+"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical,\n"
+"QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {\n"
+"    background: none;\n"
+"}\n"
+"\n"
+"/* Sizes */\n"
+"QScrollBar:vertical { width: 12px; }\n"
+"QScrollBar:horizontal { height: 12px; }\n"
+"")
+        self.tableSections.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.tableSections.setAlternatingRowColors(True)
+        self.tableSections.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.ContiguousSelection)
+        self.tableSections.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel)
+        self.tableSections.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel)
+        self.tableSections.setCornerButtonEnabled(True)
         self.tableSections.setObjectName("tableSections")
-        self.tableSections.setColumnCount(8)
-        self.tableSections.setRowCount(5)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setVerticalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setVerticalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setVerticalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setVerticalHeaderItem(3, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setVerticalHeaderItem(4, item)
+        self.tableSections.setColumnCount(10)
+        self.tableSections.setRowCount(0)
         item = QtWidgets.QTableWidgetItem()
         self.tableSections.setHorizontalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
@@ -468,87 +514,12 @@ class Ui_ManageSectionsWidget(object):
         item = QtWidgets.QTableWidgetItem()
         self.tableSections.setHorizontalHeaderItem(7, item)
         item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(0, 0, item)
+        self.tableSections.setHorizontalHeaderItem(8, item)
         item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(0, 1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(0, 2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(0, 3, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(0, 4, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(0, 5, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(0, 6, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(0, 7, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(1, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(1, 1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(1, 2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(1, 3, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(1, 4, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(1, 5, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(1, 6, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(1, 7, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(2, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(2, 1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(2, 2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(2, 3, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(2, 4, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(2, 5, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(2, 6, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(2, 7, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(3, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(3, 1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(3, 2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(3, 3, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(3, 4, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(3, 5, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(3, 6, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(3, 7, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(4, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(4, 1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(4, 2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(4, 3, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(4, 4, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(4, 5, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(4, 6, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableSections.setItem(4, 7, item)
+        self.tableSections.setHorizontalHeaderItem(9, item)
         self.tableSections.horizontalHeader().setStretchLastSection(True)
         self.tableSections.verticalHeader().setVisible(False)
+        self.tableSections.verticalHeader().setCascadingSectionResizes(True)
         self.sectionsTableMainLayout.addWidget(self.tableSections)
         self.mainLayout.addWidget(self.sectionsTableFrame)
         spacerItem2 = QtWidgets.QSpacerItem(20, 60, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Maximum)
@@ -586,101 +557,22 @@ class Ui_ManageSectionsWidget(object):
         self.comboBoxStatusFilter.setItemText(2, _translate("ManageSectionsWidget", "Full"))
         self.comboBoxStatusFilter.setItemText(3, _translate("ManageSectionsWidget", "Closed"))
         item = self.tableSections.horizontalHeaderItem(0)
-        item.setText(_translate("ManageSectionsWidget", "SECTION ID"))
+        item.setText(_translate("ManageSectionsWidget", "SELECT"))
         item = self.tableSections.horizontalHeaderItem(1)
-        item.setText(_translate("ManageSectionsWidget", "COURSE"))
+        item.setText(_translate("ManageSectionsWidget", "#"))
         item = self.tableSections.horizontalHeaderItem(2)
-        item.setText(_translate("ManageSectionsWidget", "INSTRUCTOR"))
+        item.setText(_translate("ManageSectionsWidget", "ID"))
         item = self.tableSections.horizontalHeaderItem(3)
-        item.setText(_translate("ManageSectionsWidget", "SCHEDULE"))
+        item.setText(_translate("ManageSectionsWidget", "COURSE"))
         item = self.tableSections.horizontalHeaderItem(4)
-        item.setText(_translate("ManageSectionsWidget", "CAPACITY"))
+        item.setText(_translate("ManageSectionsWidget", "INSTRUCTOR"))
         item = self.tableSections.horizontalHeaderItem(5)
-        item.setText(_translate("ManageSectionsWidget", "ENROLLED"))
+        item.setText(_translate("ManageSectionsWidget", "SCHEDULE"))
         item = self.tableSections.horizontalHeaderItem(6)
-        item.setText(_translate("ManageSectionsWidget", "STATUS"))
+        item.setText(_translate("ManageSectionsWidget", "ENROLLED"))
         item = self.tableSections.horizontalHeaderItem(7)
+        item.setText(_translate("ManageSectionsWidget", "CAPACITY"))
+        item = self.tableSections.horizontalHeaderItem(8)
+        item.setText(_translate("ManageSectionsWidget", "STATUS"))
+        item = self.tableSections.horizontalHeaderItem(9)
         item.setText(_translate("ManageSectionsWidget", "ACTIONS"))
-        __sortingEnabled = self.tableSections.isSortingEnabled()
-        self.tableSections.setSortingEnabled(False)
-        item = self.tableSections.item(0, 0)
-        item.setText(_translate("ManageSectionsWidget", "ECE101-01"))
-        item = self.tableSections.item(0, 1)
-        item.setText(_translate("ManageSectionsWidget", "ECE 101 - Digital Logic"))
-        item = self.tableSections.item(0, 2)
-        item.setText(_translate("ManageSectionsWidget", "Dr. ahemd"))
-        item = self.tableSections.item(0, 3)
-        item.setText(_translate("ManageSectionsWidget", "MWF 9:00-10:00 AM"))
-        item = self.tableSections.item(0, 4)
-        item.setText(_translate("ManageSectionsWidget", "45"))
-        item = self.tableSections.item(0, 5)
-        item.setText(_translate("ManageSectionsWidget", "42"))
-        item = self.tableSections.item(0, 6)
-        item.setText(_translate("ManageSectionsWidget", "Open"))
-        item = self.tableSections.item(0, 7)
-        item.setText(_translate("ManageSectionsWidget", "Actions"))
-        item = self.tableSections.item(1, 0)
-        item.setText(_translate("ManageSectionsWidget", "ECE101-02"))
-        item = self.tableSections.item(1, 1)
-        item.setText(_translate("ManageSectionsWidget", "ECE 101 - Digital Logic"))
-        item = self.tableSections.item(1, 2)
-        item.setText(_translate("ManageSectionsWidget", "Dr. Mike Tyson"))
-        item = self.tableSections.item(1, 3)
-        item.setText(_translate("ManageSectionsWidget", "TTh 11:00-12:30 PM"))
-        item = self.tableSections.item(1, 4)
-        item.setText(_translate("ManageSectionsWidget", "45"))
-        item = self.tableSections.item(1, 5)
-        item.setText(_translate("ManageSectionsWidget", "45"))
-        item = self.tableSections.item(1, 6)
-        item.setText(_translate("ManageSectionsWidget", "Full"))
-        item = self.tableSections.item(1, 7)
-        item.setText(_translate("ManageSectionsWidget", "Actions"))
-        item = self.tableSections.item(2, 0)
-        item.setText(_translate("ManageSectionsWidget", "ECE202-01"))
-        item = self.tableSections.item(2, 1)
-        item.setText(_translate("ManageSectionsWidget", "ECE 202 - Circuit Analysis"))
-        item = self.tableSections.item(2, 2)
-        item.setText(_translate("ManageSectionsWidget", "Dr. Mike Brown"))
-        item = self.tableSections.item(2, 3)
-        item.setText(_translate("ManageSectionsWidget", "MWF 1:00-2:00 PM"))
-        item = self.tableSections.item(2, 4)
-        item.setText(_translate("ManageSectionsWidget", "40"))
-        item = self.tableSections.item(2, 5)
-        item.setText(_translate("ManageSectionsWidget", "35"))
-        item = self.tableSections.item(2, 6)
-        item.setText(_translate("ManageSectionsWidget", "Open"))
-        item = self.tableSections.item(2, 7)
-        item.setText(_translate("ManageSectionsWidget", "Actions"))
-        item = self.tableSections.item(3, 0)
-        item.setText(_translate("ManageSectionsWidget", "ECE303-01"))
-        item = self.tableSections.item(3, 1)
-        item.setText(_translate("ManageSectionsWidget", "ECE 303 - Signals and Systems"))
-        item = self.tableSections.item(3, 2)
-        item.setText(_translate("ManageSectionsWidget", "Dr. Emily Davis"))
-        item = self.tableSections.item(3, 3)
-        item.setText(_translate("ManageSectionsWidget", "TTh 2:00-3:30 PM"))
-        item = self.tableSections.item(3, 4)
-        item.setText(_translate("ManageSectionsWidget", "50"))
-        item = self.tableSections.item(3, 5)
-        item.setText(_translate("ManageSectionsWidget", "48"))
-        item = self.tableSections.item(3, 6)
-        item.setText(_translate("ManageSectionsWidget", "Open"))
-        item = self.tableSections.item(3, 7)
-        item.setText(_translate("ManageSectionsWidget", "Actions"))
-        item = self.tableSections.item(4, 0)
-        item.setText(_translate("ManageSectionsWidget", "ECE404-01"))
-        item = self.tableSections.item(4, 1)
-        item.setText(_translate("ManageSectionsWidget", "ECE 404 - Control Systems"))
-        item = self.tableSections.item(4, 2)
-        item.setText(_translate("ManageSectionsWidget", "Dr. Tom Wilson"))
-        item = self.tableSections.item(4, 3)
-        item.setText(_translate("ManageSectionsWidget", "MWF 10:00-11:00 AM"))
-        item = self.tableSections.item(4, 4)
-        item.setText(_translate("ManageSectionsWidget", "35"))
-        item = self.tableSections.item(4, 5)
-        item.setText(_translate("ManageSectionsWidget", "0"))
-        item = self.tableSections.item(4, 6)
-        item.setText(_translate("ManageSectionsWidget", "Closed"))
-        item = self.tableSections.item(4, 7)
-        item.setText(_translate("ManageSectionsWidget", "Actions"))
-        self.tableSections.setSortingEnabled(__sortingEnabled)

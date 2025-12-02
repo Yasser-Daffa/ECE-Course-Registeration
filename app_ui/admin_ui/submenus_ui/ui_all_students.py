@@ -12,7 +12,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_AllStudents(object):
     def setupUi(self, AllStudents):
         AllStudents.setObjectName("AllStudents")
-        AllStudents.resize(1200, 1069)
+        AllStudents.resize(1200, 809)
         AllStudents.setStyleSheet("background-color: #f5f7fa;")
         self.mainLayout = QtWidgets.QVBoxLayout(AllStudents)
         self.mainLayout.setContentsMargins(40, 40, 40, 20)
@@ -176,8 +176,7 @@ class Ui_AllStudents(object):
         self.buttonRemoveSelected.setObjectName("buttonRemoveSelected")
         self.tableHeaderLayout.addWidget(self.buttonRemoveSelected)
         self.tableMainLayout.addWidget(self.tableHeader)
-        self.mainLayout.addWidget(self.tableFrame)
-        self.tableAllStudents = QtWidgets.QTableWidget(parent=AllStudents)
+        self.tableAllStudents = QtWidgets.QTableWidget(parent=self.tableFrame)
         self.tableAllStudents.setMinimumSize(QtCore.QSize(0, 300))
         self.tableAllStudents.setStyleSheet("QTableWidget {\n"
 "    border: none;\n"
@@ -241,10 +240,62 @@ class Ui_AllStudents(object):
 "QTableWidget::indicator:checked::after {\n"
 "    content: \"\";\n"
 "    image: url(\"\"); /* no default checkmark */\n"
-"}")
+"}\n"
+"/* ===== SCROLLBARS (VERTICAL & HORIZONTAL) ===== */\n"
+"\n"
+"/* Track */\n"
+"QScrollBar:vertical, QScrollBar:horizontal {\n"
+"    background: rgba(255, 255, 255, 0.05);  /* subtle track */\n"
+"    border-radius: 6px;\n"
+"    margin: 0px;  /* remove extra space */\n"
+"}\n"
+"\n"
+"/* Handle / Thumb */\n"
+"QScrollBar::handle:vertical, QScrollBar::handle:horizontal {\n"
+"    background: rgba(120, 120, 120, 0.35);  /* glassy thumb */\n"
+"    border-radius: 6px;\n"
+"    border: 1px solid rgba(255, 255, 255, 0.2); /* subtle highlight */\n"
+"    min-height: 30px; /* vertical */\n"
+"    min-width: 30px;  /* horizontal */\n"
+"}\n"
+"\n"
+"QScrollBar::handle:vertical:hover,\n"
+"QScrollBar::handle:horizontal:hover {\n"
+"    background: rgba(120, 120, 120, 0.55);\n"
+"}\n"
+"\n"
+"/* Buttons (up/down or left/right) */\n"
+"QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical,\n"
+"QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {\n"
+"    width: 16px;  /* horizontal buttons width */\n"
+"    height: 16px; /* vertical buttons height */\n"
+"    background: rgba(180, 180, 180, 0.35);\n"
+"    border-radius: 4px;\n"
+"}\n"
+"\n"
+"/* Arrow icons */\n"
+"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical,\n"
+"QScrollBar::left-arrow:horizontal, QScrollBar::right-arrow:horizontal {\n"
+"    width: 6px;\n"
+"    height: 6px;\n"
+"    background: transparent;\n"
+"}\n"
+"\n"
+"/* Remove blank areas */\n"
+"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical,\n"
+"QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {\n"
+"    background: none;\n"
+"}\n"
+"\n"
+"/* Sizes */\n"
+"QScrollBar:vertical { width: 12px; }\n"
+"QScrollBar:horizontal { height: 12px; }\n"
+"")
         self.tableAllStudents.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
         self.tableAllStudents.setAlternatingRowColors(True)
         self.tableAllStudents.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.ContiguousSelection)
+        self.tableAllStudents.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel)
+        self.tableAllStudents.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel)
         self.tableAllStudents.setCornerButtonEnabled(True)
         self.tableAllStudents.setObjectName("tableAllStudents")
         self.tableAllStudents.setColumnCount(8)
@@ -268,7 +319,8 @@ class Ui_AllStudents(object):
         self.tableAllStudents.horizontalHeader().setStretchLastSection(True)
         self.tableAllStudents.verticalHeader().setVisible(False)
         self.tableAllStudents.verticalHeader().setCascadingSectionResizes(True)
-        self.mainLayout.addWidget(self.tableAllStudents)
+        self.tableMainLayout.addWidget(self.tableAllStudents)
+        self.mainLayout.addWidget(self.tableFrame)
         spacerItem3 = QtWidgets.QSpacerItem(20, 60, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Maximum)
         self.mainLayout.addItem(spacerItem3)
 

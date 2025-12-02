@@ -24,9 +24,17 @@ from app_ui.admin_ui.submenus_ui.ui_course_management import Ui_CourseManagement
 from admin.submenus.class_course_management import CoursesManagementController
 
 class AdminDashboard(QtWidgets.QMainWindow):
+    """
+    Main admin dashboard window.
+    Handles page switching via a QStackedWidget and initializes all sub-pages.
+    """
+    
     def __init__(self, db: DatabaseUtilities):
         super().__init__()
 
+        # -------------------------------
+        # Main UI setup
+        # -------------------------------
         self.ui = Ui_AdminDashboard()
         self.ui.setupUi(self)
         self.db = db
@@ -43,13 +51,17 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.ui.stackedWidget.addWidget(self.pending_requests_page)
         # Add other pages similarly...
 
-        # ------------------------
-        # 3. Map buttons to pages
-        # ------------------------
+
+        # -------------------------------
+        # 3- Map buttons to their corresponding pages
+        # -------------------------------
+
+        # Key: QPushButton object
+        # Value: Tuple of (page name string, QWidget page)
+        # Using a string here avoids printing emojis/unicode directly from button.text()
         self.page_mapping = {
-            self.ui.buttonAllStudents: self.all_students_page,
-            self.ui.buttonPendingRequests: self.pending_requests_page
-            # other buttons → pages
+            self.ui.buttonAllStudents: ("All Students", self.all_students_page),
+            self.ui.buttonPendingRequests: ("Pending Requests", self.pending_requests_page)
         }
 
         for button in self.page_mapping.keys():
@@ -81,20 +93,20 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.pending_requests_controller = PendingRequestsController(self.pending_requests_ui, self.db)
 
     # -------------------------------
-    # Switch page by button
+    # Switch the stacked widget to the page associated with the clicked button
     # -------------------------------
     def switch_to_page(self, button):
-        page = self.page_mapping.get(button)
-        if page:
+        # Retrieve the mapping info for the clicked button
+        info = self.page_mapping.get(button)
+        if info:
+            # Unpack the tuple into a readable name and the actual QWidget page
+            name, page = info
+            
+            # Set the stacked widget to display the selected page
             self.ui.stackedWidget.setCurrentWidget(page)
-            # safely print even if button text has emojis
-            try:
-                print(f"Switched to page: {button.text()}")
-            except UnicodeEncodeError:
-                # fallback: remove unprintable characters
-                safe_text = button.text().encode('ascii', errors='ignore').decode()
-                print(f"Switched to page: {safe_text}")
-
+            
+            # Optional debug: safely print the human-readable name of the page
+            print(f"Switched to page: {name}")
 # ------------------------------- MAIN APP -------------------------------
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

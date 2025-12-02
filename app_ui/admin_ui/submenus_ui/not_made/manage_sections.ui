@@ -763,7 +763,7 @@ QComboBox[error=&quot;true&quot;] {
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>400</height>
+          <height>300</height>
          </size>
         </property>
         <property name="styleSheet">
@@ -829,10 +829,76 @@ QTableWidget::indicator:unchecked:hover {
 QTableWidget::indicator:checked::after {
     content: &quot;&quot;;
     image: url(&quot;&quot;); /* no default checkmark */
-}</string>
+}
+
+/* ===== SCROLLBARS (VERTICAL &amp; HORIZONTAL) ===== */
+
+/* Track */
+QScrollBar:vertical, QScrollBar:horizontal {
+    background: rgba(255, 255, 255, 0.05);  /* subtle track */
+    border-radius: 6px;
+    margin: 0px;  /* remove extra space */
+}
+
+/* Handle / Thumb */
+QScrollBar::handle:vertical, QScrollBar::handle:horizontal {
+    background: rgba(120, 120, 120, 0.35);  /* glassy thumb */
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.2); /* subtle highlight */
+    min-height: 30px; /* vertical */
+    min-width: 30px;  /* horizontal */
+}
+
+QScrollBar::handle:vertical:hover,
+QScrollBar::handle:horizontal:hover {
+    background: rgba(120, 120, 120, 0.55);
+}
+
+/* Buttons (up/down or left/right) */
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical,
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    width: 16px;  /* horizontal buttons width */
+    height: 16px; /* vertical buttons height */
+    background: rgba(180, 180, 180, 0.35);
+    border-radius: 4px;
+}
+
+/* Arrow icons */
+QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical,
+QScrollBar::left-arrow:horizontal, QScrollBar::right-arrow:horizontal {
+    width: 6px;
+    height: 6px;
+    background: transparent;
+}
+
+/* Remove blank areas */
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical,
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
+    background: none;
+}
+
+/* Sizes */
+QScrollBar:vertical { width: 12px; }
+QScrollBar:horizontal { height: 12px; }
+</string>
         </property>
-        <property name="selectionBehavior">
-         <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+        <property name="editTriggers">
+         <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+        </property>
+        <property name="alternatingRowColors">
+         <bool>true</bool>
+        </property>
+        <property name="selectionMode">
+         <enum>QAbstractItemView::SelectionMode::ContiguousSelection</enum>
+        </property>
+        <property name="verticalScrollMode">
+         <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
+        </property>
+        <property name="horizontalScrollMode">
+         <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
+        </property>
+        <property name="cornerButtonEnabled">
+         <bool>true</bool>
         </property>
         <attribute name="horizontalHeaderStretchLastSection">
          <bool>true</bool>
@@ -840,34 +906,22 @@ QTableWidget::indicator:checked::after {
         <attribute name="verticalHeaderVisible">
          <bool>false</bool>
         </attribute>
-        <row>
-         <property name="text">
-          <string/>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string/>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string/>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string/>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string/>
-         </property>
-        </row>
+        <attribute name="verticalHeaderCascadingSectionResizes">
+         <bool>true</bool>
+        </attribute>
         <column>
          <property name="text">
-          <string>SECTION ID</string>
+          <string>SELECT</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>#</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>ID</string>
          </property>
         </column>
         <column>
@@ -887,12 +941,12 @@ QTableWidget::indicator:checked::after {
         </column>
         <column>
          <property name="text">
-          <string>CAPACITY</string>
+          <string>ENROLLED</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>ENROLLED</string>
+          <string>CAPACITY</string>
          </property>
         </column>
         <column>
@@ -905,206 +959,6 @@ QTableWidget::indicator:checked::after {
           <string>ACTIONS</string>
          </property>
         </column>
-        <item row="0" column="0">
-         <property name="text">
-          <string>ECE101-01</string>
-         </property>
-        </item>
-        <item row="0" column="1">
-         <property name="text">
-          <string>ECE 101 - Digital Logic</string>
-         </property>
-        </item>
-        <item row="0" column="2">
-         <property name="text">
-          <string>Dr. ahemd</string>
-         </property>
-        </item>
-        <item row="0" column="3">
-         <property name="text">
-          <string>MWF 9:00-10:00 AM</string>
-         </property>
-        </item>
-        <item row="0" column="4">
-         <property name="text">
-          <string>45</string>
-         </property>
-        </item>
-        <item row="0" column="5">
-         <property name="text">
-          <string>42</string>
-         </property>
-        </item>
-        <item row="0" column="6">
-         <property name="text">
-          <string>Open</string>
-         </property>
-        </item>
-        <item row="0" column="7">
-         <property name="text">
-          <string>Actions</string>
-         </property>
-        </item>
-        <item row="1" column="0">
-         <property name="text">
-          <string>ECE101-02</string>
-         </property>
-        </item>
-        <item row="1" column="1">
-         <property name="text">
-          <string>ECE 101 - Digital Logic</string>
-         </property>
-        </item>
-        <item row="1" column="2">
-         <property name="text">
-          <string>Dr. Mike Tyson</string>
-         </property>
-        </item>
-        <item row="1" column="3">
-         <property name="text">
-          <string>TTh 11:00-12:30 PM</string>
-         </property>
-        </item>
-        <item row="1" column="4">
-         <property name="text">
-          <string>45</string>
-         </property>
-        </item>
-        <item row="1" column="5">
-         <property name="text">
-          <string>45</string>
-         </property>
-        </item>
-        <item row="1" column="6">
-         <property name="text">
-          <string>Full</string>
-         </property>
-        </item>
-        <item row="1" column="7">
-         <property name="text">
-          <string>Actions</string>
-         </property>
-        </item>
-        <item row="2" column="0">
-         <property name="text">
-          <string>ECE202-01</string>
-         </property>
-        </item>
-        <item row="2" column="1">
-         <property name="text">
-          <string>ECE 202 - Circuit Analysis</string>
-         </property>
-        </item>
-        <item row="2" column="2">
-         <property name="text">
-          <string>Dr. Mike Brown</string>
-         </property>
-        </item>
-        <item row="2" column="3">
-         <property name="text">
-          <string>MWF 1:00-2:00 PM</string>
-         </property>
-        </item>
-        <item row="2" column="4">
-         <property name="text">
-          <string>40</string>
-         </property>
-        </item>
-        <item row="2" column="5">
-         <property name="text">
-          <string>35</string>
-         </property>
-        </item>
-        <item row="2" column="6">
-         <property name="text">
-          <string>Open</string>
-         </property>
-        </item>
-        <item row="2" column="7">
-         <property name="text">
-          <string>Actions</string>
-         </property>
-        </item>
-        <item row="3" column="0">
-         <property name="text">
-          <string>ECE303-01</string>
-         </property>
-        </item>
-        <item row="3" column="1">
-         <property name="text">
-          <string>ECE 303 - Signals and Systems</string>
-         </property>
-        </item>
-        <item row="3" column="2">
-         <property name="text">
-          <string>Dr. Emily Davis</string>
-         </property>
-        </item>
-        <item row="3" column="3">
-         <property name="text">
-          <string>TTh 2:00-3:30 PM</string>
-         </property>
-        </item>
-        <item row="3" column="4">
-         <property name="text">
-          <string>50</string>
-         </property>
-        </item>
-        <item row="3" column="5">
-         <property name="text">
-          <string>48</string>
-         </property>
-        </item>
-        <item row="3" column="6">
-         <property name="text">
-          <string>Open</string>
-         </property>
-        </item>
-        <item row="3" column="7">
-         <property name="text">
-          <string>Actions</string>
-         </property>
-        </item>
-        <item row="4" column="0">
-         <property name="text">
-          <string>ECE404-01</string>
-         </property>
-        </item>
-        <item row="4" column="1">
-         <property name="text">
-          <string>ECE 404 - Control Systems</string>
-         </property>
-        </item>
-        <item row="4" column="2">
-         <property name="text">
-          <string>Dr. Tom Wilson</string>
-         </property>
-        </item>
-        <item row="4" column="3">
-         <property name="text">
-          <string>MWF 10:00-11:00 AM</string>
-         </property>
-        </item>
-        <item row="4" column="4">
-         <property name="text">
-          <string>35</string>
-         </property>
-        </item>
-        <item row="4" column="5">
-         <property name="text">
-          <string>0</string>
-         </property>
-        </item>
-        <item row="4" column="6">
-         <property name="text">
-          <string>Closed</string>
-         </property>
-        </item>
-        <item row="4" column="7">
-         <property name="text">
-          <string>Actions</string>
-         </property>
-        </item>
        </widget>
       </item>
      </layout>

@@ -131,7 +131,7 @@
                <string notr="true">background-color: white; border-radius: 15px; font-size: 34px;</string>
               </property>
               <property name="text">
-               <string>⚙️</string>
+               <string>🛠️</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -360,22 +360,7 @@ font-weight: 900;</string>
        <item>
         <widget class="QScrollArea" name="navScrollArea">
          <property name="styleSheet">
-          <string notr="true">/* ===== ScrollArea Transparent Background ===== */
-QScrollArea#scrollAreaCreateAcc {
-    background: transparent;
-    border: none;
-    padding-right: 3px; /* leaves space for the scrollbar to appear offset */
-}
-
-QScrollArea#scrollAreaCreateAcc &gt; QWidget {
-    background: transparent;
-}
-
-QScrollArea#scrollAreaCreateAcc &gt; QWidget &gt; QWidget {
-    background: transparent;
-}
-
-/* ===== VERTICAL SCROLLBAR ===== */
+          <string notr="true">/* ===== VERTICAL SCROLLBAR ===== */
 QScrollBar:vertical {
     width: 12px;
     background: rgba(255, 255, 255, 0.05);  /* subtle track */
@@ -423,7 +408,7 @@ QScrollBar::sub-page:vertical {
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>-20</y>
+            <y>0</y>
             <width>284</width>
             <height>719</height>
            </rect>
@@ -937,7 +922,23 @@ QPushButton:pressed {
             </item>
            </layout>
           </item>
-          <item row="0" column="7">
+          <item row="0" column="4">
+           <spacer name="topBarSpacer">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Policy::Expanding</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="5">
            <widget class="QPushButton" name="btnSettings">
             <property name="minimumSize">
              <size>
@@ -961,22 +962,6 @@ QPushButton:pressed {
              <string>⚙️</string>
             </property>
            </widget>
-          </item>
-          <item row="0" column="4">
-           <spacer name="topBarSpacer">
-            <property name="orientation">
-             <enum>Qt::Orientation::Horizontal</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Policy::Expanding</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
           </item>
           <item row="0" column="3">
            <spacer name="horizontalSpacer">
@@ -1010,122 +995,32 @@ QPushButton:pressed {
             </property>
            </spacer>
           </item>
-          <item row="0" column="5">
-           <widget class="QPushButton" name="btnNotifications">
-            <property name="minimumSize">
-             <size>
-              <width>48</width>
-              <height>48</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>48</width>
-              <height>48</height>
-             </size>
-            </property>
-            <property name="cursor">
-             <cursorShape>PointingHandCursor</cursorShape>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QPushButton { background-color: #f8f9fa; border: none; border-radius: 12px; font-size: 20px; } QPushButton:hover { background-color: #e8ecf1; }</string>
-            </property>
-            <property name="text">
-             <string>🔔</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="6">
-           <widget class="QPushButton" name="btnMessages">
-            <property name="minimumSize">
-             <size>
-              <width>48</width>
-              <height>48</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>48</width>
-              <height>48</height>
-             </size>
-            </property>
-            <property name="cursor">
-             <cursorShape>PointingHandCursor</cursorShape>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QPushButton { background-color: #f8f9fa; border: none; border-radius: 12px; font-size: 20px; } QPushButton:hover { background-color: #e8ecf1; }</string>
-            </property>
-            <property name="text">
-             <string>💬</string>
-            </property>
-           </widget>
-          </item>
          </layout>
         </widget>
        </item>
        <item>
-        <widget class="QScrollArea" name="contentScrollArea">
-         <property name="styleSheet">
-          <string notr="true">background-color: #f5f7fa; border: none;</string>
+        <widget class="QFrame" name="frame">
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
          </property>
-         <property name="widgetResizable">
-          <bool>true</bool>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
          </property>
-         <widget class="QWidget" name="scrollContent">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>900</width>
-            <height>745</height>
-           </rect>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">background-color: #f5f7fa;</string>
-          </property>
-          <layout class="QVBoxLayout" name="scrollContentLayout">
-           <property name="spacing">
-            <number>32</number>
-           </property>
-           <property name="leftMargin">
-            <number>40</number>
-           </property>
-           <property name="topMargin">
-            <number>38</number>
-           </property>
-           <property name="rightMargin">
-            <number>40</number>
-           </property>
-           <property name="bottomMargin">
-            <number>38</number>
-           </property>
-           <item>
-            <widget class="QFrame" name="frame">
-             <property name="frameShape">
-              <enum>QFrame::Shape::StyledPanel</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Shadow::Raised</enum>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_3">
-              <item>
-               <widget class="QStackedWidget" name="stackedWidget">
-                <property name="currentIndex">
-                 <number>5</number>
-                </property>
-                <widget class="QWidget" name="page0Profile"/>
-                <widget class="QWidget" name="page1AllStudents"/>
-                <widget class="QWidget" name="page2PendingRequests"/>
-                <widget class="QWidget" name="page3ManageFaculty"/>
-                <widget class="QWidget" name="page4ManageCourses"/>
-                <widget class="QWidget" name="page5ManageSections"/>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-          </layout>
-         </widget>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QStackedWidget" name="stackedWidget">
+            <property name="currentIndex">
+             <number>5</number>
+            </property>
+            <widget class="QWidget" name="page0Profile"/>
+            <widget class="QWidget" name="page1AllStudents"/>
+            <widget class="QWidget" name="page2PendingRequests"/>
+            <widget class="QWidget" name="page3ManageFaculty"/>
+            <widget class="QWidget" name="page4ManageCourses"/>
+            <widget class="QWidget" name="page5ManageSections"/>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
