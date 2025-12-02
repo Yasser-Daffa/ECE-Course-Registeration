@@ -13,7 +13,7 @@ from helper_files.shared_utilities import BaseLoginForm
 from admin.class_admin_utilities import admin   # انتبه: هنا نجيب الـ instance الجاهز, مو الكلاس فقط
 
 
-class AddCourseDialog(QDialog, BaseLoginForm):
+class AddCoursesDialog(QDialog, BaseLoginForm):
     """
     Dialog مسؤول عن:
     - قراءة الحقول
