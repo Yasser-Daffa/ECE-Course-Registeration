@@ -64,11 +64,11 @@ class ManageCoursesController:
             }
             self.courses_data.append(course)
 
-        self.populate_table(self.courses_data)
+        self.fill_table(self.courses_data)
         self.update_total_counter()
 
     # ------------------ POPULATE TABLE ------------------
-    def populate_table(self, courses):
+    def fill_table(self, courses):
         table = self.ui.tableAllCourses
         table.setRowCount(len(courses))
 
@@ -136,7 +136,7 @@ class ManageCoursesController:
             c for c in self.courses_data
             if text in c["code"].lower() or text in c["name"].lower()
         ]
-        self.populate_table(filtered)
+        self.fill_table(filtered)
 
     # ------------------ REMOVE SINGLE ------------------
     def remove_single_course(self, code):

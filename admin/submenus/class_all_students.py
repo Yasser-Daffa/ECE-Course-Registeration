@@ -65,7 +65,7 @@ class AllStudentsController:
             }
             self.students_data.append(student)
 
-        self.populate_table(self.students_data)
+        self.fill_table(self.students_data)
         self.update_total_counter()
 
     def handle_refresh(self):
@@ -79,7 +79,7 @@ class AllStudentsController:
         )
 
     # ================== POPULATE TABLE ==================
-    def populate_table(self, students):
+    def fill_table(self, students):
         table = self.ui.tableAllStudents
         table.setRowCount(len(students))
 
@@ -151,7 +151,7 @@ class AllStudentsController:
             s for s in self.students_data
             if text in s["name"].lower() or text in str(s["user_id"])
         ]
-        self.populate_table(filtered)
+        self.fill_table(filtered)
 
     # ================== REMOVE INDIVIDUAL STUDENT ==================
     def remove_student(self, user_id):

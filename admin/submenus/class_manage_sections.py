@@ -57,6 +57,9 @@ class ManageSectionsWidget(QWidget):
         # أول تحميل
         self.load_sections()
 
+        # Track checkbox changes
+        self.ui.tableSections.itemChanged.connect(self.update_remove_button_state)
+
     # ------------------------ شكل الجدول ------------------------
 
     def setup_table_appearance(self):
@@ -67,15 +70,6 @@ class ManageSectionsWidget(QWidget):
         # نخلي أول عمود حق الـ SELECT عريض شوي عشان يبان الصح
         header.resizeSection(0, 70)
 
-    # ------------------------ رسائل منبثقة ------------------------
-
-    def show_error(self, message: str):
-        """Show a simple critical error popup."""
-        QMessageBox.critical(self, "Error", message)
-
-    def show_info(self, message: str):
-        """Show a simple informational popup."""
-        QMessageBox.information(self, "Info", message)
 
     # ------------------------ جلب البيانات من الداتا بيس ------------------------
 
@@ -313,11 +307,10 @@ class ManageSectionsWidget(QWidget):
         table = self.ui.tableSections
         rows_to_delete = []
 
+        # Gather selected rows
         for row in range(table.rowCount()):
             item_select = table.item(row, 0)  # checkbox column
-            if not item_select:
-                continue
-            if item_select.checkState() == Qt.CheckState.Checked:
+            if item_select and item_select.checkState() == Qt.CheckState.Checked:
                 item_id = table.item(row, 2)  # section ID column
                 if item_id:
                     try:
@@ -326,11 +319,16 @@ class ManageSectionsWidget(QWidget):
                     except ValueError:
                         continue
 
+        # If nothing selected, delete all
         if not rows_to_delete:
-            self.show_info("No sections selected for deletion.")
+            rows_to_delete = [r["section_id"] for r in self._all_rows_cache]
+
+        if not rows_to_delete:
+            # Nothing to delete at all
+            QMessageBox.information(self, "Info", "No sections to delete.")
             return
 
-        # ✅ Use BaseLoginForm confirmation
+        # Confirmation using BaseLoginForm
         reply = BaseLoginForm().show_confirmation(
             "Delete Sections",
             f"Are you sure you want to delete {len(rows_to_delete)} section(s)?"
@@ -339,11 +337,26 @@ class ManageSectionsWidget(QWidget):
             return
 
         for sid in rows_to_delete:
-            msg = self.admin_utils.admin_delete_section(sid)
-            # optionally print msg
-            # print(msg)
+            self.admin_utils.admin_delete_section(sid)
 
         self.load_sections()  # refresh table after deletion
+
+    def update_remove_button_state(self):
+        table = self.ui.tableSections
+        selected_count = 0
+
+        for row in range(table.rowCount()):
+            item = table.item(row, 0)
+            if item and item.flags() & Qt.ItemFlag.ItemIsUserCheckable:
+                if item.checkState() == Qt.CheckState.Checked:
+                    selected_count += 1
+
+        if selected_count > 0:
+            self.ui.buttonRemoveSelected.setText(f"Remove Selected ({selected_count})")
+            self.ui.buttonRemoveSelected.setEnabled(True)
+        else:
+            self.ui.buttonRemoveSelected.setText("Remove All")
+            self.ui.buttonRemoveSelected.setEnabled(bool(self._all_rows_cache))
 
 
         
@@ -352,7 +365,8 @@ class ManageSectionsWidget(QWidget):
 
     def on_add_section_clicked(self):
         # تقدر لاحقاً تربطه بدايالوج إضافة سكشن جديد
-        self.show_info("Add Section dialog is not implemented yet.")
+        QMessageBox.critical(self,"issue","Add Section dialog is not implemented yet.")
+
 
 
 # =============================== MAIN للتجربة ===============================

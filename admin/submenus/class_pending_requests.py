@@ -68,7 +68,7 @@ class PendingRequestsController:
             }
             self.students_data.append(student)
 
-        self.populate_table(self.students_data)
+        self.fill_table(self.students_data)
         self.update_pending_counter()
 
     def handle_refresh(self):
@@ -81,7 +81,7 @@ class PendingRequestsController:
         )
 
     # ================== POPULATE TABLE ==================
-    def populate_table(self, students):
+    def fill_table(self, students):
         table = self.ui.tableRequests
         table.setRowCount(len(students))
     
@@ -166,7 +166,7 @@ class PendingRequestsController:
             s for s in self.students_data
             if text in s["name"].lower() or text in str(s["user_id"])
         ]
-        self.populate_table(filtered)
+        self.fill_table(filtered)
 
     # ================== APPROVE / REJECT INDIVIDUAL ==================
     def approve_student(self, user_id):
