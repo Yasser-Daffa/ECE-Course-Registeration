@@ -274,7 +274,7 @@ class PendingRequestsController:
 
     # ================== UPDATE PENDING COUNTER ==================
     def update_pending_counter(self):
-        self.ui.labelPendingCount.setText(str(len(self.students_data)))
+        self.ui.labelPendingCount.setText(f"Total Pending: {len(self.students_data)}")
 
 
 # ---------------- MAIN APP ----------------

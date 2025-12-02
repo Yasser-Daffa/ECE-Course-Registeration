@@ -27,7 +27,7 @@ class Ui_PendingRequestsWidget(object):
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.headerLayout.addItem(spacerItem)
         self.labelPendingCount = QtWidgets.QLabel(parent=PendingRequestsWidget)
-        self.labelPendingCount.setStyleSheet("font-size: 16px; color: #f5576c; font-weight: bold; background-color: #fef5f8; padding: 8px 20px; border-radius: 20px;")
+        self.labelPendingCount.setStyleSheet("font-size: 16px; color: #d35400; /* dark warm orange text */ font-weight: bold; background-color: #fdebd0; /* light soft orange background */ padding: 8px 20px; border-radius: 20px;")
         self.labelPendingCount.setObjectName("labelPendingCount")
         self.headerLayout.addWidget(self.labelPendingCount)
         self.mainLayout.addLayout(self.headerLayout)

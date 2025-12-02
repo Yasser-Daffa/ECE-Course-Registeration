@@ -20,8 +20,8 @@ from admin.submenus.class_all_students import AllStudentsController
 from app_ui.admin_ui.submenus_ui.ui_pending_requests import Ui_PendingRequestsWidget
 from admin.submenus.class_pending_requests import PendingRequestsController
 
-from app_ui.admin_ui.submenus_ui.ui_course_management import Ui_CourseManagement
-from admin.submenus.class_course_management import CoursesManagementController
+from app_ui.admin_ui.submenus_ui.ui_manage_courses import Ui_ManageCourses
+from admin.submenus.class_manage_courses import ManageCoursesController
 
 class AdminDashboard(QtWidgets.QMainWindow):
     """
@@ -49,6 +49,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # ------------------------
         self.ui.stackedWidget.addWidget(self.all_students_page)
         self.ui.stackedWidget.addWidget(self.pending_requests_page)
+        self.ui.stackedWidget.addWidget(self.manage_courses_page)
         # Add other pages similarly...
 
 
@@ -61,36 +62,48 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # Using a string here avoids printing emojis/unicode directly from button.text()
         self.page_mapping = {
             self.ui.buttonAllStudents: ("All Students", self.all_students_page),
-            self.ui.buttonPendingRequests: ("Pending Requests", self.pending_requests_page)
+            self.ui.buttonPendingRequests: ("Pending Requests", self.pending_requests_page),
+            self.ui.buttonManageCourses: ("Manage Courses", self.manage_courses_page)
         }
 
+        # Connect buttons to page-switching logic
         for button in self.page_mapping.keys():
             button.clicked.connect(lambda checked, b=button: self.switch_to_page(b))
 
         # Show default page (should be profile first)
-        # self.switch_to_page(self.ui.buttonAllStudents)
+        # self.switch_to_page(self.ui.buttonProfile)
 
     # -------------------------------
     # Initialize all sub-pages
     # -------------------------------
     def init_sub_pages(self):
-        # Create the widget
+        """
+        Create QWidget pages, set up their UI, and attach controllers.
+        Controllers must be initialized AFTER widget + UI exist.
+        """
+        # -------------------------------
+        # All Students page
+        # -------------------------------
         self.all_students_page = QtWidgets.QWidget()
-        # Setup UI
         self.all_students_ui = Ui_AllStudents()
         self.all_students_ui.setupUi(self.all_students_page)
-
-        # Initialize controller **after widget exists and UI is set up**
         self.all_students_controller = AllStudentsController(self.all_students_ui, self.db)
 
-
-        # pending requests page
+        # -------------------------------
+        # Pending Requests page
+        # -------------------------------
         self.pending_requests_page = QtWidgets.QWidget()
-        # Setup UI
         self.pending_requests_ui = Ui_PendingRequestsWidget()
         self.pending_requests_ui.setupUi(self.pending_requests_page)
-        # Initialize controller **after widget exists and UI is set up**
         self.pending_requests_controller = PendingRequestsController(self.pending_requests_ui, self.db)
+
+        # -------------------------------
+        # Pending Requests page
+        # -------------------------------
+        self.manage_courses_page = QtWidgets.QWidget()
+        self.manage_courses_ui = Ui_ManageCourses()
+        self.manage_courses_ui.setupUi(self.manage_courses_page)
+        self.manage_courses_controller = ManageCoursesController(self.manage_courses_ui, self.db)
 
     # -------------------------------
     # Switch the stacked widget to the page associated with the clicked button
@@ -107,6 +120,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
             
             # Optional debug: safely print the human-readable name of the page
             print(f"Switched to page: {name}")
+
 # ------------------------------- MAIN APP -------------------------------
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

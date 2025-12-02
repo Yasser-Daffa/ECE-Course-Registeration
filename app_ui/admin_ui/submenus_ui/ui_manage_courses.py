@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'course_management.ui'
+# Form implementation generated from reading ui file 'manage_courses.ui'
 #
 # Created by: PyQt6 UI code generator 6.10.0
 #
@@ -9,35 +9,35 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 
-class Ui_CourseManagement(object):
-    def setupUi(self, CourseManagement):
-        CourseManagement.setObjectName("CourseManagement")
-        CourseManagement.resize(1200, 858)
-        CourseManagement.setStyleSheet("background-color: #f5f7fa;")
-        self.mainLayout = QtWidgets.QVBoxLayout(CourseManagement)
+class Ui_ManageCourses(object):
+    def setupUi(self, ManageCourses):
+        ManageCourses.setObjectName("ManageCourses")
+        ManageCourses.resize(1200, 858)
+        ManageCourses.setStyleSheet("background-color: #f5f7fa;")
+        self.mainLayout = QtWidgets.QVBoxLayout(ManageCourses)
         self.mainLayout.setContentsMargins(40, 40, 40, 20)
         self.mainLayout.setSpacing(30)
         self.mainLayout.setObjectName("mainLayout")
         self.headerLayout = QtWidgets.QHBoxLayout()
         self.headerLayout.setObjectName("headerLayout")
-        self.labelTitle = QtWidgets.QLabel(parent=CourseManagement)
+        self.labelTitle = QtWidgets.QLabel(parent=ManageCourses)
         self.labelTitle.setStyleSheet("font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;")
         self.labelTitle.setObjectName("labelTitle")
         self.headerLayout.addWidget(self.labelTitle)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.headerLayout.addItem(spacerItem)
-        self.labelTotalCoursesCount = QtWidgets.QLabel(parent=CourseManagement)
+        self.labelTotalCoursesCount = QtWidgets.QLabel(parent=ManageCourses)
         self.labelTotalCoursesCount.setStyleSheet("font-size: 16px;\n"
-"color: #d35400;               /* dark warm orange text */\n"
+"color: #4b0082;               /* deep purple text */\n"
 "font-weight: bold;\n"
-"background-color: #fdebd0;    /* light soft orange background */\n"
+"background-color: #e6e0f8;    /* soft light purple background */\n"
 "padding: 8px 20px;\n"
 "border-radius: 20px;\n"
 "")
         self.labelTotalCoursesCount.setObjectName("labelTotalCoursesCount")
         self.headerLayout.addWidget(self.labelTotalCoursesCount)
         self.mainLayout.addLayout(self.headerLayout)
-        self.filterFrame = QtWidgets.QFrame(parent=CourseManagement)
+        self.filterFrame = QtWidgets.QFrame(parent=ManageCourses)
         self.filterFrame.setMinimumSize(QtCore.QSize(0, 70))
         self.filterFrame.setMaximumSize(QtCore.QSize(16777215, 70))
         self.filterFrame.setStyleSheet("background-color: white; border-radius: 12px;")
@@ -98,7 +98,7 @@ class Ui_CourseManagement(object):
         self.buttonRefresh.setObjectName("buttonRefresh")
         self.filterLayout.addWidget(self.buttonRefresh)
         self.mainLayout.addWidget(self.filterFrame)
-        self.tableFrame = QtWidgets.QFrame(parent=CourseManagement)
+        self.tableFrame = QtWidgets.QFrame(parent=ManageCourses)
         self.tableFrame.setStyleSheet("background-color: white; border-radius: 12px;")
         self.tableFrame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.tableFrame.setObjectName("tableFrame")
@@ -176,8 +176,7 @@ class Ui_CourseManagement(object):
         self.buttonRemoveCourse.setObjectName("buttonRemoveCourse")
         self.tableHeaderLayout.addWidget(self.buttonRemoveCourse)
         self.tableMainLayout.addWidget(self.tableHeader)
-        self.mainLayout.addWidget(self.tableFrame)
-        self.tableAllCourses = QtWidgets.QTableWidget(parent=CourseManagement)
+        self.tableAllCourses = QtWidgets.QTableWidget(parent=self.tableFrame)
         self.tableAllCourses.setMinimumSize(QtCore.QSize(0, 300))
         self.tableAllCourses.setStyleSheet("QTableWidget {\n"
 "    border: none;\n"
@@ -241,7 +240,57 @@ class Ui_CourseManagement(object):
 "QTableWidget::indicator:checked::after {\n"
 "    content: \"\";\n"
 "    image: url(\"\"); /* no default checkmark */\n"
-"}")
+"}\n"
+"/* ===== SCROLLBARS (VERTICAL & HORIZONTAL) ===== */\n"
+"\n"
+"/* Track */\n"
+"QScrollBar:vertical, QScrollBar:horizontal {\n"
+"    background: rgba(255, 255, 255, 0.05);  /* subtle track */\n"
+"    border-radius: 6px;\n"
+"    margin: 0px;  /* remove extra space */\n"
+"}\n"
+"\n"
+"/* Handle / Thumb */\n"
+"QScrollBar::handle:vertical, QScrollBar::handle:horizontal {\n"
+"    background: rgba(120, 120, 120, 0.35);  /* glassy thumb */\n"
+"    border-radius: 6px;\n"
+"    border: 1px solid rgba(255, 255, 255, 0.2); /* subtle highlight */\n"
+"    min-height: 30px; /* vertical */\n"
+"    min-width: 30px;  /* horizontal */\n"
+"}\n"
+"\n"
+"QScrollBar::handle:vertical:hover,\n"
+"QScrollBar::handle:horizontal:hover {\n"
+"    background: rgba(120, 120, 120, 0.55);\n"
+"}\n"
+"\n"
+"/* Buttons (up/down or left/right) */\n"
+"QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical,\n"
+"QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {\n"
+"    width: 16px;  /* horizontal buttons width */\n"
+"    height: 16px; /* vertical buttons height */\n"
+"    background: rgba(180, 180, 180, 0.35);\n"
+"    border-radius: 4px;\n"
+"}\n"
+"\n"
+"/* Arrow icons */\n"
+"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical,\n"
+"QScrollBar::left-arrow:horizontal, QScrollBar::right-arrow:horizontal {\n"
+"    width: 6px;\n"
+"    height: 6px;\n"
+"    background: transparent;\n"
+"}\n"
+"\n"
+"/* Remove blank areas */\n"
+"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical,\n"
+"QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {\n"
+"    background: none;\n"
+"}\n"
+"\n"
+"/* Sizes */\n"
+"QScrollBar:vertical { width: 12px; }\n"
+"QScrollBar:horizontal { height: 12px; }\n"
+"")
         self.tableAllCourses.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
         self.tableAllCourses.setAlternatingRowColors(True)
         self.tableAllCourses.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.ContiguousSelection)
@@ -268,36 +317,37 @@ class Ui_CourseManagement(object):
         self.tableAllCourses.horizontalHeader().setStretchLastSection(True)
         self.tableAllCourses.verticalHeader().setVisible(False)
         self.tableAllCourses.verticalHeader().setCascadingSectionResizes(True)
-        self.mainLayout.addWidget(self.tableAllCourses)
+        self.tableMainLayout.addWidget(self.tableAllCourses)
+        self.mainLayout.addWidget(self.tableFrame)
         spacerItem3 = QtWidgets.QSpacerItem(20, 60, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Maximum)
         self.mainLayout.addItem(spacerItem3)
 
-        self.retranslateUi(CourseManagement)
-        QtCore.QMetaObject.connectSlotsByName(CourseManagement)
+        self.retranslateUi(ManageCourses)
+        QtCore.QMetaObject.connectSlotsByName(ManageCourses)
 
-    def retranslateUi(self, CourseManagement):
+    def retranslateUi(self, ManageCourses):
         _translate = QtCore.QCoreApplication.translate
-        CourseManagement.setWindowTitle(_translate("CourseManagement", "Course"))
-        self.labelTitle.setText(_translate("CourseManagement", "Course Management"))
-        self.labelTotalCoursesCount.setText(_translate("CourseManagement", "22 Total Courses"))
-        self.lineEditSearch.setPlaceholderText(_translate("CourseManagement", "🔍  Search by student name or ID..."))
-        self.buttonRefresh.setText(_translate("CourseManagement", "🔄 Refresh"))
-        self.tableTitle.setText(_translate("CourseManagement", "All Courses"))
-        self.buttonAddCourse.setText(_translate("CourseManagement", "➕ Add New Course"))
-        self.buttonRemoveCourse.setText(_translate("CourseManagement", "❌ Remove Course"))
+        ManageCourses.setWindowTitle(_translate("ManageCourses", "Course"))
+        self.labelTitle.setText(_translate("ManageCourses", "Course Management"))
+        self.labelTotalCoursesCount.setText(_translate("ManageCourses", "22 Total Courses"))
+        self.lineEditSearch.setPlaceholderText(_translate("ManageCourses", "🔍  Search by Course name or code..."))
+        self.buttonRefresh.setText(_translate("ManageCourses", "🔄 Refresh"))
+        self.tableTitle.setText(_translate("ManageCourses", "All Courses"))
+        self.buttonAddCourse.setText(_translate("ManageCourses", "➕ Add New Course"))
+        self.buttonRemoveCourse.setText(_translate("ManageCourses", "❌ Remove Course"))
         item = self.tableAllCourses.horizontalHeaderItem(0)
-        item.setText(_translate("CourseManagement", "SELECT"))
+        item.setText(_translate("ManageCourses", "SELECT"))
         item = self.tableAllCourses.horizontalHeaderItem(1)
-        item.setText(_translate("CourseManagement", "#"))
+        item.setText(_translate("ManageCourses", "#"))
         item = self.tableAllCourses.horizontalHeaderItem(2)
-        item.setText(_translate("CourseManagement", "COURSE CODE"))
+        item.setText(_translate("ManageCourses", "COURSE CODE"))
         item = self.tableAllCourses.horizontalHeaderItem(3)
-        item.setText(_translate("CourseManagement", "COURSE NAME"))
+        item.setText(_translate("ManageCourses", "COURSE NAME"))
         item = self.tableAllCourses.horizontalHeaderItem(4)
-        item.setText(_translate("CourseManagement", "CREDIT HOURS"))
+        item.setText(_translate("ManageCourses", "CREDIT HOURS"))
         item = self.tableAllCourses.horizontalHeaderItem(5)
-        item.setText(_translate("CourseManagement", "SECTIONS"))
+        item.setText(_translate("ManageCourses", "SECTIONS"))
         item = self.tableAllCourses.horizontalHeaderItem(6)
-        item.setText(_translate("CourseManagement", "STUDENTS"))
+        item.setText(_translate("ManageCourses", "STUDENTS"))
         item = self.tableAllCourses.horizontalHeaderItem(7)
-        item.setText(_translate("CourseManagement", "ACTION"))
+        item.setText(_translate("ManageCourses", "ACTION"))
