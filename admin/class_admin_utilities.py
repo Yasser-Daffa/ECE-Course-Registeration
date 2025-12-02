@@ -393,7 +393,7 @@ def add_test_sections():
             "state": "open",
         },
         {
-            "course_code": "MATH1231",
+            "course_code": "MATH101",
             "doctor_id": None,
             "days": "MWF",
             "time_start": "13:00",

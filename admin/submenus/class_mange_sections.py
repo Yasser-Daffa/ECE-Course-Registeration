@@ -17,7 +17,7 @@ from app_ui.admin_ui.submenus_ui.ui_manage_sections import Ui_ManageSections
 
 # كائن الأدمن الجاهز
 from admin.class_admin_utilities import admin
-
+from helper_files.shared_utilities import BaseLoginForm
 
 class ManageSectionsWidget(QWidget):
     """
@@ -34,12 +34,15 @@ class ManageSectionsWidget(QWidget):
         self.ui.setupUi(self)
 
         self.admin_utils = admin_utils
+        self.animate = BaseLoginForm.animate_label_with_dots
 
         # نخزن كل السكاشن هنا (list of dicts) عشان الفلترة والبحث
         self._all_rows_cache = []
 
+
         # ربط الأزرار
-        self.ui.buttonRefresh.clicked.connect(self.refresh_sections)
+        self.ui.buttonRefresh.clicked.connect(self.handle_refresh)
+
         self.ui.buttonRemoveSelected.clicked.connect(self.on_remove_selected_clicked)
         self.ui.buttonAddSection.clicked.connect(self.on_add_section_clicked)
 
@@ -51,7 +54,7 @@ class ManageSectionsWidget(QWidget):
         self.setup_table_appearance()
 
         # أول تحميل
-        self.refresh_sections()
+        self.load_sections()
 
     # ------------------------ شكل الجدول ------------------------
 
@@ -83,7 +86,7 @@ class ManageSectionsWidget(QWidget):
 
     # ------------------------ جلب البيانات من الداتا بيس ------------------------
 
-    def refresh_sections(self):
+    def load_sections(self):
         """
         يستدعي admin_list_sections بدون فلاتر
         ويعبي الكاش + الجدول
@@ -134,6 +137,33 @@ class ManageSectionsWidget(QWidget):
         self._all_rows_cache = rows
         self.update_stats(self._all_rows_cache)
         self.apply_filters()  # يفلتر ويعبي الجدول حسب الفلاتر الحالية
+
+    def handle_refresh(self):
+        self.animate(self.ui.labelTotalSectionsCount,
+                     "refreshing",
+                     interval=400,
+                     duration=2000,
+                     on_finished= self.load_sections)
+
+        self.animate(self.ui.labelOpenSectionsCount,
+                     "refreshing",
+                     interval=400,
+                     duration=2000,
+                     on_finished=self.load_sections)
+
+        self.animate(self.ui.labelClosedSectionsCount,
+                     "refreshing",
+                     interval=400,
+                     duration=2000,
+                     on_finished=self.load_sections)
+
+        self.animate(self.ui.labelFullSectionsCount,
+                     "refreshing",
+                     interval=400,
+                     duration=2000,
+                     on_finished=self.load_sections)
+
+
 
     # ------------------------ كروت الإحصائيات فوق ------------------------
 
