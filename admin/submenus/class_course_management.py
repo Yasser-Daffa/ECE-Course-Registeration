@@ -16,7 +16,7 @@ from database_files.initialize_database import initialize_database
 from database_files.class_database_uitlities import DatabaseUtilities
 
 
-class AllCoursesController:
+class CoursesManagementController:
 
     def __init__(self, ui, db: DatabaseUtilities):
         self.ui = ui
@@ -217,7 +217,7 @@ if __name__ == "__main__":
     ui = Ui_CourseManagement()
     ui.setupUi(window)
 
-    controller = AllCoursesController(ui, db)
+    controller = CoursesManagementController(ui, db)
 
     window.show()
     sys.exit(app.exec())
