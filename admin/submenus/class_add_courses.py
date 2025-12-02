@@ -150,7 +150,7 @@ class AddCoursesDialog(QDialog, BaseLoginForm):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
-    dialog = AddCourseDialog(admin)
+    dialog = AddCoursesDialog(admin)
     dialog.show()
 
     sys.exit(app.exec())
