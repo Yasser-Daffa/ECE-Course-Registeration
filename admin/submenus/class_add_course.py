@@ -31,14 +31,38 @@ class AddCourseDialog(QDialog, BaseLoginForm):
 
         self.admin_utils = admin_utils
 
+        # في البداية نعطّل زر الحفظ
+        self.ui.buttonSave.setEnabled(False)
+
+        # ربط الأزرار
         self.ui.buttonSave.clicked.connect(self.on_save_clicked)
         self.ui.buttonCancel.clicked.connect(self.reject)
         if hasattr(self.ui, "buttonClose"):
             self.ui.buttonClose.clicked.connect(self.reject)
 
+        # فاليديشن الحقول (من الهيلبر)
         self.attach_non_empty_validator(self.ui.lineEditCourseCode, "Course code")
         self.attach_non_empty_validator(self.ui.lineEditCourseName, "Course name")
         self.attach_non_empty_validator(self.ui.lineEditCreditHours, "Credit hours")
+
+        # كل ما تغيّر أي حقل → نراجع إذا كلها ممتلئة
+        self.ui.lineEditCourseCode.textChanged.connect(self.check_all_fields_filled)
+        self.ui.lineEditCourseName.textChanged.connect(self.check_all_fields_filled)
+        self.ui.lineEditCreditHours.textChanged.connect(self.check_all_fields_filled)
+
+        # تشيك أولي
+        self.check_all_fields_filled()
+
+    # ------------------------ تفعيل/تعطيل زر الحفظ ------------------------
+    def check_all_fields_filled(self):
+        code = self.ui.lineEditCourseCode.text().strip()
+        name = self.ui.lineEditCourseName.text().strip()
+        credits = self.ui.lineEditCreditHours.text().strip()
+
+        if code and name and credits:
+            self.ui.buttonSave.setEnabled(True)
+        else:
+            self.ui.buttonSave.setEnabled(False)
 
     # ------------------------ رسائل منبثقة بخط أسود وخلفية بيضاء ------------------------
 
@@ -99,45 +123,41 @@ class AddCourseDialog(QDialog, BaseLoginForm):
         name = self.ui.lineEditCourseName.text().strip()
         credits_text = self.ui.lineEditCreditHours.text().strip()
 
-        has_error = False
-
-        if code == "":
-            self.highlight_invalid_lineedit(self.ui.lineEditCourseCode, "Course code cannot be empty.")
-            self.shake_widget(self.ui.lineEditCourseCode)
-            has_error = True
-        else:
-            self.reset_lineedit_border(self.ui.lineEditCourseCode)
-
-        if name == "":
-            self.highlight_invalid_lineedit(self.ui.lineEditCourseName, "Course name cannot be empty.")
-            self.shake_widget(self.ui.lineEditCourseName)
-            has_error = True
-        else:
-            self.reset_lineedit_border(self.ui.lineEditCourseName)
-
-        if credits_text == "":
-            self.highlight_invalid_lineedit(self.ui.lineEditCreditHours, "Credit hours cannot be empty.")
-            self.shake_widget(self.ui.lineEditCreditHours)
-            has_error = True
-        else:
-            if not credits_text.isdigit():
-                self.highlight_invalid_lineedit(self.ui.lineEditCreditHours, "Credit hours must be a positive integer.")
-                self.shake_widget(self.ui.lineEditCreditHours)
-                has_error = True
-            else:
-                credits = int(credits_text)
-                if credits <= 0:
-                    self.highlight_invalid_lineedit(self.ui.lineEditCreditHours, "Credit hours must be greater than 0.")
-                    self.shake_widget(self.ui.lineEditCreditHours)
-                    has_error = True
-                else:
-                    self.reset_lineedit_border(self.ui.lineEditCreditHours)
-
-        if has_error:
-            self.show_error("Please fix the highlighted fields.")
+        # احتياطي: الزر أصلاً ما يتفعل إلا إذا الحقول ممتلئة
+        if not (code and name and credits_text):
+            self.show_error("Please fill in all fields.")
             return
 
-        msg = self.admin_utils.add_course(code, name, int(credits_text))
+        # نرجع البوردر للوضع الطبيعي أولاً
+        self.reset_lineedit_border(self.ui.lineEditCourseCode)
+        self.reset_lineedit_border(self.ui.lineEditCourseName)
+        self.reset_lineedit_border(self.ui.lineEditCreditHours)
+
+        # ===== التحقق من الساعات =====
+        # أولاً: هل هي رقم أصلاً؟ (السالب "-3" هنا مو رقم صحيح)
+        if not credits_text.isdigit():
+            self.highlight_invalid_lineedit(
+                self.ui.lineEditCreditHours,
+                "Credit hours must be a positive integer."
+            )
+            self.shake_widget(self.ui.lineEditCreditHours)
+            self.show_error("Credit hours must be a positive integer.")
+            return
+
+        credits = int(credits_text)
+
+        # ثانياً: هل هي أكبر من 0 ؟
+        if credits <= 0:
+            self.highlight_invalid_lineedit(
+                self.ui.lineEditCreditHours,
+                "Credit hours must be greater than 0."
+            )
+            self.shake_widget(self.ui.lineEditCreditHours)
+            self.show_error("Credit hours must be greater than 0.")
+            return
+
+        # ===== لو وصلنا هنا فكل شيء سليم =====
+        msg = self.admin_utils.add_course(code, name, credits)
 
         if msg.lower().startswith("course already"):
             self.highlight_invalid_lineedit(self.ui.lineEditCourseCode, msg)
