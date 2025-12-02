@@ -37,18 +37,16 @@ class AddCourseDialog(QDialog, BaseLoginForm):
         # ربط الأزرار
         self.ui.buttonSave.clicked.connect(self.on_save_clicked)
         self.ui.buttonCancel.clicked.connect(self.reject)
-        if hasattr(self.ui, "buttonClose"):
-            self.ui.buttonClose.clicked.connect(self.reject)
 
         # فاليديشن الحقول (من الهيلبر)
         self.attach_non_empty_validator(self.ui.lineEditCourseCode, "Course code")
         self.attach_non_empty_validator(self.ui.lineEditCourseName, "Course name")
-        self.attach_non_empty_validator(self.ui.lineEditCreditHours, "Credit hours")
+        
 
         # كل ما تغيّر أي حقل → نراجع إذا كلها ممتلئة
         self.ui.lineEditCourseCode.textChanged.connect(self.check_all_fields_filled)
         self.ui.lineEditCourseName.textChanged.connect(self.check_all_fields_filled)
-        self.ui.lineEditCreditHours.textChanged.connect(self.check_all_fields_filled)
+        self.ui.spinBoxCreditHours.textChanged.connect(self.check_all_fields_filled)
 
         # تشيك أولي
         self.check_all_fields_filled()
@@ -57,7 +55,7 @@ class AddCourseDialog(QDialog, BaseLoginForm):
     def check_all_fields_filled(self):
         code = self.ui.lineEditCourseCode.text().strip()
         name = self.ui.lineEditCourseName.text().strip()
-        credits = self.ui.lineEditCreditHours.text().strip()
+        credits = self.ui.spinBoxCreditHours.text().strip()
 
         if code and name and credits:
             self.ui.buttonSave.setEnabled(True)
@@ -120,8 +118,8 @@ class AddCourseDialog(QDialog, BaseLoginForm):
 
     def on_save_clicked(self):
         code = self.ui.lineEditCourseCode.text().strip().upper()
-        name = self.ui.lineEditCourseName.text().strip()
-        credits_text = self.ui.lineEditCreditHours.text().strip()
+        name = self.ui.lineEditCourseName.text().strip().title()
+        credits_text = self.ui.spinBoxCreditHours.text().strip()
 
         # احتياطي: الزر أصلاً ما يتفعل إلا إذا الحقول ممتلئة
         if not (code and name and credits_text):
@@ -131,30 +129,8 @@ class AddCourseDialog(QDialog, BaseLoginForm):
         # نرجع البوردر للوضع الطبيعي أولاً
         self.reset_lineedit_border(self.ui.lineEditCourseCode)
         self.reset_lineedit_border(self.ui.lineEditCourseName)
-        self.reset_lineedit_border(self.ui.lineEditCreditHours)
-
-        # ===== التحقق من الساعات =====
-        # أولاً: هل هي رقم أصلاً؟ (السالب "-3" هنا مو رقم صحيح)
-        if not credits_text.isdigit():
-            self.highlight_invalid_lineedit(
-                self.ui.lineEditCreditHours,
-                "Credit hours must be a positive integer."
-            )
-            self.shake_widget(self.ui.lineEditCreditHours)
-            self.show_error("Credit hours must be a positive integer.")
-            return
-
+        
         credits = int(credits_text)
-
-        # ثانياً: هل هي أكبر من 0 ؟
-        if credits <= 0:
-            self.highlight_invalid_lineedit(
-                self.ui.lineEditCreditHours,
-                "Credit hours must be greater than 0."
-            )
-            self.shake_widget(self.ui.lineEditCreditHours)
-            self.show_error("Credit hours must be greater than 0.")
-            return
 
         # ===== لو وصلنا هنا فكل شيء سليم =====
         msg = self.admin_utils.add_course(code, name, credits)

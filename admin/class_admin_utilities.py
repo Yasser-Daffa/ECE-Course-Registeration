@@ -1,8 +1,16 @@
+import os
+
 from student.students_utilities import AdminRegistration
-from database_files.class_database_uitlities import DatabaseUtilities
 
 from database_files.initialize_database import initialize_database
-con, cur = initialize_database("../university_database.db")
+from database_files.class_database_uitlities import DatabaseUtilities
+
+# Make DB path absolute
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.abspath(os.path.join(BASE_DIR, "../university_database.db"))
+
+# Initialize database connection
+con, cur = initialize_database(DB_PATH)
 db = DatabaseUtilities(con, cur)
 
 

@@ -35,13 +35,6 @@ class Ui_AddCourseDialog(object):
         self.headerLayout.addWidget(self.labelTitle)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.headerLayout.addItem(spacerItem)
-        self.buttonClose = QtWidgets.QPushButton(parent=self.headerFrame)
-        self.buttonClose.setMinimumSize(QtCore.QSize(40, 40))
-        self.buttonClose.setMaximumSize(QtCore.QSize(40, 40))
-        self.buttonClose.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.buttonClose.setStyleSheet("QPushButton { background-color: rgba(255,255,255,0.2); color: white; border: none; border-radius: 20px; font-size: 18px; font-weight: bold; } QPushButton:hover { background-color: rgba(255,255,255,0.3); }")
-        self.buttonClose.setObjectName("buttonClose")
-        self.headerLayout.addWidget(self.buttonClose)
         self.mainLayout.addWidget(self.headerFrame)
         self.scrollArea = QtWidgets.QScrollArea(parent=AddCourseDialog)
         self.scrollArea.setStyleSheet("border: none; background-color: #f5f7fa;")
@@ -122,30 +115,44 @@ class Ui_AddCourseDialog(object):
         self.labelCreditHours.setStyleSheet("font-size: 13px; color: #718096; font-weight: bold; background: transparent;")
         self.labelCreditHours.setObjectName("labelCreditHours")
         self.formGrid.addWidget(self.labelCreditHours, 2, 0, 1, 1)
-        self.lineEditCreditHours = QtWidgets.QLineEdit(parent=self.scrollContent)
-        self.lineEditCreditHours.setMinimumSize(QtCore.QSize(0, 45))
-        self.lineEditCreditHours.setStyleSheet("QLineEdit {\n"
+        self.spinBoxCreditHours = QtWidgets.QSpinBox(parent=self.scrollContent)
+        self.spinBoxCreditHours.setStyleSheet("QSpinBox {\n"
 "    border: 2px solid #E0E0E0;\n"
 "    border-radius: 10px;\n"
-"    padding: 8px 10px;\n"
-"    background: rgba(250, 250, 250, 200); /* slightly transparent soft white */\n"
+"    padding: 8px 10px;                        /* same padding as your QLineEdit */\n"
+"    background: rgba(250, 250, 250, 200);\n"
 "    font-size: 11pt;\n"
-"    color: #111111;                         /* user text color */\n"
-"    font-style: normal;                      /* ensures user text is not italic */\n"
+"    color: #111111;\n"
+"    font-style: normal;\n"
 "}\n"
 "\n"
-"QLineEdit:focus {\n"
+"QSpinBox:focus {\n"
 "    border: 2px solid #667EEA;\n"
-"    background: rgba(250, 250, 250, 220);   /* slightly brighter on focus */\n"
+"    background: rgba(250, 250, 250, 220);\n"
 "}\n"
 "\n"
-"QLineEdit::placeholder {\n"
-"    color: rgba(50, 50, 50, 200);           /* placeholder text color */\n"
-"    font-style: italic;                      /* placeholder remains italic */\n"
+"/* The text area inside the spinbox */\n"
+"QSpinBox QLineEdit {\n"
+"    color: #111111;\n"
+"    font-style: normal;\n"
+"}\n"
+"\n"
+"/* Placeholder text styling (requires setting placeholder via spinbox.lineEdit().setPlaceholderText()) */\n"
+"QSpinBox QLineEdit:disabled {\n"
+"    color: #888888;\n"
+"}\n"
+"\n"
+"/* Hide the up/down arrows completely */\n"
+"QSpinBox::up-button, QSpinBox::down-button {\n"
+"    width: 0;\n"
+"    height: 0;\n"
+"    border: none;\n"
 "}\n"
 "")
-        self.lineEditCreditHours.setObjectName("lineEditCreditHours")
-        self.formGrid.addWidget(self.lineEditCreditHours, 10, 0, 1, 1)
+        self.spinBoxCreditHours.setMinimum(1)
+        self.spinBoxCreditHours.setMaximum(10)
+        self.spinBoxCreditHours.setObjectName("spinBoxCreditHours")
+        self.formGrid.addWidget(self.spinBoxCreditHours, 10, 0, 1, 1)
         self.contentLayout.addLayout(self.formGrid)
         spacerItem1 = QtWidgets.QSpacerItem(17, 30, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Minimum)
         self.contentLayout.addItem(spacerItem1)
@@ -188,6 +195,7 @@ class Ui_AddCourseDialog(object):
         self.buttonCancel.setObjectName("buttonCancel")
         self.footerLayout.addWidget(self.buttonCancel)
         self.buttonSave = QtWidgets.QPushButton(parent=self.footerFrame)
+        self.buttonSave.setEnabled(True)
         self.buttonSave.setMinimumSize(QtCore.QSize(120, 45))
         self.buttonSave.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         self.buttonSave.setStyleSheet("QPushButton {\n"
@@ -206,7 +214,10 @@ class Ui_AddCourseDialog(object):
 "QPushButton:pressed {\n"
 "    background-color: #d43f52;\n"
 "}\n"
-"")
+"QPushButton:disabled {\n"
+"    background-color: #cccccc;  /* gray background for disabled */\n"
+"    color: #666666;             /* darker gray text */\n"
+"}")
         self.buttonSave.setObjectName("buttonSave")
         self.footerLayout.addWidget(self.buttonSave)
         self.mainLayout.addWidget(self.footerFrame)
@@ -218,13 +229,11 @@ class Ui_AddCourseDialog(object):
         _translate = QtCore.QCoreApplication.translate
         AddCourseDialog.setWindowTitle(_translate("AddCourseDialog", "Add New Course"))
         self.labelTitle.setText(_translate("AddCourseDialog", "📚  Add New Course"))
-        self.buttonClose.setText(_translate("AddCourseDialog", "✕"))
         self.pushButton.setText(_translate("AddCourseDialog", "PushButton"))
         self.lineEditCourseCode.setPlaceholderText(_translate("AddCourseDialog", "e.g., ECE 101"))
         self.lineEditCourseName.setPlaceholderText(_translate("AddCourseDialog", "e.g., Digital Logic Design"))
         self.labelCourseName.setText(_translate("AddCourseDialog", "Course Name *"))
         self.labelCourseCode.setText(_translate("AddCourseDialog", "Course Code *"))
         self.labelCreditHours.setText(_translate("AddCourseDialog", "Credit Hours *"))
-        self.lineEditCreditHours.setPlaceholderText(_translate("AddCourseDialog", "e.g., Dr. John Smith"))
         self.buttonCancel.setText(_translate("AddCourseDialog", "Cancel"))
         self.buttonSave.setText(_translate("AddCourseDialog", "💾  Save Course"))
