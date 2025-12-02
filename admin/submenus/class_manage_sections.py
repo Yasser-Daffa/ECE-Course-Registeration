@@ -19,6 +19,7 @@ from app_ui.admin_ui.submenus_ui.ui_manage_sections import Ui_ManageSections
 from admin.class_admin_utilities import admin
 from helper_files.shared_utilities import BaseLoginForm
 
+
 class ManageSectionsWidget(QWidget):
     """
     شاشة إدارة السكاشن (مبسّطة):
@@ -69,20 +70,12 @@ class ManageSectionsWidget(QWidget):
     # ------------------------ رسائل منبثقة ------------------------
 
     def show_error(self, message: str):
-        box = QMessageBox(self)
-        box.setIcon(QMessageBox.Icon.Critical)
-        box.setWindowTitle("Error")
-        box.setText(message)
-        box.setStandardButtons(QMessageBox.StandardButton.Ok)
-        box.exec()
+        """Show a simple critical error popup."""
+        QMessageBox.critical(self, "Error", message)
 
     def show_info(self, message: str):
-        box = QMessageBox(self)
-        box.setIcon(QMessageBox.Icon.Information)
-        box.setWindowTitle("Info")
-        box.setText(message)
-        box.setStandardButtons(QMessageBox.StandardButton.Ok)
-        box.exec()
+        """Show a simple informational popup."""
+        QMessageBox.information(self, "Info", message)
 
     # ------------------------ جلب البيانات من الداتا بيس ------------------------
 
@@ -321,12 +314,11 @@ class ManageSectionsWidget(QWidget):
         rows_to_delete = []
 
         for row in range(table.rowCount()):
-            item_select = table.item(row, 0)  # عمود SELECT
+            item_select = table.item(row, 0)  # checkbox column
             if not item_select:
                 continue
-
             if item_select.checkState() == Qt.CheckState.Checked:
-                item_id = table.item(row, 2)  # عمود ID
+                item_id = table.item(row, 2)  # section ID column
                 if item_id:
                     try:
                         sid = int(item_id.text().strip())
@@ -338,22 +330,23 @@ class ManageSectionsWidget(QWidget):
             self.show_info("No sections selected for deletion.")
             return
 
-        reply = QMessageBox.question(
-            self,
-            "Confirm",
-            f"Are you sure you want to delete {len(rows_to_delete)} section(s)?",
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+        # ✅ Use BaseLoginForm confirmation
+        reply = BaseLoginForm().show_confirmation(
+            "Delete Sections",
+            f"Are you sure you want to delete {len(rows_to_delete)} section(s)?"
         )
-
         if reply != QMessageBox.StandardButton.Yes:
             return
 
         for sid in rows_to_delete:
             msg = self.admin_utils.admin_delete_section(sid)
-            # تقدر تطبع msg لو حاب تتأكد:
+            # optionally print msg
             # print(msg)
 
-        self.refresh_sections()
+        self.load_sections()  # refresh table after deletion
+
+
+        
 
     # ------------------------ زر Add Section (حاليا مجرد رسالة) ------------------------
 
