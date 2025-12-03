@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ManageSections</class>
- <widget class="QWidget" name="ManageSections">
+ <class>ViewSections</class>
+ <widget class="QWidget" name="ViewSections">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Manage Sections</string>
+   <string>Avaliable Sections</string>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: #f5f7fa;</string>
@@ -40,7 +40,7 @@
         <string notr="true">font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;</string>
        </property>
        <property name="text">
-        <string>Manage Course Sections</string>
+        <string>Available Course Sections</string>
        </property>
       </widget>
      </item>
@@ -56,44 +56,6 @@
         </size>
        </property>
       </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="buttonAddSection">
-       <property name="minimumSize">
-        <size>
-         <width>140</width>
-         <height>45</height>
-        </size>
-       </property>
-       <property name="cursor">
-        <cursorShape>PointingHandCursor</cursorShape>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-    background-color: #f5576c;
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: bold;
-    padding: 10px 20px;
-    transition: background-color 150ms;
-}
-QPushButton:hover {
-    background-color: #e5475c;
-}
-QPushButton:pressed {
-    background-color: #d43f52;
-}
-QPushButton:disabled {
-    background-color: #cccccc;  /* gray background for disabled */
-    color: #666666;             /* darker gray text */
-}</string>
-       </property>
-       <property name="text">
-        <string>+ Add Section</string>
-       </property>
-      </widget>
      </item>
     </layout>
    </item>
@@ -873,7 +835,7 @@ QComboBox[error=&quot;true&quot;] {
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="buttonRemoveSelected">
+          <widget class="QPushButton" name="buttonRegisterCourse">
            <property name="enabled">
             <bool>true</bool>
            </property>
@@ -887,10 +849,10 @@ QComboBox[error=&quot;true&quot;] {
             <cursorShape>PointingHandCursor</cursorShape>
            </property>
            <property name="styleSheet">
-            <string notr="true">/* ---- Reject Button ---- */
+            <string notr="true">/* ---- Approve Button ---- */
 QPushButton {
-    background-color: #f8d7da;
-    color: #721c24;
+    background-color: #d4edda;
+    color: #155724;
     border: none;
     border-radius: 8px;
     font-size: 14px;
@@ -898,19 +860,19 @@ QPushButton {
     padding: 10px 20px;
 }
 QPushButton:hover {
-    background-color: #c82333;
+    background-color: #28a745;
     color: white;
 }
 QPushButton:pressed {
-    background-color: #a71d2a;  /* slightly darker for pressed feedback */
+    background-color: #1e7e34;  /* slightly darker for pressed feedback */
 }
 QPushButton:disabled {
-    background-color: #d7bcbc; /* more washed-out red */
-    color: #5e3b3e;
+    background-color: #c1d9c3; /* more washed-out green */
+    color: #7a8b7a;
 }</string>
            </property>
            <property name="text">
-            <string>❌ Remove All</string>
+            <string>Register Course</string>
            </property>
           </widget>
          </item>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ManageCourses</class>
- <widget class="QWidget" name="ManageCourses">
+ <class>RegisterCourses</class>
+ <widget class="QWidget" name="RegisterCourses">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -267,7 +267,7 @@ QPushButton:pressed {
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="buttonRegisterCourse">
+          <widget class="QPushButton" name="buttonViewSections">
            <property name="enabled">
             <bool>true</bool>
            </property>
