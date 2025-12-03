@@ -419,9 +419,9 @@ QScrollBar::sub-page:vertical {
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>-197</y>
+            <y>-129</y>
             <width>284</width>
-            <height>719</height>
+            <height>567</height>
            </rect>
           </property>
           <property name="styleSheet">
@@ -477,26 +477,26 @@ QScrollBar::sub-page:vertical {
 
 QPushButton:hover {
     background-color: #f8f9fa;
-    color: #f5576c;
+    color: #8c6fff;  /* slightly purple-ish on hover */
 }
 
 /* CHECKED / TOGGLED STATE */
 QPushButton:checked {
-    background-color: rgba(245, 87, 108, 0.10);  /* faint pink */
-    color: #f5576c; 
+    background-color: rgba(140, 111, 255, 0.10);  /* faint purple */
+    color: #8c6fff; 
     font-weight: bold;
-    border-left: 4px solid #f5576c;
+    border-left: 4px solid #8c6fff;
     padding-left: 11px; /* adjust so bar doesn’t push content too far */
 }
 
 /* PRESSED STATE (optional but clean) */
 QPushButton:pressed {
-    background-color: rgba(245, 87, 108, 0.18);
+    background-color: rgba(140, 111, 255, 0.18);  /* slightly darker purple on press */
 }
 </string>
              </property>
              <property name="text">
-              <string>📊  Profile</string>
+              <string>👤   Profile</string>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -540,79 +540,26 @@ QPushButton:pressed {
 
 QPushButton:hover {
     background-color: #f8f9fa;
-    color: #f5576c;
+    color: #8c6fff;  /* slightly purple-ish on hover */
 }
 
 /* CHECKED / TOGGLED STATE */
 QPushButton:checked {
-    background-color: rgba(245, 87, 108, 0.10);  /* faint pink */
-    color: #f5576c; 
+    background-color: rgba(140, 111, 255, 0.10);  /* faint purple */
+    color: #8c6fff; 
     font-weight: bold;
-    border-left: 4px solid #f5576c;
+    border-left: 4px solid #8c6fff;
     padding-left: 11px; /* adjust so bar doesn’t push content too far */
 }
 
 /* PRESSED STATE (optional but clean) */
 QPushButton:pressed {
-    background-color: rgba(245, 87, 108, 0.18);
+    background-color: rgba(140, 111, 255, 0.18);  /* slightly darker purple on press */
 }
 </string>
              </property>
              <property name="text">
               <string>📅 Current Schedule</string>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <attribute name="buttonGroup">
-              <string notr="true">buttonGroupSubmenus</string>
-             </attribute>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="buttonPendingRequests">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>48</height>
-              </size>
-             </property>
-             <property name="cursor">
-              <cursorShape>PointingHandCursor</cursorShape>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">QPushButton {
-    background-color: transparent;
-    border: none;
-    border-radius: 10px;
-    color: #5a6c7d;
-    font-size: 14px;
-    text-align: left;
-    padding-left: 15px;
-}
-
-QPushButton:hover {
-    background-color: #f8f9fa;
-    color: #f5576c;
-}
-
-/* CHECKED / TOGGLED STATE */
-QPushButton:checked {
-    background-color: rgba(245, 87, 108, 0.10);  /* faint pink */
-    color: #f5576c; 
-    font-weight: bold;
-    border-left: 4px solid #f5576c;
-    padding-left: 11px; /* adjust so bar doesn’t push content too far */
-}
-
-/* PRESSED STATE (optional but clean) */
-QPushButton:pressed {
-    background-color: rgba(245, 87, 108, 0.18);
-}
-</string>
-             </property>
-             <property name="text">
-              <string> 📝 Register Courses </string>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -656,26 +603,26 @@ QPushButton:pressed {
 
 QPushButton:hover {
     background-color: #f8f9fa;
-    color: #f5576c;
+    color: #8c6fff;  /* slightly purple-ish on hover */
 }
 
 /* CHECKED / TOGGLED STATE */
 QPushButton:checked {
-    background-color: rgba(245, 87, 108, 0.10);  /* faint pink */
-    color: #f5576c; 
+    background-color: rgba(140, 111, 255, 0.10);  /* faint purple */
+    color: #8c6fff; 
     font-weight: bold;
-    border-left: 4px solid #f5576c;
+    border-left: 4px solid #8c6fff;
     padding-left: 11px; /* adjust so bar doesn’t push content too far */
 }
 
 /* PRESSED STATE (optional but clean) */
 QPushButton:pressed {
-    background-color: rgba(245, 87, 108, 0.18);
+    background-color: rgba(140, 111, 255, 0.18);  /* slightly darker purple on press */
 }
 </string>
              </property>
              <property name="text">
-              <string>📚  Manage Courses (32)</string>
+              <string> 📝 Register Courses </string>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -686,7 +633,7 @@ QPushButton:pressed {
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="buttonManagePrereqs">
+            <widget class="QPushButton" name="buttonPendingRequests">
              <property name="minimumSize">
               <size>
                <width>0</width>
@@ -709,79 +656,26 @@ QPushButton:pressed {
 
 QPushButton:hover {
     background-color: #f8f9fa;
-    color: #f5576c;
+    color: #8c6fff;  /* slightly purple-ish on hover */
 }
 
 /* CHECKED / TOGGLED STATE */
 QPushButton:checked {
-    background-color: rgba(245, 87, 108, 0.10);  /* faint pink */
-    color: #f5576c; 
+    background-color: rgba(140, 111, 255, 0.10);  /* faint purple */
+    color: #8c6fff; 
     font-weight: bold;
-    border-left: 4px solid #f5576c;
+    border-left: 4px solid #8c6fff;
     padding-left: 11px; /* adjust so bar doesn’t push content too far */
 }
 
 /* PRESSED STATE (optional but clean) */
 QPushButton:pressed {
-    background-color: rgba(245, 87, 108, 0.18);
+    background-color: rgba(140, 111, 255, 0.18);  /* slightly darker purple on press */
 }
 </string>
              </property>
              <property name="text">
-              <string>🔗  Manage Prerequisetes</string>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <attribute name="buttonGroup">
-              <string notr="true">buttonGroupSubmenus</string>
-             </attribute>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="buttonManageSections">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>48</height>
-              </size>
-             </property>
-             <property name="cursor">
-              <cursorShape>PointingHandCursor</cursorShape>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">QPushButton {
-    background-color: transparent;
-    border: none;
-    border-radius: 10px;
-    color: #5a6c7d;
-    font-size: 14px;
-    text-align: left;
-    padding-left: 15px;
-}
-
-QPushButton:hover {
-    background-color: #f8f9fa;
-    color: #f5576c;
-}
-
-/* CHECKED / TOGGLED STATE */
-QPushButton:checked {
-    background-color: rgba(245, 87, 108, 0.10);  /* faint pink */
-    color: #f5576c; 
-    font-weight: bold;
-    border-left: 4px solid #f5576c;
-    padding-left: 11px; /* adjust so bar doesn’t push content too far */
-}
-
-/* PRESSED STATE (optional but clean) */
-QPushButton:pressed {
-    background-color: rgba(245, 87, 108, 0.18);
-}
-</string>
-             </property>
-             <property name="text">
-              <string>✏️  Manage Sections</string>
+              <string> 📊 Transcript </string>
              </property>
              <property name="checkable">
               <bool>true</bool>
