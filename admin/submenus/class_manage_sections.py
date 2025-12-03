@@ -14,6 +14,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.
 
 # واجهة المانج سكاشن اللي صدّرتها من Qt Designer
 from app_ui.admin_ui.submenus_ui.ui_manage_sections import Ui_ManageSections
+from class_add_sections import AddSectionDialog
 
 # كائن الأدمن الجاهز
 from admin.class_admin_utilities import admin
@@ -363,9 +364,17 @@ class ManageSectionsWidget(QWidget):
 
     # ------------------------ زر Add Section (حاليا مجرد رسالة) ------------------------
 
+    # ------------------------ زر Add Section (يفتح نافذة الإضافة فعلياً) ------------------------
+
     def on_add_section_clicked(self):
-        # تقدر لاحقاً تربطه بدايالوج إضافة سكشن جديد
-        QMessageBox.critical(self,"issue","Add Section dialog is not implemented yet.")
+        # نفتح دايالوج إضافة السكشن الجاهز
+        dlg = AddSectionDialog(self.admin_utils, self)
+
+        # لو المستخدم ضغط Add وتمت الإضافة بنجاح
+        if dlg.exec():
+            # نعيد تحميل السكاشن من الداتا بيس ونحدث الجدول + الإحصائيات
+            self.load_sections()
+
 
 
 
