@@ -12,8 +12,8 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_AdminDashboard(object):
     def setupUi(self, AdminDashboard):
         AdminDashboard.setObjectName("AdminDashboard")
-        AdminDashboard.resize(1200, 835)
-        AdminDashboard.setMinimumSize(QtCore.QSize(1200, 700))
+        AdminDashboard.resize(1000, 600)
+        AdminDashboard.setMinimumSize(QtCore.QSize(1000, 600))
         AdminDashboard.setStyleSheet("QMainWindow { background-color: #f5f7fa; }")
         self.centralwidget = QtWidgets.QWidget(parent=AdminDashboard)
         self.centralwidget.setStyleSheet("background-color: #f5f7fa;")
@@ -176,7 +176,7 @@ class Ui_AdminDashboard(object):
         self.navScrollArea.setWidgetResizable(True)
         self.navScrollArea.setObjectName("navScrollArea")
         self.navScrollContent = QtWidgets.QWidget()
-        self.navScrollContent.setGeometry(QtCore.QRect(0, 0, 284, 719))
+        self.navScrollContent.setGeometry(QtCore.QRect(0, 0, 284, 795))
         self.navScrollContent.setStyleSheet("background-color: white;")
         self.navScrollContent.setObjectName("navScrollContent")
         self.navMainLayout = QtWidgets.QVBoxLayout(self.navScrollContent)
@@ -377,6 +377,41 @@ class Ui_AdminDashboard(object):
         self.buttonManageCourses.setObjectName("buttonManageCourses")
         self.buttonGroupSubmenus.addButton(self.buttonManageCourses)
         self.navMainLayout.addWidget(self.buttonManageCourses)
+        self.buttonManagePrereqs = QtWidgets.QPushButton(parent=self.navScrollContent)
+        self.buttonManagePrereqs.setMinimumSize(QtCore.QSize(0, 48))
+        self.buttonManagePrereqs.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonManagePrereqs.setStyleSheet("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: none;\n"
+"    border-radius: 10px;\n"
+"    color: #5a6c7d;\n"
+"    font-size: 14px;\n"
+"    text-align: left;\n"
+"    padding-left: 15px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #f8f9fa;\n"
+"    color: #f5576c;\n"
+"}\n"
+"\n"
+"/* CHECKED / TOGGLED STATE */\n"
+"QPushButton:checked {\n"
+"    background-color: rgba(245, 87, 108, 0.10);  /* faint pink */\n"
+"    color: #f5576c; \n"
+"    font-weight: bold;\n"
+"    border-left: 4px solid #f5576c;\n"
+"    padding-left: 11px; /* adjust so bar doesn’t push content too far */\n"
+"}\n"
+"\n"
+"/* PRESSED STATE (optional but clean) */\n"
+"QPushButton:pressed {\n"
+"    background-color: rgba(245, 87, 108, 0.18);\n"
+"}\n"
+"")
+        self.buttonManagePrereqs.setCheckable(True)
+        self.buttonManagePrereqs.setObjectName("buttonManagePrereqs")
+        self.navMainLayout.addWidget(self.buttonManagePrereqs)
         self.buttonManageSections = QtWidgets.QPushButton(parent=self.navScrollContent)
         self.buttonManageSections.setMinimumSize(QtCore.QSize(0, 48))
         self.buttonManageSections.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
@@ -481,19 +516,10 @@ class Ui_AdminDashboard(object):
         self.breadcrumbLabel.setObjectName("breadcrumbLabel")
         self.verticalLayout_2.addWidget(self.breadcrumbLabel)
         self.gridLayout_2.addLayout(self.verticalLayout_2, 0, 1, 1, 1)
-        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
-        self.gridLayout_2.addItem(spacerItem4, 0, 4, 1, 1)
-        self.btnSettings = QtWidgets.QPushButton(parent=self.topBarFrame)
-        self.btnSettings.setMinimumSize(QtCore.QSize(48, 48))
-        self.btnSettings.setMaximumSize(QtCore.QSize(48, 48))
-        self.btnSettings.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.btnSettings.setStyleSheet("QPushButton { background-color: #f8f9fa; border: none; border-radius: 12px; font-size: 20px; } QPushButton:hover { background-color: #e8ecf1; }")
-        self.btnSettings.setObjectName("btnSettings")
-        self.gridLayout_2.addWidget(self.btnSettings, 0, 5, 1, 1)
+        spacerItem4 = QtWidgets.QSpacerItem(10, 20, QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Minimum)
+        self.gridLayout_2.addItem(spacerItem4, 0, 0, 1, 1)
         spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.gridLayout_2.addItem(spacerItem5, 0, 3, 1, 1)
-        spacerItem6 = QtWidgets.QSpacerItem(10, 20, QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Minimum)
-        self.gridLayout_2.addItem(spacerItem6, 0, 0, 1, 1)
         self.mainContentLayout.addWidget(self.topBarFrame)
         self.frame = QtWidgets.QFrame(parent=self.mainContentWidget)
         self.frame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
@@ -501,7 +527,99 @@ class Ui_AdminDashboard(object):
         self.frame.setObjectName("frame")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.frame)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.stackedWidget = QtWidgets.QStackedWidget(parent=self.frame)
+        self.scrollArea = QtWidgets.QScrollArea(parent=self.frame)
+        self.scrollArea.setStyleSheet("\n"
+"/* ===== VERTICAL SCROLLBAR ===== */\n"
+"QScrollBar:vertical {\n"
+"    width: 12px;\n"
+"    background: rgba(255, 255, 255, 0.05);  /* subtle track */\n"
+"    margin: 0px 0px 0px 0;  /* TOP RIGHT BOTTOM LEFT */\n"
+"    border-radius: 6px;\n"
+"}\n"
+"\n"
+"QScrollBar::handle:vertical {\n"
+"    background: rgba(120, 120, 120, 0.35);  /* glassy thumb */\n"
+"    border-radius: 6px;\n"
+"    min-height: 30px;\n"
+"    border: 1px solid rgba(255, 255, 255, 0.2); /* subtle highlight */\n"
+"}\n"
+"\n"
+"QScrollBar::handle:vertical:hover {\n"
+"    background: rgba(120, 120, 120, 0.55);\n"
+"}\n"
+"\n"
+"/* Up/Down buttons */\n"
+"QScrollBar::add-line:vertical,\n"
+"QScrollBar::sub-line:vertical {\n"
+"    height: 16px;\n"
+"    background: rgba(180, 180, 180, 0.35);\n"
+"    border-radius: 4px;\n"
+"}\n"
+"\n"
+"/* Arrow icons */\n"
+"QScrollBar::up-arrow:vertical,\n"
+"QScrollBar::down-arrow:vertical {\n"
+"    width: 6px;\n"
+"    height: 6px;\n"
+"    background: transparent;\n"
+"}\n"
+"\n"
+"/* Remove the blank area inside */\n"
+"QScrollBar::add-page:vertical,\n"
+"QScrollBar::sub-page:vertical {\n"
+"    background: none;\n"
+"}\n"
+"/* ===== HORIZONTAL SCROLLBAR ===== */\n"
+"QScrollBar:horizontal {\n"
+"    height: 12px;\n"
+"    background: rgba(255, 255, 255, 0.05);  /* subtle track */\n"
+"    margin: 0px 0 0px 0;  /* TOP RIGHT BOTTOM LEFT */\n"
+"    border-radius: 6px;\n"
+"}\n"
+"\n"
+"QScrollBar::handle:horizontal {\n"
+"    background: rgba(120, 120, 120, 0.35);  /* glassy thumb */\n"
+"    border-radius: 6px;\n"
+"    min-width: 30px;\n"
+"    border: 1px solid rgba(255, 255, 255, 0.2); /* subtle highlight */\n"
+"}\n"
+"\n"
+"QScrollBar::handle:horizontal:hover {\n"
+"    background: rgba(120, 120, 120, 0.55);\n"
+"}\n"
+"\n"
+"/* Left/Right buttons */\n"
+"QScrollBar::add-line:horizontal,\n"
+"QScrollBar::sub-line:horizontal {\n"
+"    width: 16px;\n"
+"    background: rgba(180, 180, 180, 0.35);\n"
+"    border-radius: 4px;\n"
+"}\n"
+"\n"
+"/* Arrow icons */\n"
+"QScrollBar::left-arrow:horizontal,\n"
+"QScrollBar::right-arrow:horizontal {\n"
+"    width: 6px;\n"
+"    height: 6px;\n"
+"    background: transparent;\n"
+"}\n"
+"\n"
+"/* Remove the blank area inside */\n"
+"QScrollBar::add-page:horizontal,\n"
+"QScrollBar::sub-page:horizontal {\n"
+"    background: none;\n"
+"}\n"
+"")
+        self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setObjectName("scrollArea")
+        self.scrollAreaWidgetContents = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 678, 488))
+        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.stackedWidget = QtWidgets.QStackedWidget(parent=self.scrollAreaWidgetContents)
         self.stackedWidget.setObjectName("stackedWidget")
         self.page0Profile = QtWidgets.QWidget()
         self.page0Profile.setObjectName("page0Profile")
@@ -521,7 +639,9 @@ class Ui_AdminDashboard(object):
         self.page5ManageSections = QtWidgets.QWidget()
         self.page5ManageSections.setObjectName("page5ManageSections")
         self.stackedWidget.addWidget(self.page5ManageSections)
-        self.verticalLayout_3.addWidget(self.stackedWidget)
+        self.verticalLayout_4.addWidget(self.stackedWidget)
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        self.verticalLayout_3.addWidget(self.scrollArea)
         self.mainContentLayout.addWidget(self.frame)
         self.mainHorizontalLayout.addWidget(self.mainContentWidget)
         AdminDashboard.setCentralWidget(self.centralwidget)
@@ -543,13 +663,13 @@ class Ui_AdminDashboard(object):
         self.dashboardSectionLabel.setText(_translate("AdminDashboard", "DASHBOARD"))
         self.buttonProfile.setText(_translate("AdminDashboard", "📊  Profile"))
         self.userMgmtLabel.setText(_translate("AdminDashboard", "USER MANAGEMENT"))
-        self.buttonAllStudents.setText(_translate("AdminDashboard", "👥  All Students (247)"))
+        self.buttonAllStudents.setText(_translate("AdminDashboard", "👥  All Students (205)"))
         self.buttonPendingRequests.setText(_translate("AdminDashboard", "⏳  Pending Requests (12)"))
         self.buttonManageFaculty.setText(_translate("AdminDashboard", "👨‍🏫  Manage Faculty -WIP-"))
         self.courseMgmtLabel.setText(_translate("AdminDashboard", "COURSE MANAGEMENT"))
         self.buttonManageCourses.setText(_translate("AdminDashboard", "📚  Manage Courses (32)"))
+        self.buttonManagePrereqs.setText(_translate("AdminDashboard", "🔗  Manage Prerequisetes"))
         self.buttonManageSections.setText(_translate("AdminDashboard", "✏️  Manage Sections"))
         self.buttonLogout.setText(_translate("AdminDashboard", "🚪  Logout"))
         self.pageTitleLabel.setText(_translate("AdminDashboard", "Dashboard Overview"))
         self.breadcrumbLabel.setText(_translate("AdminDashboard", "🏠 Home • Dashboard"))
-        self.btnSettings.setText(_translate("AdminDashboard", "⚙️"))

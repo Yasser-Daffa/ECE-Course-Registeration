@@ -10,7 +10,7 @@ from PyQt6.QtCore import Qt
 from admin.class_admin_utilities import admin
 from admin.submenus.class_course_prereq_dialog import CoursePrereqDialogController
 
-from app_ui.admin_ui.submenus_ui.ui_manage_prereq import Ui_ManageCourses
+from app_ui.admin_ui.submenus_ui.ui_manage_prereq import Ui_ManagePrereqs
 from app_ui.admin_ui.submenus_ui.ui_course_prereq_dialog import Ui_CoursePrereqDialog
 
 # Only needed for the standalone run block
@@ -170,7 +170,7 @@ if __name__ == "__main__":
     admin_instance = admin 
 
     window = QWidget()
-    ui = Ui_ManageCourses()
+    ui = Ui_ManagePrereqs()
     ui.setupUi(window)
 
     # Pass the imported 'admin' instance and the db instance to the controller

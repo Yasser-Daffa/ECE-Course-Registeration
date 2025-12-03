@@ -9,24 +9,24 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 
-class Ui_ManageCourses(object):
-    def setupUi(self, ManageCourses):
-        ManageCourses.setObjectName("ManageCourses")
-        ManageCourses.resize(1200, 858)
-        ManageCourses.setStyleSheet("background-color: #f5f7fa;")
-        self.mainLayout = QtWidgets.QVBoxLayout(ManageCourses)
+class Ui_ManagePrereqs(object):
+    def setupUi(self, ManagePrereqs):
+        ManagePrereqs.setObjectName("ManagePrereqs")
+        ManagePrereqs.resize(1200, 858)
+        ManagePrereqs.setStyleSheet("background-color: #f5f7fa;")
+        self.mainLayout = QtWidgets.QVBoxLayout(ManagePrereqs)
         self.mainLayout.setContentsMargins(40, 40, 40, 20)
         self.mainLayout.setSpacing(30)
         self.mainLayout.setObjectName("mainLayout")
         self.headerLayout = QtWidgets.QHBoxLayout()
         self.headerLayout.setObjectName("headerLayout")
-        self.labelTitle = QtWidgets.QLabel(parent=ManageCourses)
+        self.labelTitle = QtWidgets.QLabel(parent=ManagePrereqs)
         self.labelTitle.setStyleSheet("font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;")
         self.labelTitle.setObjectName("labelTitle")
         self.headerLayout.addWidget(self.labelTitle)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.headerLayout.addItem(spacerItem)
-        self.labelTotalCoursesCount = QtWidgets.QLabel(parent=ManageCourses)
+        self.labelTotalCoursesCount = QtWidgets.QLabel(parent=ManagePrereqs)
         self.labelTotalCoursesCount.setStyleSheet("font-size: 16px;\n"
 "color: #4b0082;               /* deep purple text */\n"
 "font-weight: bold;\n"
@@ -37,7 +37,7 @@ class Ui_ManageCourses(object):
         self.labelTotalCoursesCount.setObjectName("labelTotalCoursesCount")
         self.headerLayout.addWidget(self.labelTotalCoursesCount)
         self.mainLayout.addLayout(self.headerLayout)
-        self.filterFrame = QtWidgets.QFrame(parent=ManageCourses)
+        self.filterFrame = QtWidgets.QFrame(parent=ManagePrereqs)
         self.filterFrame.setMinimumSize(QtCore.QSize(0, 70))
         self.filterFrame.setMaximumSize(QtCore.QSize(16777215, 70))
         self.filterFrame.setStyleSheet("background-color: white; border-radius: 12px;")
@@ -98,7 +98,7 @@ class Ui_ManageCourses(object):
         self.buttonRefresh.setObjectName("buttonRefresh")
         self.filterLayout.addWidget(self.buttonRefresh)
         self.mainLayout.addWidget(self.filterFrame)
-        self.tableFrame = QtWidgets.QFrame(parent=ManageCourses)
+        self.tableFrame = QtWidgets.QFrame(parent=ManagePrereqs)
         self.tableFrame.setStyleSheet("background-color: white; border-radius: 12px;")
         self.tableFrame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.tableFrame.setObjectName("tableFrame")
@@ -284,25 +284,25 @@ class Ui_ManageCourses(object):
         spacerItem3 = QtWidgets.QSpacerItem(20, 60, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Maximum)
         self.mainLayout.addItem(spacerItem3)
 
-        self.retranslateUi(ManageCourses)
-        QtCore.QMetaObject.connectSlotsByName(ManageCourses)
+        self.retranslateUi(ManagePrereqs)
+        QtCore.QMetaObject.connectSlotsByName(ManagePrereqs)
 
-    def retranslateUi(self, ManageCourses):
+    def retranslateUi(self, ManagePrereqs):
         _translate = QtCore.QCoreApplication.translate
-        ManageCourses.setWindowTitle(_translate("ManageCourses", "Course"))
-        self.labelTitle.setText(_translate("ManageCourses", "Course Prerequisites"))
-        self.labelTotalCoursesCount.setText(_translate("ManageCourses", "22 Total Courses"))
-        self.lineEditSearch.setPlaceholderText(_translate("ManageCourses", "🔍  Search by Course name or code..."))
-        self.buttonRefresh.setText(_translate("ManageCourses", "🔄 Refresh"))
-        self.tableTitle.setText(_translate("ManageCourses", "All Courses"))
-        self.buttonManagePrereq.setText(_translate("ManageCourses", "Manage Prerequisites"))
+        ManagePrereqs.setWindowTitle(_translate("ManagePrereqs", "Course"))
+        self.labelTitle.setText(_translate("ManagePrereqs", "Course Prerequisites"))
+        self.labelTotalCoursesCount.setText(_translate("ManagePrereqs", "22 Total Courses"))
+        self.lineEditSearch.setPlaceholderText(_translate("ManagePrereqs", "🔍  Search by Course name or code..."))
+        self.buttonRefresh.setText(_translate("ManagePrereqs", "🔄 Refresh"))
+        self.tableTitle.setText(_translate("ManagePrereqs", "All Courses"))
+        self.buttonManagePrereq.setText(_translate("ManagePrereqs", "Manage Prerequisites"))
         item = self.tableAllCourses.horizontalHeaderItem(0)
-        item.setText(_translate("ManageCourses", "SELECT"))
+        item.setText(_translate("ManagePrereqs", "SELECT"))
         item = self.tableAllCourses.horizontalHeaderItem(1)
-        item.setText(_translate("ManageCourses", "#"))
+        item.setText(_translate("ManagePrereqs", "#"))
         item = self.tableAllCourses.horizontalHeaderItem(2)
-        item.setText(_translate("ManageCourses", "COURSE CODE"))
+        item.setText(_translate("ManagePrereqs", "COURSE CODE"))
         item = self.tableAllCourses.horizontalHeaderItem(3)
-        item.setText(_translate("ManageCourses", "COURSE NAME"))
+        item.setText(_translate("ManagePrereqs", "COURSE NAME"))
         item = self.tableAllCourses.horizontalHeaderItem(4)
-        item.setText(_translate("ManageCourses", "PREREQ"))
+        item.setText(_translate("ManagePrereqs", "PREREQ"))

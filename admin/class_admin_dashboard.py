@@ -5,9 +5,13 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 from PyQt6 import QtWidgets
 from database_files.class_database_uitlities import DatabaseUtilities
 from database_files.initialize_database import initialize_database
+from admin.class_admin_utilities import AdminUtilities
 
 # Subpage UI & Controller imports
 from app_ui.admin_ui.ui_admin_dashboard import Ui_AdminDashboard
+
+from app_ui.admin_ui.submenus_ui.ui_profile import Ui_Profile
+
 from app_ui.admin_ui.submenus_ui.ui_all_students import Ui_AllStudents
 from admin.submenus.class_all_students import AllStudentsController
 
@@ -16,6 +20,9 @@ from admin.submenus.class_pending_requests import PendingRequestsController
 
 from app_ui.admin_ui.submenus_ui.ui_manage_courses import Ui_ManageCourses
 from admin.submenus.class_manage_courses import ManageCoursesController
+
+from app_ui.admin_ui.submenus_ui.ui_manage_prereq import Ui_ManagePrereqs
+from admin.submenus.class_manage_prereqs import ManagePrerequisitesController
 
 class AdminDashboard(QtWidgets.QMainWindow):
     """
@@ -32,6 +39,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.ui = Ui_AdminDashboard()
         self.ui.setupUi(self)
         self.db = db
+        self.admin = AdminUtilities(self.db)
 
         # ------------------------
         # 1. Initialize all pages
@@ -41,9 +49,11 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # ------------------------
         # 2. Add pages to stacked widget
         # ------------------------
+        self.ui.stackedWidget.addWidget(self.profile_page)
         self.ui.stackedWidget.addWidget(self.all_students_page)
         self.ui.stackedWidget.addWidget(self.pending_requests_page)
         self.ui.stackedWidget.addWidget(self.manage_courses_page)
+        self.ui.stackedWidget.addWidget(self.manage_prereqs_page)
         # Add other pages similarly...
 
 
@@ -55,9 +65,11 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # Value: Tuple of (page name string, QWidget page)
         # Using a string here avoids printing emojis/unicode directly from button.text()
         self.page_mapping = {
+            self.ui.buttonProfile: ("Profile", self.profile_page),
             self.ui.buttonAllStudents: ("All Students", self.all_students_page),
             self.ui.buttonPendingRequests: ("Pending Requests", self.pending_requests_page),
-            self.ui.buttonManageCourses: ("Manage Courses", self.manage_courses_page)
+            self.ui.buttonManageCourses: ("Manage Courses", self.manage_courses_page),
+            self.ui.buttonManagePrereqs: ("Manage Prereqs", self.manage_prereqs_page)
         }
 
         # Connect buttons to page-switching logic
@@ -76,6 +88,13 @@ class AdminDashboard(QtWidgets.QMainWindow):
         Controllers must be initialized AFTER widget + UI exist.
         """
         # -------------------------------
+        # Profile page
+        # -------------------------------
+        self.profile_page = QtWidgets.QWidget()
+        self.profile_page_ui = Ui_Profile()
+        self.profile_page_ui.setupUi(self.profile_page)
+
+        # -------------------------------
         # All Students page
         # -------------------------------
         self.all_students_page = QtWidgets.QWidget()
@@ -92,12 +111,20 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.pending_requests_controller = PendingRequestsController(self.pending_requests_ui, self.db)
 
         # -------------------------------
-        # Pending Requests page
+        # Manage courses
         # -------------------------------
         self.manage_courses_page = QtWidgets.QWidget()
         self.manage_courses_ui = Ui_ManageCourses()
         self.manage_courses_ui.setupUi(self.manage_courses_page)
         self.manage_courses_controller = ManageCoursesController(self.manage_courses_ui, self.db)
+
+        # -------------------------------
+        # Manage prereqs
+        # -------------------------------
+        self.manage_prereqs_page = QtWidgets.QWidget()
+        self.manage_prereqs_ui = Ui_ManagePrereqs()
+        self.manage_prereqs_ui.setupUi(self.manage_prereqs_page)
+        self.manage_prereqs_controller = ManagePrerequisitesController(self.manage_prereqs_ui, self.admin, self.db)
 
     # -------------------------------
     # Switch the stacked widget to the page associated with the clicked button

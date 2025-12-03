@@ -158,7 +158,7 @@ QScrollBar:horizontal { height: 12px; }</string>
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-5</y>
+        <y>0</y>
         <width>479</width>
         <height>906</height>
        </rect>
@@ -534,13 +534,13 @@ QPushButton:disabled {
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>80</height>
+       <height>70</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
        <width>16777215</width>
-       <height>80</height>
+       <height>70</height>
       </size>
      </property>
      <property name="styleSheet">
@@ -554,7 +554,7 @@ QPushButton:disabled {
        <number>30</number>
       </property>
       <property name="topMargin">
-       <number>20</number>
+       <number>15</number>
       </property>
       <property name="rightMargin">
        <number>30</number>
@@ -576,7 +576,7 @@ QPushButton:disabled {
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="buttonCancel">
+       <widget class="QPushButton" name="buttonClose">
         <property name="minimumSize">
          <size>
           <width>120</width>
@@ -609,7 +609,7 @@ QPushButton:pressed {
 }</string>
         </property>
         <property name="text">
-         <string>Cancel</string>
+         <string>Close</string>
         </property>
        </widget>
       </item>

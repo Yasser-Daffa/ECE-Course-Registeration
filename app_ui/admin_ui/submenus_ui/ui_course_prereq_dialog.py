@@ -89,7 +89,7 @@ class Ui_CoursePrereqDialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollContent = QtWidgets.QWidget()
-        self.scrollContent.setGeometry(QtCore.QRect(0, -5, 479, 906))
+        self.scrollContent.setGeometry(QtCore.QRect(0, 0, 479, 906))
         self.scrollContent.setStyleSheet("background-color: #f5f7fa;")
         self.scrollContent.setObjectName("scrollContent")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.scrollContent)
@@ -332,20 +332,20 @@ class Ui_CoursePrereqDialog(object):
         self.scrollArea.setWidget(self.scrollContent)
         self.mainLayout.addWidget(self.scrollArea)
         self.footerFrame = QtWidgets.QFrame(parent=CoursePrereqDialog)
-        self.footerFrame.setMinimumSize(QtCore.QSize(0, 80))
-        self.footerFrame.setMaximumSize(QtCore.QSize(16777215, 80))
+        self.footerFrame.setMinimumSize(QtCore.QSize(0, 70))
+        self.footerFrame.setMaximumSize(QtCore.QSize(16777215, 70))
         self.footerFrame.setStyleSheet("background-color: white; border-top: 2px solid #e0e0e0;")
         self.footerFrame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.footerFrame.setObjectName("footerFrame")
         self.footerLayout = QtWidgets.QHBoxLayout(self.footerFrame)
-        self.footerLayout.setContentsMargins(30, 20, 30, 20)
+        self.footerLayout.setContentsMargins(30, 15, 30, 20)
         self.footerLayout.setObjectName("footerLayout")
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.footerLayout.addItem(spacerItem2)
-        self.buttonCancel = QtWidgets.QPushButton(parent=self.footerFrame)
-        self.buttonCancel.setMinimumSize(QtCore.QSize(120, 45))
-        self.buttonCancel.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.buttonCancel.setStyleSheet("QPushButton {\n"
+        self.buttonClose = QtWidgets.QPushButton(parent=self.footerFrame)
+        self.buttonClose.setMinimumSize(QtCore.QSize(120, 45))
+        self.buttonClose.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonClose.setStyleSheet("QPushButton {\n"
 "    background-color: #f8f9fa;\n"
 "    color: #5a6c7d;\n"
 "    border: 2px solid #e0e0e0;\n"
@@ -365,8 +365,8 @@ class Ui_CoursePrereqDialog(object):
 "    border-color: #f5576c;\n"
 "    color: #f5576c;\n"
 "}")
-        self.buttonCancel.setObjectName("buttonCancel")
-        self.footerLayout.addWidget(self.buttonCancel)
+        self.buttonClose.setObjectName("buttonClose")
+        self.footerLayout.addWidget(self.buttonClose)
         self.mainLayout.addWidget(self.footerFrame)
 
         self.retranslateUi(CoursePrereqDialog)
@@ -383,4 +383,4 @@ class Ui_CoursePrereqDialog(object):
         self.buttonRemove.setText(_translate("CoursePrereqDialog", "- Remove"))
         self.labelPrereqToAdd.setText(_translate("CoursePrereqDialog", "Prerequisites to add"))
         self.buttonAdd.setText(_translate("CoursePrereqDialog", "+ Add"))
-        self.buttonCancel.setText(_translate("CoursePrereqDialog", "Cancel"))
+        self.buttonClose.setText(_translate("CoursePrereqDialog", "Close"))

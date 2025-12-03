@@ -41,7 +41,7 @@ class CoursePrereqDialogController:
         self.ui.comboBoxSelectCourse.currentIndexChanged[int].connect(self.on_course_selected)
         self.ui.buttonAdd.clicked.connect(self.on_add_prereq)
         self.ui.buttonRemove.clicked.connect(self.on_remove_prereq)
-        self.ui.buttonCancel.clicked.connect(self.dialog.close)
+        self.ui.buttonClose.clicked.connect(self.dialog.close)
 
     # ----------------- COURSE SELECTION -----------------
     def on_course_selected(self, index: int):
