@@ -87,53 +87,36 @@ class AdminUtilities:
         return self.db.delete_prerequisite(course_code, prereq)
 
     # *****************************************************************************************************************
-    def admin_add_section(self,
-                          course_code,
-                          count,
-                          doctor_ids,
-                          days_list,
-                          start_times,
-                          end_times,
-                          rooms,
-                          capacities,
-                          semesters,
-                          states):
+    # ------------------- SECTIONS -------------------
+    def admin_add_section(
+        self,
+        course_code: str,
+        doctor_id: int | None,
+        days: str,
+        time_start: str,
+        time_end: str,
+        room: str,
+        capacity: int,
+        semester: str,
+        state: str = "open",
+    ) -> str:
         """
-        نفس كودك الأصلي بالضبط لكن يستقبل
-        قوائم (lists) بدل input لكل سكشن.
-
-        مثال من الـ GUI:
-        admin.admin_add_section(
-            course_code="EE201",
-            count=3,
-            doctor_ids=[1, 2, None],
-            days_list=["MW", "TR", "F"],
-            start_times=["08:00", "10:00", "12:00"],
-            end_times=["09:30", "11:30", "13:30"],
-            rooms=["B12", "C33", "A20"],
-            capacities=[40, 50, 35],
-            semesters=["241", "241", "241"],
-            states=["open", "open", "closed"]
+        يضيف سكشن واحد للكورس المحدد.
+        كل القيم تيجي جاهزة من الـ GUI (ما فيه input هنا).
+        """
+        msg = self.db.add_section(
+            course_code=course_code,
+            doctor_id=doctor_id,
+            days=days,
+            time_start=time_start,
+            time_end=time_end,
+            room=room,
+            capacity=capacity,
+            semester=semester,
+            state=state,
         )
-        """
+        return msg
 
-        results = []
-
-        for i in range(count):
-            msg = self.db.add_section(
-                course_code=course_code,
-                doctor_id=doctor_ids[i],
-                days=days_list[i],
-                time_start=start_times[i],
-                time_end=end_times[i],
-                room=rooms[i],
-                capacity=capacities[i],
-                semester=semesters[i],
-                state=states[i]
-            )
-            results.append(msg)
-
-        return results
 
     def admin_list_sections(self, course_code=None, semester=None):
         rows = self.db.list_sections(course_code=course_code, semester=semester)
