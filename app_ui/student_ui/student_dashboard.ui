@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Admin Dashboard - ECE Registration System</string>
+   <string>Student Dashboard - ECE Registration System</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow { background-color: #f5f7fa; }</string>
@@ -93,7 +93,17 @@
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true">background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #f093fb, stop:1 #f5576c);</string>
+          <string notr="true">/* ===== Background Gradient ===== */
+QWidget {
+    background: qlineargradient(
+        x1: 0, y1: 0,
+        x2: 1, y2: 1,
+        stop: 0 #667EEA,   /* start color */
+        stop: 1 #764BA2    /* end color */
+    );
+    font-family: &quot;Segoe UI&quot;;
+}
+</string>
          </property>
          <layout class="QVBoxLayout" name="headerLayout">
           <property name="spacing">
@@ -131,7 +141,7 @@
                <string notr="true">background-color: white; border-radius: 15px; font-size: 34px;</string>
               </property>
               <property name="text">
-               <string>🛠️</string>
+               <string>🎓</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -149,7 +159,7 @@
                  <string notr="true">color: white; font-size: 23px; font-weight: 800; background: transparent;</string>
                 </property>
                 <property name="text">
-                 <string>Admin Panel</string>
+                 <string>Student Panel</string>
                 </property>
                </widget>
               </item>
@@ -244,7 +254,7 @@ background: transparent;
 border: transparent</string>
                  </property>
                  <property name="text">
-                  <string>Admin User</string>
+                  <string>Student User</string>
                  </property>
                 </widget>
                </item>
@@ -264,7 +274,7 @@ background: transparent;
 border: transparent</string>
                  </property>
                  <property name="text">
-                  <string>Administrator</string>
+                  <string>Student</string>
                  </property>
                 </widget>
                </item>
@@ -322,13 +332,14 @@ background-color: transparent</string>
                </property>
                <property name="styleSheet">
                 <string notr="true">background-color: white;
-color: #f5576c;
+color: #5a4fff;   /* vibrant purple-blue */
 border-radius: 30px;
 font-size: 26px;
-font-weight: 900;</string>
+font-weight: 900;
+</string>
                </property>
                <property name="text">
-                <string>AD</string>
+                <string>ST</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -408,9 +419,9 @@ QScrollBar::sub-page:vertical {
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>-330</y>
+            <y>-197</y>
             <width>284</width>
-            <height>795</height>
+            <height>719</height>
            </rect>
           </property>
           <property name="styleSheet">
@@ -548,7 +559,7 @@ QPushButton:pressed {
 </string>
              </property>
              <property name="text">
-              <string>👥  All Students (205)</string>
+              <string>📅 Current Schedule</string>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -601,71 +612,7 @@ QPushButton:pressed {
 </string>
              </property>
              <property name="text">
-              <string>⏳  Pending Requests (12)</string>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <attribute name="buttonGroup">
-              <string notr="true">buttonGroupSubmenus</string>
-             </attribute>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="buttonManageFaculty">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>48</height>
-              </size>
-             </property>
-             <property name="cursor">
-              <cursorShape>PointingHandCursor</cursorShape>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">QPushButton {
-    background-color: transparent;
-    border: none;
-    border-radius: 10px;
-    color: #5a6c7d;
-    font-size: 14px;
-    text-align: left;
-    padding-left: 15px;
-}
-
-QPushButton:hover {
-    background-color: #f8f9fa;
-    color: #f5576c;
-}
-
-/* CHECKED / TOGGLED STATE */
-QPushButton:checked {
-    background-color: rgba(245, 87, 108, 0.10);  /* faint pink */
-    color: #f5576c; 
-    font-weight: bold;
-    border-left: 4px solid #f5576c;
-    padding-left: 11px; /* adjust so bar doesn’t push content too far */
-}
-
-/* PRESSED STATE */
-QPushButton:pressed {
-    background-color: rgba(245, 87, 108, 0.18);
-}
-
-/* DISABLED STATE */
-QPushButton:disabled {
-    background-color: transparent;
-    color: #a0a0a0;        /* muted grey for disabled */
-    border-left: none;      /* remove left bar if present */
-    font-weight: normal;    /* remove bold */
-}
-</string>
-             </property>
-             <property name="text">
-              <string>👨‍🏫  Manage Faculty -WIP-</string>
+              <string> 📝 Register Courses </string>
              </property>
              <property name="checkable">
               <bool>true</bool>
