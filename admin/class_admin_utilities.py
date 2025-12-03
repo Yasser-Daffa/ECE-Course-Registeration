@@ -21,7 +21,7 @@ class AdminUtilities:
         self.db = db
 
 
-    # ========================= ADD COURSE =========================
+    # ------------------- COURSES -------------------
     def add_course(self, code: str, name: str, credits: int) -> str:
         """
         Adds a new course to the database.
@@ -30,7 +30,6 @@ class AdminUtilities:
         msg = self.db.AddCourse(code, name, credits)
         return msg
 
-    # ========================= UPDATE COURSE =========================
     def update_course(
         self,
         current_code: str,
@@ -50,7 +49,6 @@ class AdminUtilities:
         )
         return msg
 
-    # ========================= DELETE COURSE =========================
     def delete_course(self, code: str) -> str:
         """
         Deletes a course by code.
@@ -59,99 +57,34 @@ class AdminUtilities:
         msg = self.db.DeleteCourse(code)
         return msg
 
-    # ========================= LIST COURSES =========================
     def list_courses(self):
         """
         Returns a list of courses: (code, name, credits)
         """
         return self.db.ListCourses()
+    
 
-    # ***************************************************************************************************
-    def admin_add_prerequisite(self):
-        courses = self.db.list_courses()
-        for code, name, credits in courses:
-            print(code, name, credits)
+    # ------------------- PREREQUISITES -------------------
+    def add_prerequisites(self, course_code: str, prereq_list: list[str]) -> list[str]:
+        """
+        Add multiple prerequisites for a course.
+        Returns a list of DB messages for each addition.
+        """
+        results = []
+        for prereq in prereq_list:
+            msg = self.db.add_prerequisite(course_code, prereq)
+            results.append(msg)
+        return results
+    
+    def list_prerequisites(self, course_code: str) -> list[str]:
+        # The database utility already returns a clean list of codes
+        return self.db.list_prerequisites(course_code)
 
-        originalcourse = input("enter course code: ")
-        tims = input("enter how many requires course for this course:")
-        for i in range(int(tims)):
-            requires = input("enter requires course code: ")
-            m = self.db.add_prerequisite(originalcourse, requires)
-            print(m)
+    def update_prerequisite(self, course_code: str, old: str, new: str) -> str:
+        return self.db.update_prerequisite(course_code, old, new)
 
-    def admin_list_requires(self):
-        courses = self.db.list_courses()
-        for code, name, credits in courses:
-            print(code, name, credits)
-
-        course_code = input("Enter course code to show its prerequisites: ").strip()
-
-        rows = self.db.list_requires(course_code)
-
-        if not rows:
-            print("This course has no prerequisites.")
-        else:
-            print(f"Prerequisites for {course_code}:")
-            for (prereq_code,) in rows:
-                print("-", prereq_code)
-
-    def admin_update_requires(self):
-        # نعرض كل المواد الموجودة عشان المستخدم يعرف الكود اللي يبغى يعدّل شروطه
-        courses = self.db.list_courses()
-        for code, name, credits in courses:
-            print(code, name, credits)
-
-        # نطلب من المستخدم كود المادة اللي بيعدّل شروطها
-        course_code = input("Enter course code: ").strip()
-
-        # نعرض الشروط المسبقة الحالية للمادة
-        print("\nCurrent prerequisites:")
-        rows = self.db.list_requires(course_code)
-        for (r,) in rows:
-            print("-", r)
-
-        # نطلب من المستخدم الشرط القديم اللي يبغى يغيّره
-        old = input("Enter old prerequisite to change: ").strip()
-
-        # نطلب الشرط الجديد اللي بنحطّه بدل القديم
-        new = input("Enter new prerequisite: ").strip()
-
-        # نستخدم دالة قاعدة البيانات لتحديث الشرط
-        msg = self.db.update_requires(course_code, old, new)
-
-        # نعرض النتيجة النهائية (نجحت/فشلت)
-        print(msg)
-
-    def admin_delete_requires(self):
-        # أول شي: نعرض كل المواد عشان المستخدم يعرف الكود اللي يبغى يحذف منه
-        courses = self.db.list_courses()
-        for code, name, credits in courses:
-            print(code, name, credits)
-
-        # نطلب من المستخدم كود المادة اللي نبي نحذف من شروطها المسبقة
-        course_code = input("Enter course code: ").strip()
-
-        # نجيب كل الـ prerequisites للمادة
-        rows = self.db.list_requires(course_code)
-
-        # لو ما عندها أي شرط مسبق → نطلع رسالة ونوقف
-        if not rows:
-            print("This course has no prerequisites.")
-            return
-
-        # نعرض كل الشروط المسبقة حق المادة
-        print("\nPrerequisites:")
-        for (r,) in rows:
-            print("-", r)
-
-        # نطلب من المستخدم أي شرط مسبق يبغى يحذفه
-        prereq = input("Enter prerequisite to delete: ").strip()
-
-        # نحذف الشرط باستخدام دالة قاعدة البيانات
-        msg = self.db.delete_requires(course_code, prereq)
-
-        # نعرض النتيجة
-        print(msg)
+    def delete_prerequisite(self, course_code: str, prereq: str) -> str:
+        return self.db.delete_prerequisite(course_code, prereq)
 
     # *****************************************************************************************************************
     def admin_add_section(self,

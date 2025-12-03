@@ -730,7 +730,7 @@ class CodeGenerator:
 # Timer class for line edits
 # -----------------------------
 
-
+#CLASS IS UNUSED SO FAR
 class CodeTimerMixin:
     """
     Mixin that provides:
@@ -792,3 +792,51 @@ class CodeTimerMixin:
             self.timer.stop()
             self.labelTimer.setText("You can request a new code now.")
             self.buttonReSendCode.setEnabled(True)
+
+
+# -----------------------------
+# Custom show_message box as the defaul QMessageBox doesnt work well with windows dark mode
+# -----------------------------
+from PyQt6.QtGui import QPalette, QColor
+
+# Import icons for easier usage
+Warning = QMessageBox.Icon.Warning
+Information = QMessageBox.Icon.Information
+Critical = QMessageBox.Icon.Critical
+
+def show_msg(parent, title, text, icon=Information):
+    msg = QMessageBox(parent)
+    msg.setWindowTitle(title)
+    msg.setText(text)
+    msg.setIcon(icon)
+    msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+
+    # Force colors: white bg, black text
+    palette = msg.palette()
+    palette.setColor(QPalette.ColorRole.Window, QColor("white"))
+    palette.setColor(QPalette.ColorRole.WindowText, QColor("black"))
+    msg.setPalette(palette)
+    msg.setStyleSheet("QLabel{color: black;} QPushButton{background-color: white; color: black;}")
+
+    msg.exec()
+
+#Example usage
+# 
+# show_msg(self.dialog, "Error", "Please select a course first.", icon=Warning)
+#
+
+
+# ------------------- EASY-TO-USE FUNCTIONS *instead of the one above use these -------------------
+def warning(parent, text):
+    show_msg(parent, "Warning", text, QMessageBox.Icon.Warning)
+
+def info(parent, text):
+    show_msg(parent, "Info", text, QMessageBox.Icon.Information)
+
+def error(parent, text):
+    show_msg(parent, "Error", text, QMessageBox.Icon.Critical)
+
+
+# Example usage
+#if not self.selected_course:
+#    warning(self.dialog, "Please select a course first.")

@@ -2,7 +2,7 @@ import random  # نحتاجه للأكواد العشوائية
 
 import sqlite3
 
-con = sqlite3.connect("../university_database.db")
+con = sqlite3.connect("../../university_database.db")
 cur = con.cursor()
 cur.execute("PRAGMA foreign_keys = ON;")
 
@@ -87,12 +87,15 @@ class DatabaseUtilities:
         return "Course deleted successfully"
 
     # *********************************************************************************
-    def ListRequires(self, course_code):
+    def list_prerequisites(self, course_code):
+        """Return a list of prerequisite codes for a given course."""
         self.cur.execute(
-            "select prereq_code from requires where course_code = ? order by prereq_code", (course_code,))
-        return self.cur.fetchall()
+            "SELECT prereq_code FROM requires WHERE course_code=? ORDER BY prereq_code",
+            (course_code,)
+        )
+        return [t[0] for t in self.cur.fetchall()]  # flatten tuples
 
-    def AddPrerequisite(self, course_code, prereq_code):
+    def add_prerequisite(self, course_code, prereq_code):
 
         try:
             self.cur.execute("INSERT INTO requires(course_code, prereq_code) VALUES(?, ?)", (course_code, prereq_code))
@@ -104,31 +107,22 @@ class DatabaseUtilities:
 
     # 9/14
 
-    def UpdateRequires(self, course_code, old_prereq, new_prereq):
-        """ يعدّل شرطًا مسبقًا (Prerequisite) لمادة معينة.
-             المعاملات:
-             - course_code : كود المادة الأساسية (مثال: 'EE201')
-             - old_prereq  : المادة المسبق القديم الذي نريد تغييره
-             - new_prereq  : المادة المسبق الجديد الذي نريد وضعه بدلاً من القديم """
 
-        # نغيّر الـ prereq_code من old_prereq → new_prereq
-        # بشرط أن يكون السطر تابعًا لنفس course_code
-        self.cur.execute("UPDATE requires SET prereq_code=? WHERE course_code=? AND prereq_code=?",
-                         (new_prereq, course_code, old_prereq))
+    def update_prerequisite(self, course_code, old_prereq, new_prereq):
+        """Update a prerequisite code for a course."""
+        self.cur.execute(
+            "UPDATE requires SET prereq_code=? WHERE course_code=? AND prereq_code=?",
+            (new_prereq, course_code, old_prereq)
+        )
         self.commit()
         return "Prerequisite updated successfully"
 
-    def DeleteRequires(self, course_code, prereq_code):
-        """ يحذف شرطًا مسبقًا (Prerequisite) محدد لمادة معينة.
-        المعاملات:
-        - course_code: كود المادة الأساسية (مثال: EE201)
-        - prereq_code: كود المادة المطلوبة كشرط مسبق (مثال: EE101)
-        """
-        # تنفيذ أمر الحذف باستخدام الشرطين:
-        # 1) course_code  → المادة نفسها
-        # 2) prereq_code  → المادة المطلوبة كـ prerequisite
-
-        self.cur.execute("DELETE FROM requires WHERE course_code=? AND prereq_code=?", (course_code, prereq_code))
+    def delete_prerequisite(self, course_code, prereq_code):
+        """Delete a specific prerequisite from a course."""
+        self.cur.execute(
+            "DELETE FROM requires WHERE course_code=? AND prereq_code=?",
+            (course_code, prereq_code)
+        )
         self.commit()
         return "Prerequisite deleted successfully"
     #********************************************************************************************************************
