@@ -41,7 +41,6 @@ class ManageSectionsWidget(QWidget):
         # نخزن كل السكاشن هنا (list of dicts) عشان الفلترة والبحث
         self._all_rows_cache = []
 
-
         # ربط الأزرار
         self.ui.buttonRefresh.clicked.connect(self.handle_refresh)
 
@@ -71,7 +70,6 @@ class ManageSectionsWidget(QWidget):
         # نخلي أول عمود حق الـ SELECT عريض شوي عشان يبان الصح
         header.resizeSection(0, 70)
 
-
     # ------------------------ جلب البيانات من الداتا بيس ------------------------
 
     def load_sections(self):
@@ -94,17 +92,17 @@ class ManageSectionsWidget(QWidget):
 
         rows = []
         for (
-            section_id,
-            course_code,
-            doctor_id,
-            days,
-            time_start,
-            time_end,
-            room,
-            capacity,
-            enrolled,
-            semester,
-            state,
+                section_id,
+                course_code,
+                doctor_id,
+                days,
+                time_start,
+                time_end,
+                room,
+                capacity,
+                enrolled,
+                semester,
+                state,
         ) in result:
             rows.append(
                 {
@@ -131,7 +129,7 @@ class ManageSectionsWidget(QWidget):
                      "refreshing",
                      interval=400,
                      duration=2000,
-                     on_finished= self.load_sections)
+                     on_finished=self.load_sections)
 
         self.animate(self.ui.labelOpenSectionsCount,
                      "refreshing",
@@ -150,8 +148,6 @@ class ManageSectionsWidget(QWidget):
                      interval=400,
                      duration=2000,
                      on_finished=self.load_sections)
-
-
 
     # ------------------------ كروت الإحصائيات فوق ------------------------
 
@@ -359,9 +355,6 @@ class ManageSectionsWidget(QWidget):
             self.ui.buttonRemoveSelected.setText("Remove All")
             self.ui.buttonRemoveSelected.setEnabled(bool(self._all_rows_cache))
 
-
-        
-
     # ------------------------ زر Add Section (حاليا مجرد رسالة) ------------------------
 
     # ------------------------ زر Add Section (يفتح نافذة الإضافة فعلياً) ------------------------
@@ -374,8 +367,6 @@ class ManageSectionsWidget(QWidget):
         if dlg.exec():
             # نعيد تحميل السكاشن من الداتا بيس ونحدث الجدول + الإحصائيات
             self.load_sections()
-
-
 
 
 # =============================== MAIN للتجربة ===============================
