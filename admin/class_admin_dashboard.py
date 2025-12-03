@@ -24,6 +24,9 @@ from admin.submenus.class_manage_courses import ManageCoursesController
 from app_ui.admin_ui.submenus_ui.ui_manage_prereq import Ui_ManagePrereqs
 from admin.submenus.class_manage_prereqs import ManagePrerequisitesController
 
+from app_ui.admin_ui.submenus_ui.ui_manage_sections import Ui_ManageSections
+from admin.submenus.class_manage_sections import ManageSectionsWidget
+
 class AdminDashboard(QtWidgets.QMainWindow):
     """
     Main admin dashboard window.
@@ -54,6 +57,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.ui.stackedWidget.addWidget(self.pending_requests_page)
         self.ui.stackedWidget.addWidget(self.manage_courses_page)
         self.ui.stackedWidget.addWidget(self.manage_prereqs_page)
+        self.ui.stackedWidget.addWidget(self.manage_sections_controller)
         # Add other pages similarly...
 
 
@@ -69,7 +73,8 @@ class AdminDashboard(QtWidgets.QMainWindow):
             self.ui.buttonAllStudents: ("All Students", self.all_students_page),
             self.ui.buttonPendingRequests: ("Pending Requests", self.pending_requests_page),
             self.ui.buttonManageCourses: ("Manage Courses", self.manage_courses_page),
-            self.ui.buttonManagePrereqs: ("Manage Prereqs", self.manage_prereqs_page)
+            self.ui.buttonManagePrereqs: ("Manage Prereqs", self.manage_prereqs_page),
+            self.ui.buttonManageSections: ("Manage Prereqs", self.manage_sections_controller)
         }
 
         # Connect buttons to page-switching logic
@@ -77,7 +82,9 @@ class AdminDashboard(QtWidgets.QMainWindow):
             button.clicked.connect(lambda checked, b=button: self.switch_to_page(b))
 
         # Show default page (should be profile first)
-        # self.switch_to_page(self.ui.buttonProfile)
+        self.switch_to_page(self.ui.buttonProfile)
+        # Disable manage faculty button do to it not being implemented yet
+        self.ui.buttonManageFaculty.setEnabled(False)
 
     # -------------------------------
     # Initialize all sub-pages
@@ -100,6 +107,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.all_students_page = QtWidgets.QWidget()
         self.all_students_ui = Ui_AllStudents()
         self.all_students_ui.setupUi(self.all_students_page)
+        # Uses direct database_utilities access
         self.all_students_controller = AllStudentsController(self.all_students_ui, self.db)
 
         # -------------------------------
@@ -108,6 +116,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.pending_requests_page = QtWidgets.QWidget()
         self.pending_requests_ui = Ui_PendingRequestsWidget()
         self.pending_requests_ui.setupUi(self.pending_requests_page)
+        # Uses direct database_utilities access
         self.pending_requests_controller = PendingRequestsController(self.pending_requests_ui, self.db)
 
         # -------------------------------
@@ -116,6 +125,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.manage_courses_page = QtWidgets.QWidget()
         self.manage_courses_ui = Ui_ManageCourses()
         self.manage_courses_ui.setupUi(self.manage_courses_page)
+        # Uses direct database_utilities access
         self.manage_courses_controller = ManageCoursesController(self.manage_courses_ui, self.db)
 
         # -------------------------------
@@ -124,7 +134,16 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.manage_prereqs_page = QtWidgets.QWidget()
         self.manage_prereqs_ui = Ui_ManagePrereqs()
         self.manage_prereqs_ui.setupUi(self.manage_prereqs_page)
+        # Uses admin_utilities and direct database_utilites
         self.manage_prereqs_controller = ManagePrerequisitesController(self.manage_prereqs_ui, self.admin, self.db)
+
+        # -------------------------------
+        # Manage sections
+        # -------------------------------
+
+        # no need for all the extra junk since this page sets up its own ui internally. thanks to salem :)
+        self.manage_sections_controller = ManageSectionsWidget(self.admin)
+        self.ui.stackedWidget.addWidget(self.manage_sections_controller)
 
     # -------------------------------
     # Switch the stacked widget to the page associated with the clicked button

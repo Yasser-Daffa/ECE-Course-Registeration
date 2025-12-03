@@ -12,7 +12,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_AdminDashboard(object):
     def setupUi(self, AdminDashboard):
         AdminDashboard.setObjectName("AdminDashboard")
-        AdminDashboard.resize(1000, 600)
+        AdminDashboard.resize(1100, 650)
         AdminDashboard.setMinimumSize(QtCore.QSize(1000, 600))
         AdminDashboard.setStyleSheet("QMainWindow { background-color: #f5f7fa; }")
         self.centralwidget = QtWidgets.QWidget(parent=AdminDashboard)
@@ -176,7 +176,7 @@ class Ui_AdminDashboard(object):
         self.navScrollArea.setWidgetResizable(True)
         self.navScrollArea.setObjectName("navScrollArea")
         self.navScrollContent = QtWidgets.QWidget()
-        self.navScrollContent.setGeometry(QtCore.QRect(0, 0, 284, 795))
+        self.navScrollContent.setGeometry(QtCore.QRect(0, -330, 284, 795))
         self.navScrollContent.setStyleSheet("background-color: white;")
         self.navScrollContent.setObjectName("navScrollContent")
         self.navMainLayout = QtWidgets.QVBoxLayout(self.navScrollContent)
@@ -302,6 +302,7 @@ class Ui_AdminDashboard(object):
         self.buttonGroupSubmenus.addButton(self.buttonPendingRequests)
         self.navMainLayout.addWidget(self.buttonPendingRequests)
         self.buttonManageFaculty = QtWidgets.QPushButton(parent=self.navScrollContent)
+        self.buttonManageFaculty.setEnabled(False)
         self.buttonManageFaculty.setMinimumSize(QtCore.QSize(0, 48))
         self.buttonManageFaculty.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         self.buttonManageFaculty.setStyleSheet("QPushButton {\n"
@@ -328,9 +329,17 @@ class Ui_AdminDashboard(object):
 "    padding-left: 11px; /* adjust so bar doesn’t push content too far */\n"
 "}\n"
 "\n"
-"/* PRESSED STATE (optional but clean) */\n"
+"/* PRESSED STATE */\n"
 "QPushButton:pressed {\n"
 "    background-color: rgba(245, 87, 108, 0.18);\n"
+"}\n"
+"\n"
+"/* DISABLED STATE */\n"
+"QPushButton:disabled {\n"
+"    background-color: transparent;\n"
+"    color: #a0a0a0;        /* muted grey for disabled */\n"
+"    border-left: none;      /* remove left bar if present */\n"
+"    font-weight: normal;    /* remove bold */\n"
 "}\n"
 "")
         self.buttonManageFaculty.setCheckable(True)
@@ -411,6 +420,7 @@ class Ui_AdminDashboard(object):
 "")
         self.buttonManagePrereqs.setCheckable(True)
         self.buttonManagePrereqs.setObjectName("buttonManagePrereqs")
+        self.buttonGroupSubmenus.addButton(self.buttonManagePrereqs)
         self.navMainLayout.addWidget(self.buttonManagePrereqs)
         self.buttonManageSections = QtWidgets.QPushButton(parent=self.navScrollContent)
         self.buttonManageSections.setMinimumSize(QtCore.QSize(0, 48))
@@ -615,7 +625,7 @@ class Ui_AdminDashboard(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 678, 488))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 778, 538))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
