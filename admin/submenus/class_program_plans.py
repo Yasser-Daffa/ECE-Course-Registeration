@@ -11,14 +11,14 @@ from PyQt6.QtCore import Qt
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
-from app_ui.admin_ui.submenus_ui.ui_program_plans import Ui_RegisterCourses
+from app_ui.admin_ui.submenus_ui.ui_program_plans import Ui_ProgramPlans
 from admin.class_admin_utilities import admin
 
 
 class ProgramPlansWidget(QWidget):
     def __init__(self, admin_utils, parent=None):
         super().__init__(parent)
-        self.ui = Ui_RegisterCourses()
+        self.ui = Ui_ProgramPlans()
         self.ui.setupUi(self)
 
         self.admin_utils = admin_utils
