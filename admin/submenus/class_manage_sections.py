@@ -14,7 +14,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.
 
 # واجهة المانج سكاشن اللي صدّرتها من Qt Designer
 from app_ui.admin_ui.submenus_ui.ui_manage_sections import Ui_ManageSections
-from class_add_sections import AddSectionDialog
+from admin.submenus.class_add_sections import AddSectionDialog
 
 # كائن الأدمن الجاهز
 from admin.class_admin_utilities import admin

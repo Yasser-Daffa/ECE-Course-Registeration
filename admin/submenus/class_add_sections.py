@@ -47,7 +47,7 @@ class AddSectionDialog(QDialog, BaseLoginForm):
         self.ui.buttonAdd.clicked.connect(self.on_add_clicked)
         self.ui.buttonCancel.clicked.connect(self.reject)
 
-        # فاليديشن للحقول النصية المهمة
+        # فاليديشن للحقول النصية المهمة (الهز + تغيير البوردر لو حبيت تستخدمها)
         self.attach_non_empty_validator(self.ui.lineEditBuilding, "Building")
         self.attach_non_empty_validator(self.ui.lineEditRoom, "Room")
 
@@ -58,6 +58,13 @@ class AddSectionDialog(QDialog, BaseLoginForm):
         self.ui.lineEditBuilding.textChanged.connect(self.check_all_fields_filled)
         self.ui.lineEditRoom.textChanged.connect(self.check_all_fields_filled)
         self.ui.spinBoxCapacity.valueChanged.connect(self.check_all_fields_filled)
+
+        # أزرار الأيام برضه تؤثر على تفعيل الزر
+        self.ui.pushButtonDaySun.toggled.connect(self.check_all_fields_filled)
+        self.ui.pushButtonDayMon.toggled.connect(self.check_all_fields_filled)
+        self.ui.pushButtonDayTue.toggled.connect(self.check_all_fields_filled)
+        self.ui.pushButtonDayWed.toggled.connect(self.check_all_fields_filled)
+        self.ui.pushButtonDayThu.toggled.connect(self.check_all_fields_filled)
 
         # تشيك أولي
         self.check_all_fields_filled()
@@ -73,7 +80,7 @@ class AddSectionDialog(QDialog, BaseLoginForm):
         self.ui.comboBoxSelectCourse.addItem("Select a course.", None)
 
         # نستخدم الداتا بيس من داخل الأدمن
-        rows = self.admin_utils.db.ListCourses()  # (code, name, credits)
+        rows = self.admin_utils.db.ListCourses()  # [(code, name, credits), ...]
 
         for code, name, credits in rows:
             display = f"{code} - {name}"
@@ -89,6 +96,7 @@ class AddSectionDialog(QDialog, BaseLoginForm):
         - Status مختار
         - Building / Room
         - Capacity > 0
+        - على الأقل يوم واحد مختار
         """
         course_ok = self.ui.comboBoxSelectCourse.currentIndex() > 0
         term_ok = self.ui.comboBoxSelectTerm.currentIndex() > 0
@@ -98,7 +106,15 @@ class AddSectionDialog(QDialog, BaseLoginForm):
         room = self.ui.lineEditRoom.text().strip()
         capacity_ok = self.ui.spinBoxCapacity.value() > 0
 
-        if course_ok and term_ok and status_ok and building and room and capacity_ok:
+        days_ok = any([
+            self.ui.pushButtonDaySun.isChecked(),
+            self.ui.pushButtonDayMon.isChecked(),
+            self.ui.pushButtonDayTue.isChecked(),
+            self.ui.pushButtonDayWed.isChecked(),
+            self.ui.pushButtonDayThu.isChecked(),
+        ])
+
+        if course_ok and term_ok and status_ok and building and room and capacity_ok and days_ok:
             self.ui.buttonAdd.setEnabled(True)
         else:
             self.ui.buttonAdd.setEnabled(False)
@@ -178,63 +194,28 @@ class AddSectionDialog(QDialog, BaseLoginForm):
     def on_add_clicked(self):
         """
         يقرأ كل الحقول ويستدعي db.add_section عن طريق admin_utils.db
+        ملاحظة: نفترض أن check_all_fields_filled ضمنّت أن الحقول الأساسية صحيحة.
         """
+
         # ---- الكورس ----
-        course_index = self.ui.comboBoxSelectCourse.currentIndex()
         course_code = self.ui.comboBoxSelectCourse.currentData()
 
-        if course_index <= 0 or not course_code:
-            self.show_error("Please select a course.")
-            return
-
         # ---- الترم (السمستر) ----
-        term_index = self.ui.comboBoxSelectTerm.currentIndex()
-        if term_index <= 0:
-            self.show_error("Please select a semester.")
-            return
         semester = self.ui.comboBoxSelectTerm.currentText().strip()
 
         # ---- الحالة (state) ----
-        status_index = self.ui.comboBoxSelectStatus.currentIndex()
-        if status_index <= 0:
-            self.show_error("Please select section status.")
-            return
         state = self.ui.comboBoxSelectStatus.currentText().strip().lower()
 
         # ---- المبنى والغرفة ----
         building = self.ui.lineEditBuilding.text().strip().upper()
         room = self.ui.lineEditRoom.text().strip().upper()
-
-        # نرجّع البوردر للوضع الطبيعي
-        self.reset_lineedit_border(self.ui.lineEditBuilding)
-        self.reset_lineedit_border(self.ui.lineEditRoom)
-
-        if not building:
-            self.highlight_invalid_lineedit(self.ui.lineEditBuilding, "Building is required.")
-            self.shake_widget(self.ui.lineEditBuilding)
-            self.show_error("Please enter building.")
-            return
-
-        if not room:
-            self.highlight_invalid_lineedit(self.ui.lineEditRoom, "Room is required.")
-            self.shake_widget(self.ui.lineEditRoom)
-            self.show_error("Please enter room.")
-            return
-
-        # ممكن نخزنهم بهذا الشكل مثلاً: B40-A170 أو بس B40A170
         full_room = f"{building}{room}"
 
         # ---- السعة ----
         capacity = self.ui.spinBoxCapacity.value()
-        if capacity <= 0:
-            self.show_error("Capacity must be greater than 0.")
-            return
 
         # ---- الأيام ----
         days = self.get_selected_days()
-        if not days:
-            self.show_error("Please select at least one day.")
-            return
 
         # ---- الوقت ----
         start_qtime = self.ui.timeEditFrom.time()
@@ -243,6 +224,7 @@ class AddSectionDialog(QDialog, BaseLoginForm):
         time_start = start_qtime.toString("HH:mm")
         time_end = end_qtime.toString("HH:mm")
 
+        # الشرط المنطقي المهم: وقت النهاية بعد وقت البداية
         if end_qtime <= start_qtime:
             self.show_error("End time must be after start time.")
             return
@@ -251,11 +233,10 @@ class AddSectionDialog(QDialog, BaseLoginForm):
         doctor_id = None
         if self.ui.comboBoxSelectInstructor.currentIndex() > 0:
             data = self.ui.comboBoxSelectInstructor.currentData()
-            if data is not None:
-                try:
-                    doctor_id = int(data)
-                except (TypeError, ValueError):
-                    doctor_id = None
+            try:
+                doctor_id = int(data) if data is not None else None
+            except (TypeError, ValueError):
+                doctor_id = None
 
         # ===== استدعاء دالة إضافة السكشن في الداتا بيس =====
         try:

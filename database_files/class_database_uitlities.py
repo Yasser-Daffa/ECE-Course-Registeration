@@ -17,7 +17,7 @@ class DatabaseUtilities:
         self.con.commit()
 
     def AddCourse(self, code, name, credits):
-        """
+        """             #math 110   #dddd    -3
         تضيف مادة جديدة إلى قاعدة البيانات.
 
         المعاملات:
