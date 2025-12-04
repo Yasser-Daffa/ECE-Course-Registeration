@@ -605,7 +605,7 @@ QPushButton:disabled {
 }</string>
            </property>
            <property name="text">
-            <string>➕ Add New Course</string>
+            <string>➕ Add New Course (to plan)</string>
            </property>
           </widget>
          </item>
@@ -647,7 +647,7 @@ QPushButton:disabled {
 }</string>
            </property>
            <property name="text">
-            <string>❌ Remove Course</string>
+            <string>❌ Remove Course (from plan)</string>
            </property>
           </widget>
          </item>
@@ -786,6 +786,9 @@ QScrollBar:horizontal { height: 12px; }
         <property name="selectionMode">
          <enum>QAbstractItemView::SelectionMode::ContiguousSelection</enum>
         </property>
+        <property name="selectionBehavior">
+         <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+        </property>
         <property name="cornerButtonEnabled">
          <bool>true</bool>
         </property>
@@ -826,11 +829,6 @@ QScrollBar:horizontal { height: 12px; }
         <column>
          <property name="text">
           <string>PREREQUISITES</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>ACTION</string>
          </property>
         </column>
        </widget>
