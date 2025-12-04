@@ -233,90 +233,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QFrame" name="fullSectionsFrame">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>140</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>200</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: white; border-radius: 12px; border-top: 4px solid #ffa647;</string>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::Shape::StyledPanel</enum>
-       </property>
-       <layout class="QVBoxLayout" name="fullSectionsLayout">
-        <property name="spacing">
-         <number>10</number>
-        </property>
-        <property name="leftMargin">
-         <number>20</number>
-        </property>
-        <property name="topMargin">
-         <number>20</number>
-        </property>
-        <property name="rightMargin">
-         <number>20</number>
-        </property>
-        <property name="bottomMargin">
-         <number>20</number>
-        </property>
-        <item>
-         <widget class="QLabel" name="fullSectionsIcon">
-          <property name="minimumSize">
-           <size>
-            <width>45</width>
-            <height>45</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>45</width>
-            <height>45</height>
-           </size>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">background-color: #fff3e0; border-radius: 10px; font-size: 22px;</string>
-          </property>
-          <property name="text">
-           <string>🔒</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="labelFullSectionsCount">
-          <property name="styleSheet">
-           <string notr="true">font-size: 26px; font-weight: bold; color: #2c3e50; background: transparent;</string>
-          </property>
-          <property name="text">
-           <string>18</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="labelFullSections">
-          <property name="styleSheet">
-           <string notr="true">font-size: 13px; color: #7f8c8d; background: transparent;</string>
-          </property>
-          <property name="text">
-           <string>Full Sections</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
       <widget class="QFrame" name="closedSectionsFrame">
        <property name="minimumSize">
         <size>
@@ -331,7 +247,7 @@
         </size>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: white; border-radius: 12px; border-top: 4px solid #f093fb;</string>
+        <string notr="true">background-color: white; border-radius: 12px; border-top: 4px solid #ffa647;</string>
        </property>
        <property name="frameShape">
         <enum>QFrame::Shape::StyledPanel</enum>
@@ -367,10 +283,10 @@
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">background-color: #fce4ec; border-radius: 10px; font-size: 22px;</string>
+           <string notr="true">background-color: #fff3e0; border-radius: 10px; font-size: 22px;</string>
           </property>
           <property name="text">
-           <string>❌</string>
+           <string>🔒</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -394,6 +310,90 @@
           </property>
           <property name="text">
            <string>Closed Sections</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QFrame" name="fullSectionsFrame">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>140</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: white; border-radius: 12px; border-top: 4px solid #f093fb;</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Shape::StyledPanel</enum>
+       </property>
+       <layout class="QVBoxLayout" name="fullSectionsLayout">
+        <property name="spacing">
+         <number>10</number>
+        </property>
+        <property name="leftMargin">
+         <number>20</number>
+        </property>
+        <property name="topMargin">
+         <number>20</number>
+        </property>
+        <property name="rightMargin">
+         <number>20</number>
+        </property>
+        <property name="bottomMargin">
+         <number>20</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="fullSectionsIcon">
+          <property name="minimumSize">
+           <size>
+            <width>45</width>
+            <height>45</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>45</width>
+            <height>45</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: #fce4ec; border-radius: 10px; font-size: 22px;</string>
+          </property>
+          <property name="text">
+           <string>💯</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="labelFullSectionsCount">
+          <property name="styleSheet">
+           <string notr="true">font-size: 26px; font-weight: bold; color: #2c3e50; background: transparent;</string>
+          </property>
+          <property name="text">
+           <string>18</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="labelFullSections">
+          <property name="styleSheet">
+           <string notr="true">font-size: 13px; color: #7f8c8d; background: transparent;</string>
+          </property>
+          <property name="text">
+           <string>Full Sections</string>
           </property>
          </widget>
         </item>
@@ -697,29 +697,12 @@ QComboBox[error=&quot;true&quot;] {
     border: 2px solid #FF4A4A;
 }</string>
            </property>
+           <property name="editable">
+            <bool>true</bool>
+           </property>
            <item>
             <property name="text">
              <string>All Courses</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>ECE 101</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>ECE 202</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>ECE 303</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>ECE 404</string>
             </property>
            </item>
           </widget>
@@ -824,12 +807,12 @@ QComboBox[error=&quot;true&quot;] {
            </item>
            <item>
             <property name="text">
-             <string>Full</string>
+             <string>Closed</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Closed</string>
+             <string>Full</string>
             </property>
            </item>
           </widget>
@@ -1032,11 +1015,6 @@ QScrollBar:horizontal { height: 12px; }
         </attribute>
         <column>
          <property name="text">
-          <string>SELECT</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
           <string>#</string>
          </property>
         </column>
@@ -1077,7 +1055,7 @@ QScrollBar:horizontal { height: 12px; }
         </column>
         <column>
          <property name="text">
-          <string>ACTIONS</string>
+          <string>REGISTERATION</string>
          </property>
         </column>
        </widget>

@@ -294,30 +294,25 @@ class Ui_ProgramPlans(object):
         self.buttonViewSections.setMinimumSize(QtCore.QSize(120, 40))
         self.buttonViewSections.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         self.buttonViewSections.setStyleSheet("QPushButton {\n"
-"    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #667EEA, stop:1 #764BA2);\n"
+"    background-color: #f5576c;\n"
 "    color: #ffffff;\n"
 "    border: none;\n"
 "    border-radius: 8px;\n"
 "    font-size: 14px;\n"
 "    font-weight: bold;\n"
 "    padding: 10px 20px;\n"
-"    transition: background 150ms;\n"
+"    transition: background-color 150ms;\n"
 "}\n"
-"\n"
 "QPushButton:hover {\n"
-"    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #4F63C6, stop:1 #5D3F9E);\n"
+"    background-color: #e5475c;\n"
 "}\n"
-"\n"
 "QPushButton:pressed {\n"
-"    background-color: #3C4A99;\n"
+"    background-color: #d43f52;\n"
 "}\n"
-"\n"
-"\n"
 "QPushButton:disabled {\n"
-"    background-color: #e0e0e0;\n"
-"    color: #999999;\n"
-"}\n"
-"")
+"    background-color: #cccccc;  /* gray background for disabled */\n"
+"    color: #666666;             /* darker gray text */\n"
+"}")
         self.buttonViewSections.setObjectName("buttonViewSections")
         self.tableHeaderLayout.addWidget(self.buttonViewSections)
         self.buttonAddCourse = QtWidgets.QPushButton(parent=self.tableHeader)
@@ -542,8 +537,8 @@ class Ui_ProgramPlans(object):
         self.buttonRefresh.setText(_translate("ProgramPlans", "🔄 Refresh"))
         self.tableTitle.setText(_translate("ProgramPlans", "📚 Available Corurses"))
         self.buttonViewSections.setText(_translate("ProgramPlans", "Edit Plan"))
-        self.buttonAddCourse.setText(_translate("ProgramPlans", "➕ Add New Course (to plan)"))
-        self.buttonRemoveCourse.setText(_translate("ProgramPlans", "❌ Remove Course (from plan)"))
+        self.buttonAddCourse.setText(_translate("ProgramPlans", "➕ Add Course to plan"))
+        self.buttonRemoveCourse.setText(_translate("ProgramPlans", "❌ Remove Course from plan"))
         item = self.tableAllCourses.horizontalHeaderItem(0)
         item.setText(_translate("ProgramPlans", "#"))
         item = self.tableAllCourses.horizontalHeaderItem(1)
