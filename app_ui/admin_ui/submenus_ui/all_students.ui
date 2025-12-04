@@ -521,11 +521,6 @@ QScrollBar:horizontal { height: 12px; }
         </attribute>
         <column>
          <property name="text">
-          <string>SELECT</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
           <string>#</string>
          </property>
         </column>

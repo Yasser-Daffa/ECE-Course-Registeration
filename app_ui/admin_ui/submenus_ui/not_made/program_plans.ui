@@ -567,6 +567,90 @@ QPushButton:disabled {
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QPushButton" name="buttonAddCourse">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>120</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">/* ---- Approve Button ---- */
+QPushButton {
+    background-color: #d4edda;
+    color: #155724;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 20px;
+}
+QPushButton:hover {
+    background-color: #28a745;
+    color: white;
+}
+QPushButton:pressed {
+    background-color: #1e7e34;  /* slightly darker for pressed feedback */
+}
+QPushButton:disabled {
+    background-color: #c1d9c3; /* more washed-out green */
+    color: #7a8b7a;
+}</string>
+           </property>
+           <property name="text">
+            <string>➕ Add New Course</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="buttonRemoveCourse">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>120</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">/* ---- Reject Button ---- */
+QPushButton {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 20px;
+}
+QPushButton:hover {
+    background-color: #c82333;
+    color: white;
+}
+QPushButton:pressed {
+    background-color: #a71d2a;  /* slightly darker for pressed feedback */
+}
+QPushButton:disabled {
+    background-color: #d7bcbc; /* more washed-out red */
+    color: #5e3b3e;
+}</string>
+           </property>
+           <property name="text">
+            <string>❌ Remove Course</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>

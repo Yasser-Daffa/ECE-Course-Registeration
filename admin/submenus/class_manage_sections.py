@@ -10,7 +10,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 
 # عشان نقدر نشوف المجلد الرئيسي
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
 # واجهة المانج سكاشن اللي صدّرتها من Qt Designer
 from app_ui.admin_ui.submenus_ui.ui_manage_sections import Ui_ManageSections
