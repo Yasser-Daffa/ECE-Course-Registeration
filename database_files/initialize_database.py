@@ -133,7 +133,7 @@ def initialize_database(db_path="../university_database.db"):
         program text not null,      -- Program name
         level integer not null check (level >= 1),
         course_code text not null,  -- Course in this level
-        primary key (program, level, course_code),
+        primary key (program, course_code),
         foreign key (course_code) references courses(code) on delete restrict on update cascade
     );
     """)

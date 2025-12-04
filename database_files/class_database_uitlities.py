@@ -491,29 +491,60 @@ class DatabaseUtilities:
 
     def register_student_to_section(self, student_id: int, section_id: int) -> bool:
         """
-        Register a student to a section.
-        Returns True if successful, False if already registered or error occurs.
+        يسجل الطالب في سكشن معيّن في جدول registrations
+        - يتأكد إن السكشن موجود
+        - يتأكد إن الطالب مو مسجل مسبقاً في نفس السكشن
+        - يتأكد إن السعة ما امتلأت
+        - يحدث عدد المسجلين في جدول sections
+        يرجع True لو نجحت العملية، False لو صار خطأ أو ما ينفع التسجيل.
         """
         try:
-            # Check if already registered
-            cur = self.con.cursor()
-            cur.execute(
-                "SELECT 1 FROM student_sections WHERE student_id = ? AND section_id = ?",
-                (student_id, section_id)
+            # 1) نتأكد إن السكشن موجود
+            self.cur.execute(
+                "SELECT capacity, enrolled FROM sections WHERE section_id = ?",
+                (section_id,),
             )
-            if cur.fetchone():
-                return False  # already registered
+            row = self.cur.fetchone()
+            if not row:
+                print(f"[DB] Section {section_id} not found.")
+                return False
 
-            # Insert into table
-            cur.execute(
-                "INSERT INTO student_sections (student_id, section_id) VALUES (?, ?)",
-                (student_id, section_id)
+            capacity, enrolled = row
+
+            # 2) نتأكد إن الطالب مو مسجل أصلاً في هذا السكشن
+            self.cur.execute(
+                "SELECT 1 FROM registrations WHERE student_id = ? AND section_id = ?",
+                (student_id, section_id),
             )
-            self.con.commit()
+            if self.cur.fetchone():
+                print(f"[DB] Student {student_id} already registered in section {section_id}.")
+                return False
+
+            # 3) نتأكد من السعة
+            if enrolled is not None and capacity is not None and enrolled >= capacity:
+                print(f"[DB] Section {section_id} is full: {enrolled}/{capacity}.")
+                return False
+
+            # 4) ندخّل في جدول registrations
+            self.cur.execute(
+                "INSERT INTO registrations (student_id, section_id) VALUES (?, ?)",
+                (student_id, section_id),
+            )
+
+            # 5) نحدّث عدد المسجلين في جدول sections
+            self.cur.execute(
+                "UPDATE sections SET enrolled = COALESCE(enrolled, 0) + 1 WHERE section_id = ?",
+                (section_id,),
+            )
+
+            self.commit()
+            print(f"[DB] Registered student {student_id} to section {section_id} successfully.")
             return True
+
         except Exception as e:
-            print(f"DB Error in register_student_to_section: {e}")
+            print("DB Error in register_student_to_section:", e)
             return False
+
 
 
 

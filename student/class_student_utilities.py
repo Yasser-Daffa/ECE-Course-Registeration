@@ -39,26 +39,63 @@ class StudentUtilities:
 
     # ================== Available courses ==================
     def get_available_courses(self, semester):
+        """
+        ترجع قائمة بالمواد المتاحة للتسجيل لهذا الطالب في سمستر معيّن.
+        كل عنصر dict بالشكل التالي:
+        {
+            "course_code": ...,
+            "course_name": ...,
+            "credits": ...,
+            "prereqs": [...],
+            "missing_prereqs": [...],
+            "can_register": True/False
+        }
+        """
+        # 1) نجيب برنامج الطالب من جدول users
         program = self.get_student_program()
+        print(f"[DEBUG] Student ID = {self.student_id}, program = {program}")
+
         if not program:
+            print("[DEBUG] No program found for this student.")
             return []
 
-        plan_courses = [code for code, in self.db.list_plan_courses(program)]
+        # 2) نجيب مواد الخطة لهذا البرنامج
+        plan_rows = self.db.list_plan_courses(program)
+        # شكلها: (program, code, name, credits, level)
+        print(f"[DEBUG] plan_rows = {len(plan_rows)} rows")
+        plan_courses = [row[1] for row in plan_rows]  # row[1] = course_code
+
+        # 3) المواد اللي خلصها + اللي مسجلها حالياً
         completed = set(self.get_completed_courses())
         registered = set(self.get_registered_courses(semester))
+        print(f"[DEBUG] completed = {completed}")
+        print(f"[DEBUG] registered = {registered}")
 
         available = []
-        course_info_list = self.db.ListCourses()
+
+        # 4) نجيب كل المواد من جدول courses
+        course_info_list = self.db.ListCourses()  # (code, name, credits)
+
         for code in plan_courses:
+            # نشيل المواد اللي خلصها الطالب أو مسجلها فعلاً
             if code in completed or code in registered:
                 continue
 
+            # نجيب سطر هذه المادة
             course_info = next((c for c in course_info_list if c[0] == code), None)
             if not course_info:
+                print(f"[DEBUG] course {code} not found in courses table")
                 continue
+
             _, name, credits = course_info
 
-            prereqs = self.db.list_prerequisites(code)
+            # المتطلبات (إما من db أو من كلاس الأدمن حسب ما ضبطناه عندك)
+            try:
+                from admin.class_admin_utilities import admin
+                prereqs = admin.list_prerequisites(code)
+            except ImportError:
+                prereqs = self.db.list_prerequisites(code)
+
             missing_prereqs = [p for p in prereqs if p not in completed]
             can_register = len(missing_prereqs) == 0
 
@@ -71,7 +108,9 @@ class StudentUtilities:
                 "can_register": can_register
             })
 
+        print(f"[DEBUG] available courses = {len(available)}")
         return available
+
 
     def show_available_courses(self, semester):
         courses = self.get_available_courses(semester)
@@ -159,6 +198,75 @@ class StudentUtilities:
 
     def get_sections_for_course(self, course_code, semester):
         return self.db.list_sections(course_code=course_code, semester=semester)
+
+    def get_sections_for_courses(self, course_codes, semester):
+        """
+        ترجع جميع السكاشن لكل المواد اللي في course_codes لهذا السمستر.
+        كل سكشن نرجعه بشكل dict مناسب للجدول ولفحص التعارض:
+        {
+            "section_id": ...,
+            "course_code": ...,
+            "days": ...,
+            "time_start": ...,
+            "time_end": ...,
+            "room": ...
+        }
+        """
+        result = []
+
+        for code in course_codes:
+            rows = self.db.list_sections(course_code=code, semester=semester)
+            for sec in rows:
+                # ترتيب الأعمدة من list_sections:
+                # section_id, course_code, doctor_id, days, time_start, time_end,
+                # room, capacity, enrolled, semester, state
+                section_id = sec[0]
+                course_code = sec[1]
+                days = sec[3]
+                time_start = sec[4]
+                time_end = sec[5]
+                room = sec[6]
+
+                result.append({
+                    "section_id": section_id,
+                    "course_code": course_code,
+                    "days": (days or "").strip(),
+                    "time_start": time_start,
+                    "time_end": time_end,
+                    "room": (room or "").strip(),
+                })
+
+        return result
+
+    if __name__ == "__main__":
+        # كود اختبار للسكاشن من الكونسول
+
+        print("===== TEST: list_sections() from Database =====")
+
+        # نطلب من المستخدم كود المادة والسمستر
+        course_code = input("Enter course code (مثال PWM201): ").strip().upper()
+        semester = input("Enter semester (مثال 2025-1 ، أو خليه فاضي لكل السمسترات): ").strip()
+
+        if not course_code:
+            print("You must enter a course code.")
+            exit()
+
+        # لو السمستر فاضي نخليه None
+        if not semester:
+            semester = None
+
+        print("\nQuerying sections...")
+        rows = db.list_sections(course_code=course_code, semester=semester)
+
+        print(f"\nFound {len(rows)} section(s) for course {course_code} and semester={semester!r}:\n")
+        for row in rows:
+            # row ترتيبها من list_sections:
+            # section_id, course_code, doctor_id, days, time_start, time_end, room, capacity, enrolled, semester, state
+            section_id, code, doctor_id, days, t_start, t_end, room, cap, enrolled, sem, state = row
+            print(
+                f"SECTION {section_id} | {code} | {days} {t_start}-{t_end} | "
+                f"room={room} | sem={sem} | state={state} | cap={cap} | enrolled={enrolled}"
+            )
 
     def check_time_conflict(self, sec1, sec2):
         days1 = set(sec1["days"].upper().replace(" ", ""))
