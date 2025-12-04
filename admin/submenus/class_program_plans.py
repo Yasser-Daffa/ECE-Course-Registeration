@@ -13,13 +13,14 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"
 
 from app_ui.admin_ui.submenus_ui.ui_program_plans import Ui_ProgramPlans
 from admin.class_admin_utilities import admin
-
+from helper_files.shared_utilities import BaseLoginForm, warning, info, error
 
 class ProgramPlansWidget(QWidget):
     def __init__(self, admin_utils, parent=None):
         super().__init__(parent)
         self.ui = Ui_ProgramPlans()
         self.ui.setupUi(self)
+        self.blf = BaseLoginForm()
 
         self.admin_utils = admin_utils
         self.all_rows = []  # (program, code, name, credits, level)
@@ -31,7 +32,17 @@ class ProgramPlansWidget(QWidget):
         self.ui.buttonRefresh.clicked.connect(self.load_plans)
         self.ui.comboBoxSelectProgram.currentIndexChanged.connect(self.load_plans)
         self.ui.comboBoxStatusFilter.currentIndexChanged.connect(self.load_plans)
-        self.ui.buttonRemoveCourse.clicked.connect(self.on_delete_course_clicked)
+
+
+        table = self.ui.tableAllCourses
+        table.setSelectionBehavior(table.SelectionBehavior.SelectRows)
+        table.setSelectionMode(table.SelectionMode.MultiSelection)
+        table.setEditTriggers(table.EditTrigger.NoEditTriggers)
+
+        # update remove button whenever selection changes
+        table.selectionModel().selectionChanged.connect(self.update_remove_button)
+        self.ui.buttonRemoveCourse.setEnabled(False)
+
 
         # ما نحمّل شيء في البداية إلى أن يختار برنامج
         self.fill_table([])
@@ -129,42 +140,52 @@ class ProgramPlansWidget(QWidget):
 
     def on_delete_course_clicked(self):
         table = self.ui.tableAllCourses
-        row = table.currentRow()
+        selected_rows = table.selectionModel().selectedRows()
 
-        if row < 0:
-            QMessageBox.warning(self, "Delete", "Please select a course to delete.")
+        if not selected_rows:
+            warning(self, "Please select at least one course to delete.")
             return
 
-        course_item = table.item(row, 2)
-        if course_item is None:
-            QMessageBox.warning(self, "Delete", "Invalid selected row.")
-            return
+        # Gather selected courses
+        to_delete = []
+        for idx in selected_rows:
+            row = idx.row()
+            course_item = table.item(row, 2)
+            if course_item:
+                code = course_item.text().strip()
+                program = course_item.data(Qt.ItemDataRole.UserRole)
+                to_delete.append((program, code))
 
-        course_code = course_item.text().strip()
-        program = course_item.data(Qt.ItemDataRole.UserRole)
-
-        if not program:
-            QMessageBox.warning(self, "Delete", "Program information is missing.")
-            return
-
-        confirm = QMessageBox.question(
-            self,
+        confirm = self.blf.show_confirmation(
             "Confirm Delete",
-            f"Remove course:\n{course_code}\nfrom plan: {program}?",
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            f"Remove {len(to_delete)} selected course(s) from the plan?",
         )
 
         if confirm != QMessageBox.StandardButton.Yes:
             return
 
-        try:
-            msg = self.admin_utils.admin_delete_course_from_plan(program, course_code)
-        except Exception as e:
-            QMessageBox.critical(self, "Error", f"Error while deleting course:\n{e}")
-            return
+        # delete each one
+        for program, course_code in to_delete:
+            try:
+                self.admin_utils.admin_delete_course_from_plan(program, course_code)
+            except Exception as e:
+                error(self, f"Error deleting {course_code}:\n{e}")
 
-        QMessageBox.information(self, "Deleted", msg)
         self.load_plans()
+
+
+
+    def update_remove_button(self):
+        table = self.ui.tableAllCourses
+        n = len(table.selectionModel().selectedRows())
+
+        if n > 0:
+            self.ui.buttonRemoveCourse.setText(f"Remove Selected ({n})")
+            self.ui.buttonRemoveCourse.setEnabled(True)
+        else:
+            self.ui.buttonRemoveCourse.setText("Remove Selected")
+            self.ui.buttonRemoveCourse.setEnabled(False)
+
 
     # أزرار مستقبلية
     def on_add_course_clicked(self):
