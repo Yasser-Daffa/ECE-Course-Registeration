@@ -40,7 +40,7 @@
         <string notr="true">font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;</string>
        </property>
        <property name="text">
-        <string>Current Schedule</string>
+        <string>📅Current Schedule</string>
        </property>
       </widget>
      </item>
@@ -364,6 +364,9 @@ QScrollBar:horizontal { height: 12px; }
         </property>
         <property name="selectionMode">
          <enum>QAbstractItemView::SelectionMode::ContiguousSelection</enum>
+        </property>
+        <property name="selectionBehavior">
+         <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
         </property>
         <property name="verticalScrollMode">
          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
