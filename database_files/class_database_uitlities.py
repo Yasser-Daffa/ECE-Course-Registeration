@@ -385,8 +385,55 @@ class DatabaseUtilities:
         self.commit()
 
         if self.cur.rowcount > 0:
-            return "✓ Course removed from plan successfully"
-        return "✗ Course not found in this plan"
+            return " Course removed from plan successfully"
+        return " Course not found in this plan"
+
+    def update_course_in_plan(self,
+                              old_program,
+                              old_course_code,
+                              old_level,
+                              new_program,
+                              new_course_code,
+                              new_level):
+        """
+        تعدّل سطر واحد في program_plans:
+        من (old_program, old_course_code, old_level)
+        إلى (new_program, new_course_code, new_level)
+        NOTE:
+        نستخدم البرنامج والكود فقط في WHERE عشان نضمن انه يلقاه
+        """
+
+        # نطبعهم بصيغة موحّدة عشان ما نتعلق في مسافات / كابتل / سمول
+        old_program = (old_program or "").strip().upper()
+        old_course_code = (old_course_code or "").strip().upper()
+        new_program = (new_program or "").strip().upper()
+        new_course_code = (new_course_code or "").strip().upper()
+
+        try:
+            # نحدّث الصف بناءً على (program, course_code) فقط
+            self.cur.execute("""
+                UPDATE program_plans
+                SET program = ?, course_code = ?, level = ?
+                WHERE UPPER(program) = ? AND UPPER(course_code) = ?
+            """, (
+                new_program,
+                new_course_code,
+                new_level,
+                old_program,
+                old_course_code,
+            ))
+
+            if self.cur.rowcount == 0:
+                # يعني ما لقى ولا صف بهذي التركيبة
+                self.commit()
+                return "✗ Course not found in this plan"
+
+            self.commit()
+            return "✓ Course in plan updated successfully"
+
+        except sqlite3.IntegrityError:
+            # محاولة تكرار نفس الكورس بنفس الليفل مرتين في نفس الخطة
+            return "This course (with this level) is already in this plan"
 
     def list_plan_courses(self, program=None):
         if program is None:

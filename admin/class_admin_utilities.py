@@ -261,6 +261,28 @@ class AdminUtilities:
         elif ch == '2':
             self.reg_manager.close_registration(sem)
 
+    def admin_update_course_to_plan(self,
+                                    old_program,
+                                    old_course_code,
+                                    old_level,
+                                    new_program,
+                                    new_course_code,
+                                    new_level):
+        """
+        واجهة بسيطة للـ GUI:
+        - تستقبل القيم القديمة والجديدة
+        - تنادي دالة الـ DB update_course_in_plan
+        - ترجع الرسالة كنص
+        """
+        return self.db.update_course_in_plan(
+            old_program=old_program,
+            old_course_code=old_course_code,
+            old_level=old_level,
+            new_program=new_program,
+            new_course_code=new_course_code,
+            new_level=new_level,
+        )
+
 
 admin = AdminUtilities(db)
 def admin_show_plans(self):
