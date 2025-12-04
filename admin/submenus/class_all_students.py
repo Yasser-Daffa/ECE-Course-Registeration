@@ -1,9 +1,6 @@
 import os, sys, functools
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
-
-
-
 from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import (
     QWidget, QTableWidgetItem, QPushButton, QHBoxLayout, QMessageBox, QHeaderView
@@ -31,26 +28,25 @@ class AllStudentsController:
         self.load_students()
         self.format_table()
 
-        # Track checkbox changes
-        self.ui.tableAllStudents.itemChanged.connect(self.update_remove_button_state)
-
     # ----------------- UI SIGNAL CONNECTIONS -----------------
     def connect_ui_signals(self):
         self.ui.lineEditSearch.textChanged.connect(self.search_students)
         self.ui.buttonRemoveSelected.clicked.connect(self.remove_selected_students)
-
-        self.handle_refresh()
         self.ui.buttonRefresh.clicked.connect(self.handle_refresh)
 
-    # ================== LOAD / POPULATE TABLE ==================
+        # Enable/disable Remove Selected based on row selection
+        self.ui.tableAllStudents.selectionModel().selectionChanged.connect(
+            lambda: self.update_remove_button_text()
+        )
+
+        self.handle_refresh()
+
+    # ----------------- LOAD / POPULATE TABLE -----------------
     def load_students(self):
         self.students_data.clear()
         self.ui.tableAllStudents.setRowCount(0)
 
-        # Get all users
         rows = self.db.list_users()
-
-        # Filter only active students
         active_rows = [row for row in rows if row[5] == "active"]
 
         for i, row in enumerate(active_rows, start=1):
@@ -67,9 +63,9 @@ class AllStudentsController:
 
         self.fill_table(self.students_data)
         self.update_total_counter()
+        self.update_remove_button_text()
 
     def handle_refresh(self):
-        # use the original animate_label_with_dots method
         BaseLoginForm.animate_label_with_dots(
             self.ui.labelTotalStudentsCount,
             base_text="Refreshing",
@@ -78,27 +74,27 @@ class AllStudentsController:
             on_finished=self.load_students
         )
 
-    # ================== POPULATE TABLE ==================
+    # ----------------- POPULATE TABLE -----------------
     def fill_table(self, students):
         table = self.ui.tableAllStudents
         table.setRowCount(len(students))
 
         for row_idx, student in enumerate(students):
-
             # Row number
             item_number = QTableWidgetItem(str(row_idx + 1))
-            item_number.setFlags(Qt.ItemFlag.ItemIsEnabled)
-            table.setItem(row_idx, 1, item_number)
+            item_number.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
+            table.setItem(row_idx, 0, item_number)
 
             # Student ID
             item_id = QTableWidgetItem(str(student["user_id"]))
-            table.setItem(row_idx, 2, item_id)
+            item_id.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
+            table.setItem(row_idx, 1, item_id)
 
             # Name, Email, Program, State
-            table.setItem(row_idx, 3, QTableWidgetItem(student["name"]))
-            table.setItem(row_idx, 4, QTableWidgetItem(student["email"]))
-            table.setItem(row_idx, 5, QTableWidgetItem(student["program"]))
-            table.setItem(row_idx, 6, QTableWidgetItem(student["state"]))
+            table.setItem(row_idx, 2, QTableWidgetItem(student["name"]))
+            table.setItem(row_idx, 3, QTableWidgetItem(student["email"]))
+            table.setItem(row_idx, 4, QTableWidgetItem(student["program"]))
+            table.setItem(row_idx, 5, QTableWidgetItem(student["state"]))
 
             # Remove Student button
             btnRemove = QPushButton("Remove")
@@ -115,36 +111,29 @@ class AllStudentsController:
             layout.setContentsMargins(0, 0, 0, 0)
             layout.setSpacing(4)
             layout.addWidget(btnRemove)
-            table.setCellWidget(row_idx, 7, container)
+            table.setCellWidget(row_idx, 6, container)
 
-            # Checkbox
-            chk_item = QTableWidgetItem()
-            chk_item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsUserCheckable)
-            chk_item.setCheckState(Qt.CheckState.Unchecked)
-            table.setItem(row_idx, 0, chk_item)
-
-    # ================== TABLE FORMATTING ==================
+    # ----------------- TABLE FORMATTING -----------------
     def format_table(self):
         table = self.ui.tableAllStudents
-        headers = ["S", "#", "Student ID", "Name", "Email", "Program", "State", "Actions"]
+        headers = ["#", "Student ID", "Name", "Email", "Program", "State", "Actions"]
         table.setColumnCount(len(headers))
         table.setHorizontalHeaderLabels(headers)
 
         header = table.horizontalHeader()
-
-        # First column fixed for checkbox
-        header.setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
-        table.setColumnWidth(0, 40)
-
-        # All other columns allow user resizing
-        for col in range(1, len(headers)):
+        for col in range(len(headers)):
             header.setSectionResizeMode(col, QHeaderView.ResizeMode.Interactive)
 
         table.verticalHeader().setDefaultSectionSize(100)
-        table.setColumnWidth(1, 60)  # #
-        table.setColumnWidth(2, 120) # Student ID
+        table.setColumnWidth(0, 60)   # #
+        table.setColumnWidth(1, 120)  # Student ID
 
-    # ================== SEARCH ==================
+        # Row selection
+        table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
+        table.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.MultiSelection)
+        table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
+
+    # ----------------- SEARCH -----------------
     def search_students(self):
         text = self.ui.lineEditSearch.text().lower()
         filtered = [
@@ -153,7 +142,7 @@ class AllStudentsController:
         ]
         self.fill_table(filtered)
 
-    # ================== REMOVE INDIVIDUAL STUDENT ==================
+    # ----------------- REMOVE INDIVIDUAL STUDENT -----------------
     def remove_student(self, user_id):
         reply = self.blf.show_confirmation(
             "Remove Student",
@@ -164,16 +153,11 @@ class AllStudentsController:
             self.db.commit()
             self.load_students()
 
-    # ================== REMOVE SELECTED STUDENTS ==================
+    # ----------------- REMOVE SELECTED STUDENTS -----------------
     def get_selected_user_ids(self):
         table = self.ui.tableAllStudents
-        user_ids = []
-        for row in range(table.rowCount()):
-            item = table.item(row, 0)
-            if item and item.checkState() == Qt.CheckState.Checked:
-                user_id = int(table.item(row, 2).text())
-                user_ids.append(user_id)
-        return user_ids
+        selected_rows = table.selectionModel().selectedRows()
+        return [int(table.item(idx.row(), 1).text()) for idx in selected_rows]  # column 1 = Student ID
 
     def remove_selected_students(self):
         selected_ids = self.get_selected_user_ids()
@@ -201,27 +185,20 @@ class AllStudentsController:
         self.db.commit()
         self.load_students()
 
-    # ================== UPDATE BUTTON TEXT BASED ON CHECKBOXES ==================
-    def update_remove_button_state(self):
-        table = self.ui.tableAllStudents
-        selected_count = 0
-
-        for row in range(table.rowCount()):
-            item = table.item(row, 0)
-            if item and item.flags() & Qt.ItemFlag.ItemIsUserCheckable:
-                if item.checkState() == Qt.CheckState.Checked:
-                    selected_count += 1
-
-        if selected_count > 0:
+    # ----------------- UPDATE REMOVE BUTTON TEXT -----------------
+# ----------------- UPDATE REMOVE BUTTON TEXT -----------------
+    def update_remove_button_text(self):
+        selected_count = len(self.ui.tableAllStudents.selectionModel().selectedRows())
+        if selected_count == 0:
+            self.ui.buttonRemoveSelected.setText("Remove Selected")
+            self.ui.buttonRemoveSelected.setEnabled(False)
+        else:
             self.ui.buttonRemoveSelected.setText(f"Remove Selected ({selected_count})")
             self.ui.buttonRemoveSelected.setEnabled(True)
-        else:
-            self.ui.buttonRemoveSelected.setText("Remove All")
-            self.ui.buttonRemoveSelected.setEnabled(bool(self.students_data))
 
-    # ================== UPDATE TOTAL COUNTER ==================
+    # ----------------- UPDATE TOTAL COUNTER -----------------
     def update_total_counter(self):
-        self.ui.labelTotalStudentsCount.setText(str(f"Total Students: {len(self.students_data)}"))
+        self.ui.labelTotalStudentsCount.setText(f"Total Students: {len(self.students_data)}")
 
 
 # ---------------- MAIN APP ----------------

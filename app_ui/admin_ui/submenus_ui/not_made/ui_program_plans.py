@@ -320,6 +320,60 @@ class Ui_RegisterCourses(object):
 "")
         self.buttonViewSections.setObjectName("buttonViewSections")
         self.tableHeaderLayout.addWidget(self.buttonViewSections)
+        self.buttonAddCourse = QtWidgets.QPushButton(parent=self.tableHeader)
+        self.buttonAddCourse.setEnabled(True)
+        self.buttonAddCourse.setMinimumSize(QtCore.QSize(120, 40))
+        self.buttonAddCourse.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonAddCourse.setStyleSheet("/* ---- Approve Button ---- */\n"
+"QPushButton {\n"
+"    background-color: #d4edda;\n"
+"    color: #155724;\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    font-size: 14px;\n"
+"    font-weight: bold;\n"
+"    padding: 10px 20px;\n"
+"}\n"
+"QPushButton:hover {\n"
+"    background-color: #28a745;\n"
+"    color: white;\n"
+"}\n"
+"QPushButton:pressed {\n"
+"    background-color: #1e7e34;  /* slightly darker for pressed feedback */\n"
+"}\n"
+"QPushButton:disabled {\n"
+"    background-color: #c1d9c3; /* more washed-out green */\n"
+"    color: #7a8b7a;\n"
+"}")
+        self.buttonAddCourse.setObjectName("buttonAddCourse")
+        self.tableHeaderLayout.addWidget(self.buttonAddCourse)
+        self.buttonRemoveCourse = QtWidgets.QPushButton(parent=self.tableHeader)
+        self.buttonRemoveCourse.setEnabled(True)
+        self.buttonRemoveCourse.setMinimumSize(QtCore.QSize(120, 40))
+        self.buttonRemoveCourse.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonRemoveCourse.setStyleSheet("/* ---- Reject Button ---- */\n"
+"QPushButton {\n"
+"    background-color: #f8d7da;\n"
+"    color: #721c24;\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    font-size: 14px;\n"
+"    font-weight: bold;\n"
+"    padding: 10px 20px;\n"
+"}\n"
+"QPushButton:hover {\n"
+"    background-color: #c82333;\n"
+"    color: white;\n"
+"}\n"
+"QPushButton:pressed {\n"
+"    background-color: #a71d2a;  /* slightly darker for pressed feedback */\n"
+"}\n"
+"QPushButton:disabled {\n"
+"    background-color: #d7bcbc; /* more washed-out red */\n"
+"    color: #5e3b3e;\n"
+"}")
+        self.buttonRemoveCourse.setObjectName("buttonRemoveCourse")
+        self.tableHeaderLayout.addWidget(self.buttonRemoveCourse)
         self.tableMainLayout.addWidget(self.tableHeader)
         self.tableAllCourses = QtWidgets.QTableWidget(parent=self.tableFrame)
         self.tableAllCourses.setMinimumSize(QtCore.QSize(0, 300))
@@ -489,6 +543,8 @@ class Ui_RegisterCourses(object):
         self.buttonRefresh.setText(_translate("RegisterCourses", "🔄 Refresh"))
         self.tableTitle.setText(_translate("RegisterCourses", "📚 Available Corurses"))
         self.buttonViewSections.setText(_translate("RegisterCourses", "Edit Plan"))
+        self.buttonAddCourse.setText(_translate("RegisterCourses", "➕ Add New Course"))
+        self.buttonRemoveCourse.setText(_translate("RegisterCourses", "❌ Remove Course"))
         item = self.tableAllCourses.horizontalHeaderItem(0)
         item.setText(_translate("RegisterCourses", "#"))
         item = self.tableAllCourses.horizontalHeaderItem(1)
