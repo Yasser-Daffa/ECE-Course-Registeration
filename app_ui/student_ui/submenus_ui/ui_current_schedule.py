@@ -209,6 +209,7 @@ class Ui_AllStudents(object):
         self.tableCourses.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
         self.tableCourses.setAlternatingRowColors(True)
         self.tableCourses.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.ContiguousSelection)
+        self.tableCourses.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
         self.tableCourses.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel)
         self.tableCourses.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel)
         self.tableCourses.setCornerButtonEnabled(True)
@@ -246,7 +247,7 @@ class Ui_AllStudents(object):
 
     def retranslateUi(self, AllStudents):
         _translate = QtCore.QCoreApplication.translate
-        self.labelTitle.setText(_translate("AllStudents", "Current Schedule"))
+        self.labelTitle.setText(_translate("AllStudents", "📅Current Schedule"))
         self.tableTitle.setText(_translate("AllStudents", "Current Courses registred"))
         self.buttonRemoveSelected.setText(_translate("AllStudents", "❌ Remove Selected"))
         item = self.tableCourses.horizontalHeaderItem(0)
