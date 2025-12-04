@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'manage_courses.ui'
+# Form implementation generated from reading ui file 'program_plans.ui'
 #
 # Created by: PyQt6 UI code generator 6.10.0
 #
@@ -9,35 +9,25 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 
-class Ui_ManageCourses(object):
-    def setupUi(self, ManageCourses):
-        ManageCourses.setObjectName("ManageCourses")
-        ManageCourses.resize(1200, 858)
-        ManageCourses.setStyleSheet("background-color: #f5f7fa;")
-        self.mainLayout = QtWidgets.QVBoxLayout(ManageCourses)
+class Ui_RegisterCourses(object):
+    def setupUi(self, RegisterCourses):
+        RegisterCourses.setObjectName("RegisterCourses")
+        RegisterCourses.resize(1200, 858)
+        RegisterCourses.setStyleSheet("background-color: #f5f7fa;")
+        self.mainLayout = QtWidgets.QVBoxLayout(RegisterCourses)
         self.mainLayout.setContentsMargins(40, 40, 40, 20)
         self.mainLayout.setSpacing(30)
         self.mainLayout.setObjectName("mainLayout")
         self.headerLayout = QtWidgets.QHBoxLayout()
         self.headerLayout.setObjectName("headerLayout")
-        self.labelTitle = QtWidgets.QLabel(parent=ManageCourses)
+        self.labelTitle = QtWidgets.QLabel(parent=RegisterCourses)
         self.labelTitle.setStyleSheet("font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;")
         self.labelTitle.setObjectName("labelTitle")
         self.headerLayout.addWidget(self.labelTitle)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.headerLayout.addItem(spacerItem)
-        self.labelTotalCoursesCount = QtWidgets.QLabel(parent=ManageCourses)
-        self.labelTotalCoursesCount.setStyleSheet("font-size: 16px;\n"
-"color: #4b0082;               /* deep purple text */\n"
-"font-weight: bold;\n"
-"background-color: #e6e0f8;    /* soft light purple background */\n"
-"padding: 8px 20px;\n"
-"border-radius: 20px;\n"
-"")
-        self.labelTotalCoursesCount.setObjectName("labelTotalCoursesCount")
-        self.headerLayout.addWidget(self.labelTotalCoursesCount)
         self.mainLayout.addLayout(self.headerLayout)
-        self.filterFrame = QtWidgets.QFrame(parent=ManageCourses)
+        self.filterFrame = QtWidgets.QFrame(parent=RegisterCourses)
         self.filterFrame.setMinimumSize(QtCore.QSize(0, 70))
         self.filterFrame.setMaximumSize(QtCore.QSize(16777215, 70))
         self.filterFrame.setStyleSheet("background-color: white; border-radius: 12px;")
@@ -45,6 +35,7 @@ class Ui_ManageCourses(object):
         self.filterFrame.setObjectName("filterFrame")
         self.filterLayout = QtWidgets.QHBoxLayout(self.filterFrame)
         self.filterLayout.setContentsMargins(25, 15, 25, 15)
+        self.filterLayout.setSpacing(30)
         self.filterLayout.setObjectName("filterLayout")
         self.lineEditSearch = QtWidgets.QLineEdit(parent=self.filterFrame)
         self.lineEditSearch.setMinimumSize(QtCore.QSize(300, 40))
@@ -70,6 +61,183 @@ class Ui_ManageCourses(object):
 "")
         self.lineEditSearch.setObjectName("lineEditSearch")
         self.filterLayout.addWidget(self.lineEditSearch)
+        self.comboBoxSelectProgram = QtWidgets.QComboBox(parent=self.filterFrame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.comboBoxSelectProgram.sizePolicy().hasHeightForWidth())
+        self.comboBoxSelectProgram.setSizePolicy(sizePolicy)
+        self.comboBoxSelectProgram.setMinimumSize(QtCore.QSize(150, 40))
+        self.comboBoxSelectProgram.setMaximumSize(QtCore.QSize(16777215, 65))
+        self.comboBoxSelectProgram.setStyleSheet("/* ----------------- QComboBox Base ----------------- */\n"
+"QComboBox {\n"
+"    border: 2px solid #E0E0E0;          /* main border */\n"
+"    border-radius: 10px;\n"
+"    padding: 8px 10px;                   /* Matches QLineEdit padding */\n"
+"    background: rgba(250, 250, 250, 200);\n"
+"    font-size: 11pt;\n"
+"    color: #111111;\n"
+"}\n"
+"\n"
+"/* Focused state */\n"
+"QComboBox:focus {\n"
+"    border: 2px solid #667EEA; \n"
+"    background: rgba(250, 250, 250, 220);\n"
+"}\n"
+"\n"
+"/* ----------------- Drop-down Arrow ----------------- */\n"
+"QComboBox::drop-down {\n"
+"    subcontrol-origin: padding;\n"
+"    subcontrol-position: top right;\n"
+"    width: 30px; \n"
+"    border-left-width: 1px;\n"
+"    border-left-color: #E0E0E0;\n"
+"    border-left-style: solid;\n"
+"    border-top-right-radius: 12px;       /* rounder corners */\n"
+"    border-bottom-right-radius: 12px;    /* rounder corners */\n"
+"    background: transparent;\n"
+"}\n"
+"\n"
+"/* Remove ugly black border on hover/focus */\n"
+"QComboBox::drop-down:hover,\n"
+"QComboBox::drop-down:focus {\n"
+"    border-left-color: #667EEA;\n"
+"    background: transparent;\n"
+"    border: none;\n"
+"}\n"
+"\n"
+"/* Modern, visible arrow using simple chevron */\n"
+"QComboBox::down-arrow {\n"
+"    width: 10px;\n"
+"    height: 10px;\n"
+"    border: solid #667EEA;\n"
+"    border-width: 0 2px 2px 0;\n"
+"    margin-right: 6px;\n"
+"}\n"
+"\n"
+"/* ----------------- Dropdown Popup ----------------- */\n"
+"/* Dropdown Popup */\n"
+"QComboBox QAbstractItemView {\n"
+"    background-color: #fdfdfd;          /* slightly off-white */\n"
+"    border: 2px solid #E0E0E0;          /* subtle grey border */\n"
+"    border-radius: 8px;                  /* may not be perfect on Windows */\n"
+"    color: #111111;\n"
+"    font-size: 11pt;\n"
+"    padding: 5px;\n"
+"    selection-background-color: #667EEA;\n"
+"    selection-color: white;\n"
+"    outline: none;\n"
+"}\n"
+"\n"
+"/* Items hover/selection */\n"
+"QComboBox QAbstractItemView::item:hover {\n"
+"    background-color: rgba(102, 126, 234, 0.1);\n"
+"    color: #111111;\n"
+"}\n"
+"\n"
+"QComboBox QAbstractItemView::item:selected {\n"
+"    background-color: #667EEA;\n"
+"    color: white;\n"
+"}\n"
+"\n"
+"/* Error highlight for combo box */\n"
+"QComboBox[error=\"true\"] {\n"
+"    border: 2px solid #FF4A4A;\n"
+"}")
+        self.comboBoxSelectProgram.setObjectName("comboBoxSelectProgram")
+        self.comboBoxSelectProgram.addItem("")
+        self.comboBoxSelectProgram.addItem("")
+        self.comboBoxSelectProgram.addItem("")
+        self.comboBoxSelectProgram.addItem("")
+        self.filterLayout.addWidget(self.comboBoxSelectProgram)
+        self.comboBoxStatusFilter = QtWidgets.QComboBox(parent=self.filterFrame)
+        self.comboBoxStatusFilter.setMinimumSize(QtCore.QSize(150, 40))
+        self.comboBoxStatusFilter.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.comboBoxStatusFilter.setStyleSheet("/* ----------------- QComboBox Base ----------------- */\n"
+"QComboBox {\n"
+"    border: 2px solid #E0E0E0;          /* main border */\n"
+"    border-radius: 10px;\n"
+"    padding: 8px 10px;                   /* Matches QLineEdit padding */\n"
+"    background: rgba(250, 250, 250, 200);\n"
+"    font-size: 11pt;\n"
+"    color: #111111;\n"
+"}\n"
+"\n"
+"/* Focused state */\n"
+"QComboBox:focus {\n"
+"    border: 2px solid #667EEA; \n"
+"    background: rgba(250, 250, 250, 220);\n"
+"}\n"
+"\n"
+"/* ----------------- Drop-down Arrow ----------------- */\n"
+"QComboBox::drop-down {\n"
+"    subcontrol-origin: padding;\n"
+"    subcontrol-position: top right;\n"
+"    width: 30px; \n"
+"    border-left-width: 1px;\n"
+"    border-left-color: #E0E0E0;\n"
+"    border-left-style: solid;\n"
+"    border-top-right-radius: 12px;       /* rounder corners */\n"
+"    border-bottom-right-radius: 12px;    /* rounder corners */\n"
+"    background: transparent;\n"
+"}\n"
+"\n"
+"/* Remove ugly black border on hover/focus */\n"
+"QComboBox::drop-down:hover,\n"
+"QComboBox::drop-down:focus {\n"
+"    border-left-color: #667EEA;\n"
+"    background: transparent;\n"
+"    border: none;\n"
+"}\n"
+"\n"
+"/* Modern, visible arrow using simple chevron */\n"
+"QComboBox::down-arrow {\n"
+"    width: 10px;\n"
+"    height: 10px;\n"
+"    border: solid #667EEA;\n"
+"    border-width: 0 2px 2px 0;\n"
+"    margin-right: 6px;\n"
+"}\n"
+"\n"
+"/* ----------------- Dropdown Popup ----------------- */\n"
+"/* Dropdown Popup */\n"
+"QComboBox QAbstractItemView {\n"
+"    background-color: #fdfdfd;          /* slightly off-white */\n"
+"    border: 2px solid #E0E0E0;          /* subtle grey border */\n"
+"    border-radius: 8px;                  /* may not be perfect on Windows */\n"
+"    color: #111111;\n"
+"    font-size: 11pt;\n"
+"    padding: 5px;\n"
+"    selection-background-color: #667EEA;\n"
+"    selection-color: white;\n"
+"    outline: none;\n"
+"}\n"
+"\n"
+"/* Items hover/selection */\n"
+"QComboBox QAbstractItemView::item:hover {\n"
+"    background-color: rgba(102, 126, 234, 0.1);\n"
+"    color: #111111;\n"
+"}\n"
+"\n"
+"QComboBox QAbstractItemView::item:selected {\n"
+"    background-color: #667EEA;\n"
+"    color: white;\n"
+"}\n"
+"\n"
+"/* Error highlight for combo box */\n"
+"QComboBox[error=\"true\"] {\n"
+"    border: 2px solid #FF4A4A;\n"
+"}")
+        self.comboBoxStatusFilter.setObjectName("comboBoxStatusFilter")
+        self.comboBoxStatusFilter.addItem("")
+        self.comboBoxStatusFilter.addItem("")
+        self.comboBoxStatusFilter.addItem("")
+        self.comboBoxStatusFilter.addItem("")
+        self.comboBoxStatusFilter.addItem("")
+        self.comboBoxStatusFilter.addItem("")
+        self.comboBoxStatusFilter.addItem("")
+        self.comboBoxStatusFilter.addItem("")
+        self.filterLayout.addWidget(self.comboBoxStatusFilter)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.filterLayout.addItem(spacerItem1)
         self.buttonRefresh = QtWidgets.QPushButton(parent=self.filterFrame)
@@ -98,7 +266,7 @@ class Ui_ManageCourses(object):
         self.buttonRefresh.setObjectName("buttonRefresh")
         self.filterLayout.addWidget(self.buttonRefresh)
         self.mainLayout.addWidget(self.filterFrame)
-        self.tableFrame = QtWidgets.QFrame(parent=ManageCourses)
+        self.tableFrame = QtWidgets.QFrame(parent=RegisterCourses)
         self.tableFrame.setStyleSheet("background-color: white; border-radius: 12px;")
         self.tableFrame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.tableFrame.setObjectName("tableFrame")
@@ -121,60 +289,37 @@ class Ui_ManageCourses(object):
         self.tableHeaderLayout.addWidget(self.tableTitle)
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.tableHeaderLayout.addItem(spacerItem2)
-        self.buttonAddCourse = QtWidgets.QPushButton(parent=self.tableHeader)
-        self.buttonAddCourse.setEnabled(True)
-        self.buttonAddCourse.setMinimumSize(QtCore.QSize(120, 40))
-        self.buttonAddCourse.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.buttonAddCourse.setStyleSheet("/* ---- Approve Button ---- */\n"
-"QPushButton {\n"
-"    background-color: #d4edda;\n"
-"    color: #155724;\n"
+        self.buttonViewSections = QtWidgets.QPushButton(parent=self.tableHeader)
+        self.buttonViewSections.setEnabled(True)
+        self.buttonViewSections.setMinimumSize(QtCore.QSize(120, 40))
+        self.buttonViewSections.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonViewSections.setStyleSheet("QPushButton {\n"
+"    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #667EEA, stop:1 #764BA2);\n"
+"    color: #ffffff;\n"
 "    border: none;\n"
 "    border-radius: 8px;\n"
 "    font-size: 14px;\n"
 "    font-weight: bold;\n"
 "    padding: 10px 20px;\n"
+"    transition: background 150ms;\n"
 "}\n"
+"\n"
 "QPushButton:hover {\n"
-"    background-color: #28a745;\n"
-"    color: white;\n"
+"    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #4F63C6, stop:1 #5D3F9E);\n"
 "}\n"
+"\n"
 "QPushButton:pressed {\n"
-"    background-color: #1e7e34;  /* slightly darker for pressed feedback */\n"
+"    background-color: #3C4A99;\n"
 "}\n"
+"\n"
+"\n"
 "QPushButton:disabled {\n"
-"    background-color: #c1d9c3; /* more washed-out green */\n"
-"    color: #7a8b7a;\n"
-"}")
-        self.buttonAddCourse.setObjectName("buttonAddCourse")
-        self.tableHeaderLayout.addWidget(self.buttonAddCourse)
-        self.buttonRemoveCourse = QtWidgets.QPushButton(parent=self.tableHeader)
-        self.buttonRemoveCourse.setEnabled(True)
-        self.buttonRemoveCourse.setMinimumSize(QtCore.QSize(120, 40))
-        self.buttonRemoveCourse.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.buttonRemoveCourse.setStyleSheet("/* ---- Reject Button ---- */\n"
-"QPushButton {\n"
-"    background-color: #f8d7da;\n"
-"    color: #721c24;\n"
-"    border: none;\n"
-"    border-radius: 8px;\n"
-"    font-size: 14px;\n"
-"    font-weight: bold;\n"
-"    padding: 10px 20px;\n"
+"    background-color: #e0e0e0;\n"
+"    color: #999999;\n"
 "}\n"
-"QPushButton:hover {\n"
-"    background-color: #c82333;\n"
-"    color: white;\n"
-"}\n"
-"QPushButton:pressed {\n"
-"    background-color: #a71d2a;  /* slightly darker for pressed feedback */\n"
-"}\n"
-"QPushButton:disabled {\n"
-"    background-color: #d7bcbc; /* more washed-out red */\n"
-"    color: #5e3b3e;\n"
-"}")
-        self.buttonRemoveCourse.setObjectName("buttonRemoveCourse")
-        self.tableHeaderLayout.addWidget(self.buttonRemoveCourse)
+"")
+        self.buttonViewSections.setObjectName("buttonViewSections")
+        self.tableHeaderLayout.addWidget(self.buttonViewSections)
         self.tableMainLayout.addWidget(self.tableHeader)
         self.tableAllCourses = QtWidgets.QTableWidget(parent=self.tableFrame)
         self.tableAllCourses.setMinimumSize(QtCore.QSize(0, 300))
@@ -294,10 +439,9 @@ class Ui_ManageCourses(object):
         self.tableAllCourses.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
         self.tableAllCourses.setAlternatingRowColors(True)
         self.tableAllCourses.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.ContiguousSelection)
-        self.tableAllCourses.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
         self.tableAllCourses.setCornerButtonEnabled(True)
         self.tableAllCourses.setObjectName("tableAllCourses")
-        self.tableAllCourses.setColumnCount(8)
+        self.tableAllCourses.setColumnCount(7)
         self.tableAllCourses.setRowCount(0)
         item = QtWidgets.QTableWidgetItem()
         self.tableAllCourses.setHorizontalHeaderItem(0, item)
@@ -313,8 +457,6 @@ class Ui_ManageCourses(object):
         self.tableAllCourses.setHorizontalHeaderItem(5, item)
         item = QtWidgets.QTableWidgetItem()
         self.tableAllCourses.setHorizontalHeaderItem(6, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableAllCourses.setHorizontalHeaderItem(7, item)
         self.tableAllCourses.horizontalHeader().setStretchLastSection(True)
         self.tableAllCourses.verticalHeader().setVisible(False)
         self.tableAllCourses.verticalHeader().setCascadingSectionResizes(True)
@@ -323,32 +465,41 @@ class Ui_ManageCourses(object):
         spacerItem3 = QtWidgets.QSpacerItem(20, 60, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Maximum)
         self.mainLayout.addItem(spacerItem3)
 
-        self.retranslateUi(ManageCourses)
-        QtCore.QMetaObject.connectSlotsByName(ManageCourses)
+        self.retranslateUi(RegisterCourses)
+        QtCore.QMetaObject.connectSlotsByName(RegisterCourses)
 
-    def retranslateUi(self, ManageCourses):
+    def retranslateUi(self, RegisterCourses):
         _translate = QtCore.QCoreApplication.translate
-        ManageCourses.setWindowTitle(_translate("ManageCourses", "Course"))
-        self.labelTitle.setText(_translate("ManageCourses", "Course Management"))
-        self.labelTotalCoursesCount.setText(_translate("ManageCourses", "22 Total Courses"))
-        self.lineEditSearch.setPlaceholderText(_translate("ManageCourses", "🔍  Search by Course name or code..."))
-        self.buttonRefresh.setText(_translate("ManageCourses", "🔄 Refresh"))
-        self.tableTitle.setText(_translate("ManageCourses", "All Courses"))
-        self.buttonAddCourse.setText(_translate("ManageCourses", "➕ Add New Course"))
-        self.buttonRemoveCourse.setText(_translate("ManageCourses", "❌ Remove Course"))
+        RegisterCourses.setWindowTitle(_translate("RegisterCourses", "Course"))
+        self.labelTitle.setText(_translate("RegisterCourses", "Program Plans"))
+        self.lineEditSearch.setPlaceholderText(_translate("RegisterCourses", "🔍  Search by Course name or code..."))
+        self.comboBoxSelectProgram.setPlaceholderText(_translate("RegisterCourses", "Select Program..."))
+        self.comboBoxSelectProgram.setItemText(0, _translate("RegisterCourses", "Computer"))
+        self.comboBoxSelectProgram.setItemText(1, _translate("RegisterCourses", "Communication"))
+        self.comboBoxSelectProgram.setItemText(2, _translate("RegisterCourses", "Power"))
+        self.comboBoxSelectProgram.setItemText(3, _translate("RegisterCourses", "Biomedical"))
+        self.comboBoxStatusFilter.setItemText(0, _translate("RegisterCourses", "All Levels"))
+        self.comboBoxStatusFilter.setItemText(1, _translate("RegisterCourses", "Level 1"))
+        self.comboBoxStatusFilter.setItemText(2, _translate("RegisterCourses", "Level 2"))
+        self.comboBoxStatusFilter.setItemText(3, _translate("RegisterCourses", "Level 3"))
+        self.comboBoxStatusFilter.setItemText(4, _translate("RegisterCourses", "Level 4"))
+        self.comboBoxStatusFilter.setItemText(5, _translate("RegisterCourses", "Level 5"))
+        self.comboBoxStatusFilter.setItemText(6, _translate("RegisterCourses", "Level 6"))
+        self.comboBoxStatusFilter.setItemText(7, _translate("RegisterCourses", "Level 7"))
+        self.buttonRefresh.setText(_translate("RegisterCourses", "🔄 Refresh"))
+        self.tableTitle.setText(_translate("RegisterCourses", "📚 Available Corurses"))
+        self.buttonViewSections.setText(_translate("RegisterCourses", "Edit Plan"))
         item = self.tableAllCourses.horizontalHeaderItem(0)
-        item.setText(_translate("ManageCourses", "SELECT"))
+        item.setText(_translate("RegisterCourses", "#"))
         item = self.tableAllCourses.horizontalHeaderItem(1)
-        item.setText(_translate("ManageCourses", "#"))
+        item.setText(_translate("RegisterCourses", "LEVEL"))
         item = self.tableAllCourses.horizontalHeaderItem(2)
-        item.setText(_translate("ManageCourses", "COURSE CODE"))
+        item.setText(_translate("RegisterCourses", "COURSE CODE"))
         item = self.tableAllCourses.horizontalHeaderItem(3)
-        item.setText(_translate("ManageCourses", "COURSE NAME"))
+        item.setText(_translate("RegisterCourses", "COURSE NAME"))
         item = self.tableAllCourses.horizontalHeaderItem(4)
-        item.setText(_translate("ManageCourses", "CREDIT HOURS"))
+        item.setText(_translate("RegisterCourses", "CREDIT HOURS"))
         item = self.tableAllCourses.horizontalHeaderItem(5)
-        item.setText(_translate("ManageCourses", "SECTIONS"))
+        item.setText(_translate("RegisterCourses", "PREREQUISITES"))
         item = self.tableAllCourses.horizontalHeaderItem(6)
-        item.setText(_translate("ManageCourses", "STUDENTS"))
-        item = self.tableAllCourses.horizontalHeaderItem(7)
-        item.setText(_translate("ManageCourses", "ACTION"))
+        item.setText(_translate("RegisterCourses", "ACTION"))
