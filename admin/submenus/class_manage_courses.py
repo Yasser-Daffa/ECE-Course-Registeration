@@ -30,15 +30,13 @@ class ManageCoursesController:
         self.load_courses()
         self.format_table()
 
-        # track checkbox changes
-        # self.ui.tableAllCourses.itemChanged.connect(self.update_remove_button_state)
-
     # ------------------ SIGNALS ------------------
     def connect_ui_signals(self):
         self.ui.lineEditSearch.textChanged.connect(self.search_courses)
         self.ui.buttonRemoveCourse.clicked.connect(self.remove_selected_courses)
         self.ui.buttonRefresh.clicked.connect(self.handle_refresh)
         self.ui.buttonAddCourse.clicked.connect(self.handle_add_course_clicked)
+        self.ui.tableAllCourses.selectionModel().selectionChanged.connect(lambda: self.update_remove_button_text())
 
     # ------------------ REFRESH ------------------
     def handle_refresh(self):
@@ -75,22 +73,25 @@ class ManageCoursesController:
         table.setRowCount(len(courses))
 
         for row_idx, course in enumerate(courses):
-
-            # Checkbox column
-            chk_item = QTableWidgetItem()
-            chk_item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsUserCheckable)
-            chk_item.setCheckState(Qt.CheckState.Unchecked)
-            table.setItem(row_idx, 0, chk_item)
-
             # Row number
             item_number = QTableWidgetItem(str(row_idx + 1))
-            item_number.setFlags(Qt.ItemFlag.ItemIsEnabled)
-            table.setItem(row_idx, 1, item_number)
+            item_number.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
+            table.setItem(row_idx, 0, item_number)
 
-            # Code, Name, Credits
-            table.setItem(row_idx, 2, QTableWidgetItem(course["code"]))
-            table.setItem(row_idx, 3, QTableWidgetItem(course["name"]))
-            table.setItem(row_idx, 4, QTableWidgetItem(str(course["credits"])))
+            # Course Code
+            code_item = QTableWidgetItem(course["code"])
+            code_item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
+            table.setItem(row_idx, 1, code_item)
+
+            # Name
+            name_item = QTableWidgetItem(course["name"])
+            name_item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
+            table.setItem(row_idx, 2, name_item)
+
+            # Credits
+            credits_item = QTableWidgetItem(str(course["credits"]))
+            credits_item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
+            table.setItem(row_idx, 3, credits_item)
 
             # Remove button
             btnRemove = QPushButton("Remove")
@@ -107,29 +108,36 @@ class ManageCoursesController:
             layout.setContentsMargins(0, 0, 0, 0)
             layout.setSpacing(4)
             layout.addWidget(btnRemove)
-            table.setCellWidget(row_idx, 5, container)
+
+
+            table.setCellWidget(row_idx, 4, container)
 
     # ------------------ FORMAT TABLE ------------------
     def format_table(self):
         table = self.ui.tableAllCourses
-        headers = ["S", "#", "Course Code", "Name", "Credits", "Actions"]
+
+        headers = ["#", "Course Code", "Name", "Credits", "Actions"]
         table.setColumnCount(len(headers))
         table.setHorizontalHeaderLabels(headers)
 
         header = table.horizontalHeader()
 
-        # checkbox column fixed
-        header.setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
-        table.setColumnWidth(0, 40)
+        # row selection mode (recommended)
+        table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
+        table.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.MultiSelection)
+        table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
 
-        # others resizable
-        for col in range(1, len(headers)):
-            header.setSectionResizeMode(col, QHeaderView.ResizeMode.Interactive)
-
+        # spacing & sizes
         table.verticalHeader().setDefaultSectionSize(80)
-        table.setColumnWidth(1, 50)
-        table.setColumnWidth(2, 140)
-        table.setColumnWidth(3, 240)
+        table.setColumnWidth(0, 60)
+        table.setColumnWidth(1, 200)
+        table.setColumnWidth(2, 340)
+        table.setColumnWidth(3, 100)
+        table.setColumnWidth(4, 120)
+
+        # make header interactive/resizable
+        for col in range(len(headers)):
+            header.setSectionResizeMode(col, QHeaderView.ResizeMode.Interactive)
 
     # ------------------ SEARCH ------------------
     def search_courses(self):
@@ -148,28 +156,31 @@ class ManageCoursesController:
         )
 
         if reply == QMessageBox.StandardButton.Yes:
-            msg = self.db.DeleteCourse(code)
-            print(msg)
+            self.db.DeleteCourse(code)
             self.load_courses()
 
     # ------------------ REMOVE SELECTED ------------------
     def get_selected_course_codes(self):
+        """
+        Uses row selection instead of checkboxes.
+        """
         table = self.ui.tableAllCourses
+        selected_rows = table.selectionModel().selectedRows()
+
         codes = []
-        for row in range(table.rowCount()):
-            item = table.item(row, 0)
-            if item and item.checkState() == Qt.CheckState.Checked:
-                codes.append(table.item(row, 2).text())
+        for idx in selected_rows:
+            row = idx.row()
+            codes.append(table.item(row, 1).text())  # column 1 = course code
+
         return codes
 
     def remove_selected_courses(self):
         selected = self.get_selected_course_codes()
 
-        # if no checkboxes selected → delete ALL
         if not selected:
             reply = self.blf.show_confirmation(
                 "Delete All Courses",
-                "Are you sure you want to delete ALL courses?"
+                "No rows selected.\nDelete ALL courses?"
             )
             if reply != QMessageBox.StandardButton.Yes:
                 return
@@ -179,7 +190,6 @@ class ManageCoursesController:
             self.load_courses()
             return
 
-        # delete selected only
         reply = self.blf.show_confirmation(
             "Delete Selected Courses",
             f"Delete {len(selected)} selected course(s)?"
@@ -192,17 +202,24 @@ class ManageCoursesController:
 
         self.load_courses()
 
-    # ------------------ ADD COURSE ------------------
-    def handle_add_course_clicked(self):
-        # You can replace this with a QDialog later.
-        print("\nAdd Course button clicked (connect to dialog here)\n")
-        
+    # ---------------- UPDATE REMOVE BUTTON TEXT PER SELECTION -----------
+    def update_remove_button_text(self):
+        selected = len(self.ui.tableAllCourses.selectionModel().selectedRows())
+
+        if selected == 0:
+            self.ui.buttonRemoveCourse.setText("Remove All")
+        else:
+            self.ui.buttonRemoveCourse.setText(f"Remove Selected ({selected})")
 
     # ------------------ TOTAL COUNTER ------------------
     def update_total_counter(self):
         self.ui.labelTotalCoursesCount.setText(
             f"Total Courses: {len(self.courses_data)}"
         )
+    # ------------------ ADD COURSE ------------------
+    def handle_add_course_clicked(self):
+        print("\nAdd Course button clicked (connect to dialog here)\n")
+
 
 
 

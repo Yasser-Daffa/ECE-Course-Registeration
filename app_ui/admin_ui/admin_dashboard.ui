@@ -408,9 +408,9 @@ QScrollBar::sub-page:vertical {
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>-4</y>
+            <y>-437</y>
             <width>284</width>
-            <height>871</height>
+            <height>947</height>
            </rect>
           </property>
           <property name="styleSheet">
@@ -842,6 +842,56 @@ QPushButton:pressed {
              <attribute name="buttonGroup">
               <string notr="true">buttonGroupSubmenus</string>
              </attribute>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="buttonProgramPlans">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>48</height>
+              </size>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton {
+    background-color: transparent;
+    border: none;
+    border-radius: 10px;
+    color: #5a6c7d;
+    font-size: 14px;
+    text-align: left;
+    padding-left: 15px;
+}
+
+QPushButton:hover {
+    background-color: #f8f9fa;
+    color: #f5576c;
+}
+
+/* CHECKED / TOGGLED STATE */
+QPushButton:checked {
+    background-color: rgba(245, 87, 108, 0.10);  /* faint pink */
+    color: #f5576c; 
+    font-weight: bold;
+    border-left: 4px solid #f5576c;
+    padding-left: 11px; /* adjust so bar doesn’t push content too far */
+}
+
+/* PRESSED STATE (optional but clean) */
+QPushButton:pressed {
+    background-color: rgba(245, 87, 108, 0.18);
+}
+</string>
+             </property>
+             <property name="text">
+              <string>📋  Program Plans</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>

@@ -284,6 +284,9 @@ QComboBox[error=&quot;true&quot;] {
     border: 2px solid #FF4A4A;
 }</string>
              </property>
+             <property name="editable">
+              <bool>true</bool>
+             </property>
              <item>
               <property name="text">
                <string>Select a course...</string>
@@ -396,6 +399,9 @@ QComboBox[error=&quot;true&quot;] {
     border: 2px solid #FF4A4A;
 }</string>
              </property>
+             <property name="editable">
+              <bool>true</bool>
+             </property>
              <property name="currentText">
               <string>Select a instructor...</string>
              </property>
@@ -432,6 +438,9 @@ QComboBox[error=&quot;true&quot;] {
            </item>
            <item>
             <widget class="QLineEdit" name="lineEditBuilding">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
              <property name="minimumSize">
               <size>
                <width>200</width>
@@ -1439,13 +1448,19 @@ QPushButton:pressed {
     padding: 10px 20px;
     transition: background-color 150ms;
 }
+
 QPushButton:hover {
     background-color: #e5475c;
 }
+
 QPushButton:pressed {
     background-color: #d43f52;
 }
-</string>
+
+QPushButton:disabled {
+    background-color: #cccccc;  /* gray background for disabled */
+    color: #666666;             /* darker gray text */
+}</string>
         </property>
         <property name="text">
          <string>Add</string>

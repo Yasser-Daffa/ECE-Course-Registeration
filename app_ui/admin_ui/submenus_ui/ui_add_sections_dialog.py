@@ -184,6 +184,7 @@ class Ui_AddSectionDialog(object):
 "QComboBox[error=\"true\"] {\n"
 "    border: 2px solid #FF4A4A;\n"
 "}")
+        self.comboBoxSelectCourse.setEditable(True)
         self.comboBoxSelectCourse.setObjectName("comboBoxSelectCourse")
         self.comboBoxSelectCourse.addItem("")
         self.verticalLayoutCourse.addWidget(self.comboBoxSelectCourse)
@@ -273,6 +274,7 @@ class Ui_AddSectionDialog(object):
 "QComboBox[error=\"true\"] {\n"
 "    border: 2px solid #FF4A4A;\n"
 "}")
+        self.comboBoxSelectInstructor.setEditable(True)
         self.comboBoxSelectInstructor.setObjectName("comboBoxSelectInstructor")
         self.comboBoxSelectInstructor.addItem("")
         self.verticalLayoutInstructor.addWidget(self.comboBoxSelectInstructor)
@@ -289,6 +291,7 @@ class Ui_AddSectionDialog(object):
         self.labelBuilding.setObjectName("labelBuilding")
         self.verticalLayout_7.addWidget(self.labelBuilding)
         self.lineEditBuilding = QtWidgets.QLineEdit(parent=self.scrollContent)
+        self.lineEditBuilding.setEnabled(True)
         self.lineEditBuilding.setMinimumSize(QtCore.QSize(200, 40))
         self.lineEditBuilding.setMaximumSize(QtCore.QSize(400, 16777215))
         self.lineEditBuilding.setStyleSheet("QLineEdit {\n"
@@ -900,13 +903,19 @@ class Ui_AddSectionDialog(object):
 "    padding: 10px 20px;\n"
 "    transition: background-color 150ms;\n"
 "}\n"
+"\n"
 "QPushButton:hover {\n"
 "    background-color: #e5475c;\n"
 "}\n"
+"\n"
 "QPushButton:pressed {\n"
 "    background-color: #d43f52;\n"
 "}\n"
-"")
+"\n"
+"QPushButton:disabled {\n"
+"    background-color: #cccccc;  /* gray background for disabled */\n"
+"    color: #666666;             /* darker gray text */\n"
+"}")
         self.buttonAdd.setObjectName("buttonAdd")
         self.footerLayout.addWidget(self.buttonAdd)
         self.mainLayout.addWidget(self.footerFrame)

@@ -176,7 +176,7 @@ class Ui_AdminDashboard(object):
         self.navScrollArea.setWidgetResizable(True)
         self.navScrollArea.setObjectName("navScrollArea")
         self.navScrollContent = QtWidgets.QWidget()
-        self.navScrollContent.setGeometry(QtCore.QRect(0, -4, 284, 871))
+        self.navScrollContent.setGeometry(QtCore.QRect(0, -437, 284, 947))
         self.navScrollContent.setStyleSheet("background-color: white;")
         self.navScrollContent.setObjectName("navScrollContent")
         self.navMainLayout = QtWidgets.QVBoxLayout(self.navScrollContent)
@@ -458,6 +458,41 @@ class Ui_AdminDashboard(object):
         self.buttonManageSections.setObjectName("buttonManageSections")
         self.buttonGroupSubmenus.addButton(self.buttonManageSections)
         self.navMainLayout.addWidget(self.buttonManageSections)
+        self.buttonProgramPlans = QtWidgets.QPushButton(parent=self.navScrollContent)
+        self.buttonProgramPlans.setMinimumSize(QtCore.QSize(0, 48))
+        self.buttonProgramPlans.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonProgramPlans.setStyleSheet("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: none;\n"
+"    border-radius: 10px;\n"
+"    color: #5a6c7d;\n"
+"    font-size: 14px;\n"
+"    text-align: left;\n"
+"    padding-left: 15px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #f8f9fa;\n"
+"    color: #f5576c;\n"
+"}\n"
+"\n"
+"/* CHECKED / TOGGLED STATE */\n"
+"QPushButton:checked {\n"
+"    background-color: rgba(245, 87, 108, 0.10);  /* faint pink */\n"
+"    color: #f5576c; \n"
+"    font-weight: bold;\n"
+"    border-left: 4px solid #f5576c;\n"
+"    padding-left: 11px; /* adjust so bar doesn’t push content too far */\n"
+"}\n"
+"\n"
+"/* PRESSED STATE (optional but clean) */\n"
+"QPushButton:pressed {\n"
+"    background-color: rgba(245, 87, 108, 0.18);\n"
+"}\n"
+"")
+        self.buttonProgramPlans.setCheckable(True)
+        self.buttonProgramPlans.setObjectName("buttonProgramPlans")
+        self.navMainLayout.addWidget(self.buttonProgramPlans)
         self.buttonRegisterForStudents = QtWidgets.QPushButton(parent=self.navScrollContent)
         self.buttonRegisterForStudents.setEnabled(False)
         self.buttonRegisterForStudents.setMinimumSize(QtCore.QSize(0, 48))
@@ -724,6 +759,7 @@ class Ui_AdminDashboard(object):
         self.buttonManageCourses.setText(_translate("AdminDashboard", "📚  Manage Courses (32)"))
         self.buttonManagePrereqs.setText(_translate("AdminDashboard", "🔗  Manage Prerequisetes"))
         self.buttonManageSections.setText(_translate("AdminDashboard", "✏️  Manage Sections"))
+        self.buttonProgramPlans.setText(_translate("AdminDashboard", "📋  Program Plans"))
         self.buttonRegisterForStudents.setText(_translate("AdminDashboard", "🎓 Register for Students -WIP-"))
         self.buttonLogout.setText(_translate("AdminDashboard", "🚪  Logout"))
         self.pageTitleLabel.setText(_translate("AdminDashboard", "Dashboard Overview"))
