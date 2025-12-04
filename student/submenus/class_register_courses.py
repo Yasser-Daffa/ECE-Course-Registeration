@@ -1,4 +1,4 @@
-import sys
+import sys, os
 
 from PyQt6.QtWidgets import (
     QApplication,
@@ -10,8 +10,12 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+
 # واجهة اختيار المواد (Qt Designer)
 from app_ui.student_ui.submenus_ui.ui_register_courses import Ui_RegisterCourses
+from student.submenus.class_view_sections import ViewSectionsWidget
+from helper_files.shared_utilities import BaseLoginForm, info, warning, error, show_msg
 
 # منطق الطالب + اتصال قاعدة البيانات
 from student.class_student_utilities import StudentUtilities, db
@@ -31,6 +35,7 @@ class RegisterCoursesWidget(QWidget):
         # تجهيز واجهة Qt Designer
         self.ui = Ui_RegisterCourses()
         self.ui.setupUi(self)
+        self.blf = BaseLoginForm()
 
         # كلاس الطالب
         self.student_utils = StudentUtilities(db, student_id)
@@ -178,17 +183,18 @@ class RegisterCoursesWidget(QWidget):
 
     # ==================== زر View Sections ====================
 
+
     def handle_view_sections(self):
-        """
-        حالياً: بس يطبع كود المادة المختارة (بعدين نربطها بواجهة السكاشن)
-        """
         code = self.get_selected_course_code()
         if not code:
-            QMessageBox.warning(self, "No Selection", "Please select one course first.")
+            show_msg(self, "No Selection", "Please select one course first.", QMessageBox.Icon.Warning)
             return
 
+        self.sections_window = ViewSectionsWidget(self.student_utils, code)
+        self.sections_window.show()
+
         print("SELECTED COURSE FOR SECTIONS:", code)
-        QMessageBox.information(self, "DEBUG", f"Selected course: {code}")
+        show_msg(self, "DEBUG", f"Selected course: {code}")
 
 
 # ==================== تشغيل الواجهة مباشرة ====================
@@ -197,7 +203,7 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     # غيّر هذي القيم حسب الطالب والسمستر اللي تبي تختبر عليه
-    student_id = 1         # لازم يكون موجود في جدول users وله program
+    student_id = 2500001         # لازم يكون موجود في جدول users وله program
     semester = "2025-1"    # حسب شكل السمستر عندك
 
     window = RegisterCoursesWidget(student_id, semester)
