@@ -98,9 +98,8 @@ class AddCourseToPlanDialog(QDialog):
         program = self.ui.comboBoxSelectProgram.currentData()
         level = self.ui.spinBoxLevel.value()
 
-        # احتياط فقط (الزر ما يشتغل إلا لو كل شيء جاهز)
         if not course_code or not program or level < 1:
-            error(self,"Please fill all required fields.")
+            error(self, "Please fill all required fields.")
             return
 
         try:
@@ -114,7 +113,16 @@ class AddCourseToPlanDialog(QDialog):
             return
 
         info(self, msg)
-        self.accept()
+
+        # 🔥 تنظيف الحقول بعد النجاح
+        self.ui.comboBoxSelectCourse.setCurrentIndex(0)
+        self.ui.spinBoxLevel.setValue(1)
+
+        # 🔥 إبعاد أي اختيار سابق حتى لا تبقى الرسالة السابقة
+        self.check_all_fields_filled()
+
+        # 🔥 لا تقفل النافذة
+        return
 
 
 # =============== MAIN للتجربة ===============
