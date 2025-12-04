@@ -537,30 +537,25 @@ QPushButton:pressed {
            </property>
            <property name="styleSheet">
             <string notr="true">QPushButton {
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #667EEA, stop:1 #764BA2);
+    background-color: #f5576c;
     color: #ffffff;
     border: none;
     border-radius: 8px;
     font-size: 14px;
     font-weight: bold;
     padding: 10px 20px;
-    transition: background 150ms;
+    transition: background-color 150ms;
 }
-
 QPushButton:hover {
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #4F63C6, stop:1 #5D3F9E);
+    background-color: #e5475c;
 }
-
 QPushButton:pressed {
-    background-color: #3C4A99;
+    background-color: #d43f52;
 }
-
-
 QPushButton:disabled {
-    background-color: #e0e0e0;
-    color: #999999;
-}
-</string>
+    background-color: #cccccc;  /* gray background for disabled */
+    color: #666666;             /* darker gray text */
+}</string>
            </property>
            <property name="text">
             <string>Edit Plan</string>
@@ -605,7 +600,7 @@ QPushButton:disabled {
 }</string>
            </property>
            <property name="text">
-            <string>➕ Add New Course (to plan)</string>
+            <string>➕ Add Course to plan</string>
            </property>
           </widget>
          </item>
@@ -647,7 +642,7 @@ QPushButton:disabled {
 }</string>
            </property>
            <property name="text">
-            <string>❌ Remove Course (from plan)</string>
+            <string>❌ Remove Course from plan</string>
            </property>
           </widget>
          </item>

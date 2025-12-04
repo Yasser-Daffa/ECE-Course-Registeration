@@ -185,7 +185,7 @@ class AllStudentsController:
         self.db.commit()
         self.load_students()
 
-    # ----------------- UPDATE REMOVE BUTTON TEXT -----------------
+    
 # ----------------- UPDATE REMOVE BUTTON TEXT -----------------
     def update_remove_button_text(self):
         selected_count = len(self.ui.tableAllStudents.selectionModel().selectedRows())
