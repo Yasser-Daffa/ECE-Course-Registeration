@@ -130,7 +130,7 @@ create table if not exists program_plans(
     program text not null,      -- Program name
     level integer not null check (level >= 1),
     course_code text not null,  -- Course in this level
-    primary key (program, level, course_code),
+    primary key (program, course_code),
     foreign key (course_code) references courses(code) on delete restrict on update cascade
 );
 """)

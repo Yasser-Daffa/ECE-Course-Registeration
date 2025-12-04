@@ -202,47 +202,27 @@ class AdminUtilities:
         msg = self.db.update_transcript_grade(student_id, course_code, semester, new_grade)
         print(msg)
 
-    def admin_add_course_to_plan(self):
-        # نعرض كل المواد المتاحة
-        courses = self.db.list_courses()
-        print("Available courses:")
-        for code, name, credits in courses:
-            print(f"{code} - {name} ({credits} credits)")
 
-        course_code = input("Enter course code to add to a plan: ").strip()
 
-        # نفس البرامج المستخدمة في جدول users.program
-        print("\nAvailable programs:")
-        print("PWM  - Power & Machines Engineering")
-        print("BIO  - Biomedical Engineering")
-        print("COMM - Communications Engineering")
-        print("COMP - Computer Engineering")
-
-        program = input("Enter program code ('PWM','BIO','COMM','COMP'): ").strip().upper()
-        level = int(input("Enter level number: ").strip())
-
+    def admin_add_course_to_plan(self, program: str, course_code: str, level: int) -> str:
+        """
+        يضيف كورس إلى الخطة الدراسية لبرنامج معيّن ولمستوى معيّن.
+        """
         msg = self.db.add_course_to_plan(program, course_code, level)
-        print(msg)
+        return msg
 
-    def admin_delete_course_from_plan(self):
-        program = input("Enter program code ('PWM','BIO','COMM','COMP'): ").strip().upper()
-        rows = self.db.list_plan_courses(program)
+        # داخل class AdminUtilities في class_admin_utilities.py
 
-        if not rows:
-            print("This plan has no courses or does not exist.")
-            return
-
-        print(f"\nCourses in plan '{program}':")
-        for prog, code, name, credits, level in rows:
-            print(f"Level {level}: {code} - {name} ({credits} credits)")
-
-        course_code = input("Enter course code to remove from this plan: ").strip()
+    def admin_delete_course_from_plan(self, program: str, course_code: str) -> str:
+        """
+        يحذف كورس من الخطة الدراسية لبرنامج معيّن.
+        يستقبل:
+        - program: كود البرنامج 'PWM','BIO','COMM','COMP'
+        - course_code: رمز المادة المراد حذفها من الخطة
+        ويرجع رسالة نصية من طبقة الداتابيس.
+        """
         msg = self.db.delete_course_from_plan(program, course_code)
-        print(msg)
-
-
-
-
+        return msg
 
     def admin_show_plans(self):
         """
@@ -283,59 +263,39 @@ class AdminUtilities:
 
 
 admin = AdminUtilities(db)
-def add_test_sections():
-    # انتبه: لازم يكون في كورسات بهذي الأكواد في جدول courses
-    sections_data = [
-        {
-            "course_code": "MATH101",
-            "doctor_id": None,          # أو رقم دكتور موجود فعليًا
-            "days": "MW",
-            "time_start": "09:00",
-            "time_end": "09:50",
-            "room": "B15",
-            "capacity": 40,
-            "semester": "241",
-            "state": "open",
-        },
-        {
-            "course_code": "MATH101",
-            "doctor_id": None,
-            "days": "TTh",
-            "time_start": "11:00",
-            "time_end": "12:15",
-            "room": "B16",
-            "capacity": 45,
-            "semester": "241",
-            "state": "open",
-        },
-        {
-            "course_code": "MATH101",
-            "doctor_id": None,
-            "days": "MWF",
-            "time_start": "13:00",
-            "time_end": "13:50",
-            "room": "C201",
-            "capacity": 35,
-            "semester": "241",
-            "state": "closed",
-        },
-    ]
+def admin_show_plans(self):
+    """
+    يعرض كل الخطط الدراسية لكل برنامج،
+    ويعرض المواد الموجودة داخل كل خطة مرتبة حسب المستوى.
+    """
 
-    for sec in sections_data:
-        msg = db.add_section(
-            sec["course_code"],
-            sec["doctor_id"],
-            sec["days"],
-            sec["time_start"],
-            sec["time_end"],
-            sec["room"],
-            sec["capacity"],
-            sec["semester"],
-            sec["state"],
-        )
-        print(sec["course_code"], "=>", msg)
+    rows = self.db.list_plan_courses()
+    # يرجّع صفوف بالشكل:
+    # (program, course_code, course_name, credits, level)
 
+    if not rows:
+        print("No plans found.")
+        return
+
+    current_program = None
+
+    print("\n====== Study Plans ======\n")
+
+    for program, code, name, level in rows:
+
+        # إذا دخلنا برنامج جديد نطبع عنوان جديد
+        if program != current_program:
+            current_program = program
+            print(f"\n====== Program: {program} ======")
+
+        # عرض المادة
+        print(f"  Level {level}: {code} - {name} ")
 
 if __name__ == "__main__":
-    add_test_sections()
-    print("✅ Done seeding test sections.")
+    from database_files.class_database_uitlities import DatabaseUtilities, con, cur
+
+    db = DatabaseUtilities(con, cur)
+    admin = AdminUtilities(db)
+
+    admin.admin_show_plans()
+
