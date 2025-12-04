@@ -1,5 +1,3 @@
-import random  # نحتاجه للأكواد العشوائية
-
 import sqlite3
 
 con = sqlite3.connect("../../university_database.db")
@@ -15,6 +13,21 @@ class DatabaseUtilities:
     def commit(self):
         """حفظ التغييرات في قاعدة البيانات."""
         self.con.commit()
+    
+    # Query execution & fetching
+    def fetchone(self, query, params=()):
+        self.cur.execute(query, params)
+        return self.cur.fetchone()
+
+    def fetchall(self, query, params=()):
+        self.cur.execute(query, params)
+        return self.cur.fetchall()
+
+    # Insert/Update/Delete with commit
+    def execute(self, query, params=()):
+        self.cur.execute(query, params)
+        self.con.commit()
+
 
     def AddCourse(self, code, name, credits):
         """             #math 110   #dddd    -3
@@ -453,6 +466,55 @@ class DatabaseUtilities:
             """, (program,))
 
         return self.cur.fetchall()
+    
+    # student dealings
+
+    def list_student_registrations(self, student_id, semester=None):
+        """
+        Return list of sections the student is registered in.
+        Each item: section_id, course_code, semester, ...
+        """
+        sections = self.list_sections(semester=semester)  # get all sections or filtered by semester
+        registrations = []
+        for sec in sections:
+            sec_id = sec[0]  # section_id
+            # Check if student is registered in this section
+            self.cur.execute("SELECT 1 FROM registrations WHERE student_id=? AND section_id=?", (student_id, sec_id))
+            if self.cur.fetchone():
+                registrations.append(sec)
+        return registrations
+    
+    def is_student_registered(self, student_id, section_id):
+        self.cur.execute("SELECT 1 FROM registrations WHERE student_id=? AND section_id=?", (student_id, section_id))
+        return self.cur.fetchone() is not None
+    
+
+    def register_student_to_section(self, student_id: int, section_id: int) -> bool:
+        """
+        Register a student to a section.
+        Returns True if successful, False if already registered or error occurs.
+        """
+        try:
+            # Check if already registered
+            cur = self.con.cursor()
+            cur.execute(
+                "SELECT 1 FROM student_sections WHERE student_id = ? AND section_id = ?",
+                (student_id, section_id)
+            )
+            if cur.fetchone():
+                return False  # already registered
+
+            # Insert into table
+            cur.execute(
+                "INSERT INTO student_sections (student_id, section_id) VALUES (?, ?)",
+                (student_id, section_id)
+            )
+            self.con.commit()
+            return True
+        except Exception as e:
+            print(f"DB Error in register_student_to_section: {e}")
+            return False
+
 
 
 
