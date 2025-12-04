@@ -12,7 +12,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"
 
 from app_ui.admin_ui.submenus_ui.ui_add_course_to_plan_dialog import Ui_AddCourseDialog
 from admin.class_admin_utilities import admin
-
+from helper_files.shared_utilities import warning,info,error
 
 class AddCourseToPlanDialog(QDialog):
     """
@@ -87,53 +87,9 @@ class AddCourseToPlanDialog(QDialog):
 
     # ------------------------ رسائل كلاسيكية (زي زمان) ------------------------
 
-    def show_error(self, message: str):
-        box = QMessageBox(self)
-        box.setIcon(QMessageBox.Icon.Critical)
-        box.setWindowTitle("Error")
-        box.setText(message)
-        box.setStandardButtons(QMessageBox.StandardButton.Ok)
-        box.setStyleSheet(
-            """
-            QMessageBox {
-                background-color: white;
-                color: black;
-            }
-            QMessageBox QLabel {
-                color: black;
-                font-size: 12pt;
-            }
-            QMessageBox QPushButton {
-                color: black;
-                padding: 6px 14px;
-            }
-            """
-        )
-        box.exec()
 
-    def show_info(self, message: str):
-        box = QMessageBox(self)
-        box.setIcon(QMessageBox.Icon.Information)
-        box.setWindowTitle("Success")
-        box.setText(message)
-        box.setStandardButtons(QMessageBox.StandardButton.Ok)
-        box.setStyleSheet(
-            """
-            QMessageBox {
-                background-color: white;
-                color: black;
-            }
-            QMessageBox QLabel {
-                color: black;
-                font-size: 12pt;
-            }
-            QMessageBox QPushButton {
-                color: black;
-                padding: 6px 14px;
-            }
-            """
-        )
-        box.exec()
+
+
 
     # ------------------------ حدث زر الحفظ ------------------------
 
@@ -144,7 +100,7 @@ class AddCourseToPlanDialog(QDialog):
 
         # احتياط فقط (الزر ما يشتغل إلا لو كل شيء جاهز)
         if not course_code or not program or level < 1:
-            self.show_error("Please fill all required fields.")
+            error(self,"Please fill all required fields.")
             return
 
         try:
@@ -154,10 +110,10 @@ class AddCourseToPlanDialog(QDialog):
                 level=level,
             )
         except Exception as e:
-            self.show_error(f"Error while adding course to plan:\n{e}")
+            error(self, f"Error while adding course to plan:\n{e}")
             return
 
-        self.show_info(msg)
+        info(self, msg)
         self.accept()
 
 
