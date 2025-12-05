@@ -461,11 +461,6 @@ QScrollBar:horizontal { height: 12px; }
         </attribute>
         <column>
          <property name="text">
-          <string>SELECT</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
           <string>#</string>
          </property>
         </column>
@@ -491,7 +486,7 @@ QScrollBar:horizontal { height: 12px; }
         </column>
         <column>
          <property name="text">
-          <string>ACTION</string>
+          <string>PREREQUISITES</string>
          </property>
         </column>
        </widget>

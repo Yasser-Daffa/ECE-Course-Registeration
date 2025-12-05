@@ -103,7 +103,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="totalUsersValue">
+         <widget class="QLabel" name="labelGpaCount">
           <property name="styleSheet">
            <string notr="true">font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;</string>
           </property>
@@ -113,7 +113,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="totalUsersLabel">
+         <widget class="QLabel" name="labelGpa">
           <property name="styleSheet">
            <string notr="true">font-size: 14px; color: #7f8c8d; background: transparent;</string>
           </property>
@@ -184,7 +184,7 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="pendingRequestsValue_2">
+         <widget class="QLabel" name="labelCompletedCreditsCount">
           <property name="styleSheet">
            <string notr="true">font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;</string>
           </property>
@@ -194,7 +194,7 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="pendingRequestsLabel_2">
+         <widget class="QLabel" name="labelCompletedCredits">
           <property name="styleSheet">
            <string notr="true">font-size: 14px; color: #7f8c8d; background: transparent;</string>
           </property>
@@ -262,7 +262,7 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="totalStudentsValue">
+         <widget class="QLabel" name="labelCurrentCreditsCount">
           <property name="styleSheet">
            <string notr="true">font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;</string>
           </property>
@@ -272,7 +272,7 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="totalStudentsLabel">
+         <widget class="QLabel" name="labelCurrentCredits">
           <property name="styleSheet">
            <string notr="true">font-size: 14px; color: #7f8c8d; background: transparent;</string>
           </property>
@@ -340,7 +340,7 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="pendingRequestsValue">
+         <widget class="QLabel" name="labelRegisteredCoursesCount">
           <property name="styleSheet">
            <string notr="true">font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;</string>
           </property>
@@ -350,7 +350,7 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="pendingRequestsLabel">
+         <widget class="QLabel" name="labelRegisteredCourses">
           <property name="styleSheet">
            <string notr="true">font-size: 14px; color: #7f8c8d; background: transparent;</string>
           </property>
