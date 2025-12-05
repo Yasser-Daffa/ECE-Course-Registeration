@@ -18,7 +18,7 @@ from app_ui.student_ui.submenus_ui.ui_register_courses import Ui_RegisterCourses
 from student.submenus.class_register_courses import RegisterCoursesWidget
 
 from app_ui.student_ui.submenus_ui.ui_transcript import Ui_Transcript
-from student.submenus.class_transcript import academic
+from student.submenus.class_transcript import TranscriptWidget
 
 # CANT TEST THIS CLASS IN HERE UNLESS WE HAVE THE REQUIRED INFORMATION FROM USERS
 
@@ -113,8 +113,8 @@ class StudentDashboard(QtWidgets.QMainWindow):
         # # Transcript courses
         # # -------------------------------
         # this page sets up its own ui internally.
-        self.transcript = TranscriptWidget(self.student_id)
-        self.ui.stackedWidget.addWidget(self.transcript)
+        self.transcript_page = TranscriptWidget(self.user_id)
+        self.ui.stackedWidget.addWidget(self.transcript_page)
 
 
     # -------------------------------
