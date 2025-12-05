@@ -66,9 +66,9 @@ class Ui_RegisterCourses(object):
         self.buttonRefresh.setMinimumSize(QtCore.QSize(100, 40))
         self.buttonRefresh.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         self.buttonRefresh.setStyleSheet("QPushButton {\n"
-"    background-color: #f8f9fa;\n"
-"    color: #5a6c7d;\n"
-"    border: 2px solid #e0e0e0;\n"
+"    background-color: #f8f9fa;     /* light grey background */\n"
+"    color: #5a6c7d;               /* text color */\n"
+"    border: 2px solid #e0e0e0;    /* default border */\n"
 "    border-radius: 8px;\n"
 "    font-size: 14px;\n"
 "    font-weight: bold;\n"
@@ -76,15 +76,16 @@ class Ui_RegisterCourses(object):
 "}\n"
 "\n"
 "QPushButton:hover {\n"
-"    border-color: #f5576c;\n"
-"    color: #f5576c;\n"
+"    border-color: #6c5ce7;        /* purplish-blue border on hover */\n"
+"    color: #6c5ce7;               /* match text color to border */\n"
 "}\n"
 "\n"
 "QPushButton:pressed {\n"
-"    background-color: #e0e0e0; /* darker grey for pressed feedback */\n"
-"    border-color: #f5576c;\n"
-"    color: #f5576c;\n"
-"}")
+"    background-color: #e0e0e0;    /* slightly darker grey when pressed */\n"
+"    border-color: #6c5ce7;        /* keep border highlight */\n"
+"    color: #6c5ce7;               /* text color */\n"
+"}\n"
+"")
         self.buttonRefresh.setObjectName("buttonRefresh")
         self.filterLayout.addWidget(self.buttonRefresh)
         self.mainLayout.addWidget(self.filterFrame)
@@ -298,6 +299,7 @@ class Ui_RegisterCourses(object):
         self.buttonRefresh.setText(_translate("RegisterCourses", "🔄 Refresh"))
         self.tableTitle.setText(_translate("RegisterCourses", "All Courses"))
         self.buttonViewSections.setText(_translate("RegisterCourses", " View Availabe Sections"))
+        self.tableAllCourses.setSortingEnabled(True)
         item = self.tableAllCourses.horizontalHeaderItem(0)
         item.setText(_translate("RegisterCourses", "#"))
         item = self.tableAllCourses.horizontalHeaderItem(1)

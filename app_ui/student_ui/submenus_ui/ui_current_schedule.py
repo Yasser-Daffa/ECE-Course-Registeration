@@ -277,6 +277,7 @@ class Ui_CurrentSchedule(object):
         self.buttonRefresh.setText(_translate("CurrentSchedule", "🔄 Refresh"))
         self.tableTitle.setText(_translate("CurrentSchedule", "Current Courses registred"))
         self.buttonRemoveSelected.setText(_translate("CurrentSchedule", "❌ Remove Selected"))
+        self.tableCourses.setSortingEnabled(True)
         item = self.tableCourses.horizontalHeaderItem(0)
         item.setText(_translate("CurrentSchedule", "SELECT"))
         item = self.tableCourses.horizontalHeaderItem(1)

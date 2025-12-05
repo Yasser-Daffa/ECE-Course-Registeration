@@ -626,7 +626,7 @@ class Ui_Transcript(object):
         self.labelMajor.setText(_translate("Transcript", "POWER!!!"))
         self.labelDepartmentTitle.setText(_translate("Transcript", "DEPARTMENT"))
         self.labelDepartment.setText(_translate("Transcript", "Electrical Engineering Faculty"))
-        self.labelTableTitle.setText(_translate("Transcript", "Year [202X] Semster [1]"))
+        self.labelTableTitle.setText(_translate("Transcript", "Course History"))
         self.labelSemesterGPA.setText(_translate("Transcript", "Semester GPA: 3.80"))
         self.labelSemesterCreditsCount.setText(_translate("Transcript", "Credits: 18"))
         item = self.tableCourses.horizontalHeaderItem(0)

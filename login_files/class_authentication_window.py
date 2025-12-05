@@ -43,25 +43,20 @@ from helper_files.validators import (
 from database_files.class_database_uitlities import DatabaseUtilities
 from admin.class_admin_utilities import db
 
-# Placeholder imports for your future main windows
-# from student_dashboard.class_student_dashboard import StudentDashboard
-# from admin_dashboard.class_admin_dashboard import AdminDashboard
 
 
 class AuthenticationWindow(BaseLoginForm, EmailSender): 
     def __init__(self):
         super().__init__()
 
-
-        # --- 0. Initialize database and ensure all tables exist ---
-        # Import the function that sets up the database schema if not already present
-        from database_files.initialize_database import initialize_database
-
         # Call it to create/connect the database and return the connection and cursor
         # This ensures all required tables, triggers, and constraints exist
         # con, cur = initialize_database("university_database.db")  # runs the table creation if missing
 
-        # Wrap the connection and cursor in your DatabaseUtilities helper for easy DB operations
+        # For logout button
+        QApplication.instance().setQuitOnLastWindowClosed(True)
+        
+        # using the database we called from admin utils
         self.db = db
         # Email sender instance
         self.email_sender = EmailSender()

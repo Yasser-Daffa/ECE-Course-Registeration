@@ -413,6 +413,9 @@ QScrollBar:horizontal { height: 12px; }
         <property name="horizontalScrollMode">
          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
         </property>
+        <property name="sortingEnabled">
+         <bool>true</bool>
+        </property>
         <property name="cornerButtonEnabled">
          <bool>true</bool>
         </property>
@@ -425,11 +428,6 @@ QScrollBar:horizontal { height: 12px; }
         <attribute name="verticalHeaderCascadingSectionResizes">
          <bool>true</bool>
         </attribute>
-        <column>
-         <property name="text">
-          <string>SELECT</string>
-         </property>
-        </column>
         <column>
          <property name="text">
           <string>#</string>

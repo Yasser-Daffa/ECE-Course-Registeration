@@ -3,9 +3,11 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 
 
 from PyQt6 import QtWidgets
+from PyQt6.QtWidgets import QApplication
+from PyQt6.QtCore import QPropertyAnimation, QEasingCurve, QTimer
+
 from database_files.class_database_uitlities import DatabaseUtilities
-from database_files.initialize_database import initialize_database
-from admin.class_admin_utilities import AdminUtilities
+from admin.class_admin_utilities import AdminUtilities, db
 
 # Subpage UI & Controller imports
 from app_ui.admin_ui.ui_admin_dashboard import Ui_AdminDashboard
@@ -26,6 +28,10 @@ from admin.submenus.class_manage_prereqs import ManagePrerequisitesController
 
 from app_ui.admin_ui.submenus_ui.ui_manage_sections import Ui_ManageSections
 from admin.submenus.class_manage_sections import ManageSectionsWidget
+
+from app_ui.admin_ui.submenus_ui.ui_program_plans import Ui_ProgramPlans
+from admin.submenus.class_program_plans import ProgramPlansWidget 
+
 
 class AdminDashboard(QtWidgets.QMainWindow):
     """
@@ -74,7 +80,8 @@ class AdminDashboard(QtWidgets.QMainWindow):
             self.ui.buttonPendingRequests: ("Pending Requests", self.pending_requests_page),
             self.ui.buttonManageCourses: ("Manage Courses", self.manage_courses_page),
             self.ui.buttonManagePrereqs: ("Manage Prereqs", self.manage_prereqs_page),
-            self.ui.buttonManageSections: ("Manage Prereqs", self.manage_sections_controller)
+            self.ui.buttonManageSections: ("Manage Sections", self.manage_sections_controller),
+            self.ui.buttonProgramPlans: ("Program Plans", self.program_plans_controller)
         }
 
         # Connect buttons to page-switching logic
@@ -148,6 +155,14 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.manage_sections_controller = ManageSectionsWidget(self.admin)
         self.ui.stackedWidget.addWidget(self.manage_sections_controller)
 
+        # -------------------------------
+        # Manage sections
+        # -------------------------------
+
+        # # this page sets up its own ui internally. and only uses admin utils class
+        self.program_plans_controller = ProgramPlansWidget(self.admin)
+        self.ui.stackedWidget.addWidget(self.program_plans_controller)
+
     # -------------------------------
     # Switch the stacked widget to the page associated with the clicked button
     # -------------------------------
@@ -167,40 +182,34 @@ class AdminDashboard(QtWidgets.QMainWindow):
     # ------- Cool Logout Functionality -----------
     def fade_and_logout(self):
         from login_files.class_authentication_window import AuthenticationWindow
-        from PyQt6.QtCore import QPropertyAnimation, QEasingCurve, QTimer
 
-        # IMPORTANT: Prevent Qt from quitting
-        QtWidgets.QApplication.instance().setQuitOnLastWindowClosed(False)
+        # Prevent app from quitting when this window closes
+        QApplication.instance().setQuitOnLastWindowClosed(False)
 
-        # Create fade-out animation
+        # Fade-out animation
         self.anim = QPropertyAnimation(self, b"windowOpacity")
         self.anim.setDuration(350)
         self.anim.setStartValue(1.0)
         self.anim.setEndValue(0.0)
         self.anim.setEasingCurve(QEasingCurve.Type.InOutQuad)
 
-        # When fade finishes → close → wait → show login
         self.anim.finished.connect(lambda: (
             self.close(),
             QTimer.singleShot(50, self.show_authentication_window)
         ))
+
         self.anim.start()
-        # QtWidgets.QApplication.instance().setQuitOnLastWindowClosed(True)
 
 
     def show_authentication_window(self):
         from login_files.class_authentication_window import AuthenticationWindow
-        self.authentication_window = AuthenticationWindow()
-        self.authentication_window.show()
+        self.auth_window = AuthenticationWindow()
+        self.auth_window.show()
+
 
 # ------------------------------- MAIN APP -------------------------------
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    DB_PATH = os.path.join(BASE_DIR, "../university_database.db")
-    con, cur = initialize_database(DB_PATH)
-    db = DatabaseUtilities(con, cur)
 
     window = AdminDashboard(db)
     window.show()

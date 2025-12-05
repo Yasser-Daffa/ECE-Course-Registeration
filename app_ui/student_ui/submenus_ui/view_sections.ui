@@ -501,9 +501,9 @@ QLineEdit:disabled {
         </property>
         <property name="styleSheet">
          <string notr="true">QPushButton {
-    background-color: #f8f9fa;
-    color: #5a6c7d;
-    border: 2px solid #e0e0e0;
+    background-color: #f8f9fa;     /* light grey background */
+    color: #5a6c7d;               /* text color */
+    border: 2px solid #e0e0e0;    /* default border */
     border-radius: 8px;
     font-size: 14px;
     font-weight: bold;
@@ -511,15 +511,16 @@ QLineEdit:disabled {
 }
 
 QPushButton:hover {
-    border-color: #f5576c;
-    color: #f5576c;
+    border-color: #6c5ce7;        /* purplish-blue border on hover */
+    color: #6c5ce7;               /* match text color to border */
 }
 
 QPushButton:pressed {
-    background-color: #e0e0e0; /* darker grey for pressed feedback */
-    border-color: #f5576c;
-    color: #f5576c;
-}</string>
+    background-color: #e0e0e0;    /* slightly darker grey when pressed */
+    border-color: #6c5ce7;        /* keep border highlight */
+    color: #6c5ce7;               /* text color */
+}
+</string>
         </property>
         <property name="text">
          <string>🔄 Refresh</string>
