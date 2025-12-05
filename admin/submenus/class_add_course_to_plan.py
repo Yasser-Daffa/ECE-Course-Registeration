@@ -85,22 +85,10 @@ class AddCourseToPlanDialog(QDialog):
 
         self.ui.buttonSave.setEnabled(course_ok and program_ok and level_ok)
 
-    # ------------------------ رسائل كلاسيكية (زي زمان) ------------------------
-
-
-
-
-
-    # ------------------------ حدث زر الحفظ ------------------------
-
     def on_save_clicked(self):
         course_code = self.ui.comboBoxSelectCourse.currentData()
         program = self.ui.comboBoxSelectProgram.currentData()
         level = self.ui.spinBoxLevel.value()
-
-        if not course_code or not program or level < 1:
-            error(self, "Please fill all required fields.")
-            return
 
         try:
             msg = self.admin_utils.admin_add_course_to_plan(

@@ -4,7 +4,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"
 
 from student.class_student_utilities import StudentUtilities, db
 
-student_id = 2500001
+student_id = 7500003
 stu = StudentUtilities(db, student_id)
 
 # Directly fetch registered sections/courses

@@ -83,6 +83,6 @@ class CurrentScheduleWidget(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    w = CurrentScheduleWidget(student_id=2500001)
+    w = CurrentScheduleWidget(student_id=7500003)
     w.show()
     sys.exit(app.exec())
