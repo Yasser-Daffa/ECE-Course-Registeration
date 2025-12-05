@@ -109,7 +109,8 @@ def initialize_database(db_path="../university_database.db"):
         student_id integer not null,
         section_id integer not null,
         course_code text not null,
-        primary key (student_id, course_code), -- Prevent duplicate registration
+        semester text not null,
+        primary key (student_id, course_code, semester), -- Prevent duplicate registration,
         foreign key (student_id) references users(user_id) on delete cascade on update cascade,
         foreign key (section_id) references sections(section_id) on delete cascade on update cascade,
         foreign key (course_code) references courses(code) on delete cascade on update cascade
