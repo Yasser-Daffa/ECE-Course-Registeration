@@ -2,9 +2,9 @@ import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 
 
-from PyQt6 import QtWidgets
-from PyQt6.QtWidgets import QApplication
 from PyQt6.QtCore import QPropertyAnimation, QEasingCurve, QTimer
+from PyQt6.QtWidgets import QApplication
+from PyQt6 import QtWidgets
 
 from database_files.class_database_uitlities import DatabaseUtilities
 from admin.class_admin_utilities import AdminUtilities, db
@@ -64,6 +64,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.ui.stackedWidget.addWidget(self.manage_courses_page)
         self.ui.stackedWidget.addWidget(self.manage_prereqs_page)
         self.ui.stackedWidget.addWidget(self.manage_sections_controller)
+        self.ui.stackedWidget.addWidget(self.program_plans_controller)
         # Add other pages similarly...
 
 
@@ -153,15 +154,14 @@ class AdminDashboard(QtWidgets.QMainWindow):
 
         # # no need for all the extra junk since this page sets up its own ui internally. thanks to salem :)
         self.manage_sections_controller = ManageSectionsWidget(self.admin)
-        self.ui.stackedWidget.addWidget(self.manage_sections_controller)
-
+        
         # -------------------------------
         # Manage sections
         # -------------------------------
 
         # # this page sets up its own ui internally. and only uses admin utils class
         self.program_plans_controller = ProgramPlansWidget(self.admin)
-        self.ui.stackedWidget.addWidget(self.program_plans_controller)
+        
 
     # -------------------------------
     # Switch the stacked widget to the page associated with the clicked button
@@ -182,17 +182,19 @@ class AdminDashboard(QtWidgets.QMainWindow):
     # ------- Cool Logout Functionality -----------
     def fade_and_logout(self):
         from login_files.class_authentication_window import AuthenticationWindow
+        from PyQt6.QtCore import QPropertyAnimation, QEasingCurve, QTimer
 
-        # Prevent app from quitting when this window closes
-        QApplication.instance().setQuitOnLastWindowClosed(False)
+        # IMPORTANT: Prevent Qt from quitting
+        QtWidgets.QApplication.instance().setQuitOnLastWindowClosed(False)
 
-        # Fade-out animation
+        # Create fade-out animation
         self.anim = QPropertyAnimation(self, b"windowOpacity")
         self.anim.setDuration(350)
         self.anim.setStartValue(1.0)
         self.anim.setEndValue(0.0)
         self.anim.setEasingCurve(QEasingCurve.Type.InOutQuad)
 
+        # When fade finishes → close → wait → show login
         self.anim.finished.connect(lambda: (
             self.close(),
             QTimer.singleShot(50, self.show_authentication_window)
@@ -203,8 +205,8 @@ class AdminDashboard(QtWidgets.QMainWindow):
 
     def show_authentication_window(self):
         from login_files.class_authentication_window import AuthenticationWindow
-        self.auth_window = AuthenticationWindow()
-        self.auth_window.show()
+        self.authentication_window = AuthenticationWindow()
+        self.authentication_window.show()
 
 
 # ------------------------------- MAIN APP -------------------------------

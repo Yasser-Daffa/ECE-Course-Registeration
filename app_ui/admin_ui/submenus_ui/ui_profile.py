@@ -12,7 +12,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_Profile(object):
     def setupUi(self, Profile):
         Profile.setObjectName("Profile")
-        Profile.resize(863, 819)
+        Profile.resize(863, 849)
         Profile.setStyleSheet("background-color: #f5f7fa;")
         self.mainLayout = QtWidgets.QVBoxLayout(Profile)
         self.mainLayout.setContentsMargins(40, 40, 40, 40)
@@ -372,6 +372,8 @@ class Ui_Profile(object):
         self.adminInfoBodyLayout.addLayout(self.buttonsLayout)
         self.adminInfoMainLayout.addWidget(self.adminInfoBody)
         self.mainLayout.addWidget(self.adminInfoFrame)
+        spacerItem2 = QtWidgets.QSpacerItem(20, 60, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Maximum)
+        self.mainLayout.addItem(spacerItem2)
 
         self.retranslateUi(Profile)
         QtCore.QMetaObject.connectSlotsByName(Profile)

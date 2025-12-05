@@ -103,7 +103,9 @@ class StudentDashboard(QtWidgets.QMainWindow):
         # -------------------------------
         # this page sets up its own ui internally.
         self.current_schedule_page = CurrentScheduleWidget(self.user_id)
-        self.ui.stackedWidget.addWidget(self.current_schedule_page)
+
+        # # already added inside innit
+        # self.ui.stackedWidget.addWidget(self.current_schedule_page)
 
         # -------------------------------
         # Register Courses page
@@ -111,14 +113,14 @@ class StudentDashboard(QtWidgets.QMainWindow):
         # this page sets up its own ui internally.
 
         self.register_courses_page = RegisterCoursesWidget(self.user_id, semester=None)
-        self.ui.stackedWidget.addWidget(self.register_courses_page)
+        # self.ui.stackedWidget.addWidget(self.register_courses_page)
 
         # # -------------------------------
         # # Transcript courses
         # # -------------------------------
         # this page sets up its own ui internally.
         self.transcript_page = TranscriptWidget(self.user_id)
-        self.ui.stackedWidget.addWidget(self.transcript_page)
+        # self.ui.stackedWidget.addWidget(self.transcript_page)
 
 
     # -------------------------------
