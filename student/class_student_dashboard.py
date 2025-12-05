@@ -17,9 +17,10 @@ from student.submenus.class_current_schedule import CurrentScheduleWidget
 from app_ui.student_ui.submenus_ui.ui_register_courses import Ui_RegisterCourses
 from student.submenus.class_register_courses import RegisterCoursesWidget
 
-# from app_ui.student_ui.submenus_ui.ui_transcript import Ui_Transcript
-# from student.submenus. import 
+from app_ui.student_ui.submenus_ui.ui_transcript import Ui_Transcript
+from student.submenus.class_transcript import academic
 
+# CANT TEST THIS CLASS IN HERE UNLESS WE HAVE THE REQUIRED INFORMATION FROM USERS
 
 class StudentDashboard(QtWidgets.QMainWindow):
     """
@@ -51,7 +52,7 @@ class StudentDashboard(QtWidgets.QMainWindow):
         # self.ui.stackedWidget.addWidget(self.profile_page)
         self.ui.stackedWidget.addWidget(self.current_schedule_page)
         self.ui.stackedWidget.addWidget(self.register_courses_page)
-        # self.ui.stackedWidget.addWidget(self.transcript_page)
+        self.ui.stackedWidget.addWidget(self.transcript_page)
 
         # Add other pages similarly...
 
@@ -67,7 +68,7 @@ class StudentDashboard(QtWidgets.QMainWindow):
             self.ui.buttonProfile: ("Profile", self.current_schedule_page),
             self.ui.buttonCurrentSchedule: ("Current Schedule", self.current_schedule_page),
             self.ui.buttonRegisterCourses: ("Manage Courses", self.register_courses_page),
-            # self.ui.buttonTranscript: ("Transcript", self.transcript_page),
+            self.ui.buttonTranscript: ("Transcript", self.transcript_page),
         }
 
         # Connect buttons to page-switching logic
@@ -111,9 +112,9 @@ class StudentDashboard(QtWidgets.QMainWindow):
         # # -------------------------------
         # # Transcript courses
         # # -------------------------------
-        # # this page sets up its own ui internally.
-        # self.transcript = TranscriptWidget(self.student_id)
-        # self.ui.stackedWidget.addWidget(self.transcript)
+        # this page sets up its own ui internally.
+        self.transcript = TranscriptWidget(self.student_id)
+        self.ui.stackedWidget.addWidget(self.transcript)
 
 
     # -------------------------------
