@@ -1,6 +1,7 @@
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 
+from PyQt6.QtCore import QPropertyAnimation, QEasingCurve, QTimer
 
 from PyQt6 import QtWidgets
 from student.class_student_utilities import StudentUtilities, db
@@ -75,6 +76,9 @@ class StudentDashboard(QtWidgets.QMainWindow):
         for button in self.page_mapping.keys():
             button.clicked.connect(lambda checked, b=button: self.switch_to_page(b))
 
+        # Connect logout button
+        self.ui.buttonLogout.clicked.connect(self.fade_and_logout)
+
         # Show default page (should be profile first)
         self.switch_to_page(self.ui.buttonProfile)
         # Disable manage faculty button do to it not being implemented yet
@@ -132,6 +136,36 @@ class StudentDashboard(QtWidgets.QMainWindow):
             
             # Optional debug: safely print the human-readable name of the page
             print(f"Switched to page: {name}")
+
+    # ------- Cool Logout Functionality -----------
+    def fade_and_logout(self):
+        from login_files.class_authentication_window import AuthenticationWindow
+        from PyQt6.QtCore import QPropertyAnimation, QEasingCurve, QTimer
+
+        # IMPORTANT: Prevent Qt from quitting
+        QtWidgets.QApplication.instance().setQuitOnLastWindowClosed(False)
+
+        # Create fade-out animation
+        self.anim = QPropertyAnimation(self, b"windowOpacity")
+        self.anim.setDuration(350)
+        self.anim.setStartValue(1.0)
+        self.anim.setEndValue(0.0)
+        self.anim.setEasingCurve(QEasingCurve.Type.InOutQuad)
+
+        # When fade finishes → close → wait → show login
+        self.anim.finished.connect(lambda: (
+            self.close(),
+            QTimer.singleShot(50, self.show_authentication_window)
+        ))
+
+        self.anim.start()
+
+
+    def show_authentication_window(self):
+        from login_files.class_authentication_window import AuthenticationWindow
+        self.authentication_window = AuthenticationWindow()
+        self.authentication_window.show()
+
 
 # # ------------------------------- MAIN APP -------------------------------
 # if __name__ == "__main__":
