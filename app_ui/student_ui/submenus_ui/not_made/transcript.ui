@@ -154,7 +154,7 @@ QScrollBar::sub-page:horizontal {
         <x>0</x>
         <y>0</y>
         <width>1106</width>
-        <height>611</height>
+        <height>1031</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -225,7 +225,7 @@ QScrollBar::sub-page:horizontal {
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="labelGpaCount">
+             <widget class="QLabel" name="labelGPACount">
               <property name="styleSheet">
                <string notr="true">font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;</string>
               </property>
@@ -235,7 +235,7 @@ QScrollBar::sub-page:horizontal {
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="labelGpa">
+             <widget class="QLabel" name="labelGPA">
               <property name="styleSheet">
                <string notr="true">font-size: 14px; color: #7f8c8d; background: transparent;</string>
               </property>
@@ -547,7 +547,7 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
            <number>15</number>
           </property>
           <item>
-           <widget class="QLabel" name="tableTitle">
+           <widget class="QLabel" name="labelTableTitle">
             <property name="styleSheet">
              <string notr="true">font-size: 18px; font-weight: bold; color: #2c3e50; background: transparent;</string>
             </property>
@@ -570,7 +570,7 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
            </spacer>
           </item>
           <item>
-           <widget class="QLabel" name="labelSemesterGPA1">
+           <widget class="QLabel" name="labelSemesterGPA">
             <property name="styleSheet">
              <string notr="true">font-size: 15px; font-weight: 600; color: #64748b; background: transparent;</string>
             </property>
@@ -580,7 +580,7 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="labelSemesterCredits1">
+           <widget class="QLabel" name="labelSemesterCreditsCount">
             <property name="styleSheet">
              <string notr="true">font-size: 15px; font-weight: 600; color: #64748b; background: transparent; padding-left: 20px;</string>
             </property>
@@ -594,6 +594,270 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
        </item>
        <item>
         <widget class="QTableWidget" name="tableCourses">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>300</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QTableWidget {
+    border: none;
+    background-color: white;
+    gridline-color: #e5e5e5;      /* slightly darker for visibility */
+    color: #222222;               /* matches QLineEdit text color */
+    font-size: 14px;
+}
+
+QTableWidget::item {
+    padding: 14px;
+    border: none;
+    color: #222222;               /* consistent text color */
+}
+
+QTableWidget::item:selected {
+    background-color: #fcebed;  /* soft pink selection */
+    color: #222222;             /* keep text readable */
+}
+
+QHeaderView::section {
+    background-color: #f8f9fa;
+    padding: 12px;
+	border: 1px solid #c1c1c1; 
+    font-size: 13px;
+    color: #555555;               /* similar to readOnly QLineEdit text */
+    font-weight: bold;
+}
+QTableWidget::item:focus {
+    outline: none;
+    border: none;
+}
+/* Removes weird selection rectangle */
+QTableWidget::item:focus {
+    outline: none;
+    border: none;
+}
+QTableWidget::indicator {
+    width: 18px;
+    height: 18px;
+}
+
+QTableWidget::indicator:unchecked {
+    border: 1px solid #b8b8b8;      /* soft grey border */
+    background-color: #f8f8f8;      /* very light grey */
+    border-radius: 3px;             /* slightly rounded */
+}
+
+QTableWidget::indicator:checked {
+    border: 1px solid #5a5a5a;      /* darker grey when selected */
+    background-color: #6c6c6c;      /* washed-out grey instead of harsh green */
+    image: url(&quot;&quot;);                 /* remove default checkmark */
+    border-radius: 3px;
+}
+
+QTableWidget::indicator:checked:hover,
+QTableWidget::indicator:unchecked:hover {
+    border-color: #3a3a3a;
+}
+
+QTableWidget::indicator:checked::after {
+    content: &quot;&quot;;
+    image: url(&quot;&quot;); /* no default checkmark */
+}
+/* ===== SCROLLBARS (VERTICAL &amp; HORIZONTAL) ===== */
+
+/* Track */
+QScrollBar:vertical, QScrollBar:horizontal {
+    background: rgba(255, 255, 255, 0.05);  /* subtle track */
+    border-radius: 6px;
+    margin: 0px;  /* remove extra space */
+}
+
+/* Handle / Thumb */
+QScrollBar::handle:vertical, QScrollBar::handle:horizontal {
+    background: rgba(120, 120, 120, 0.35);  /* glassy thumb */
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.2); /* subtle highlight */
+    min-height: 30px; /* vertical */
+    min-width: 30px;  /* horizontal */
+}
+
+QScrollBar::handle:vertical:hover,
+QScrollBar::handle:horizontal:hover {
+    background: rgba(120, 120, 120, 0.55);
+}
+
+/* Buttons (up/down or left/right) */
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical,
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    width: 16px;  /* horizontal buttons width */
+    height: 16px; /* vertical buttons height */
+    background: rgba(180, 180, 180, 0.35);
+    border-radius: 4px;
+}
+
+/* Arrow icons */
+QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical,
+QScrollBar::left-arrow:horizontal, QScrollBar::right-arrow:horizontal {
+    width: 6px;
+    height: 6px;
+    background: transparent;
+}
+
+/* Remove blank areas */
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical,
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
+    background: none;
+}
+
+/* Sizes */
+QScrollBar:vertical { width: 12px; }
+QScrollBar:horizontal { height: 12px; }
+</string>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::SelectionMode::ContiguousSelection</enum>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+         </property>
+         <property name="verticalScrollMode">
+          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
+         </property>
+         <property name="horizontalScrollMode">
+          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
+         </property>
+         <property name="cornerButtonEnabled">
+          <bool>true</bool>
+         </property>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderCascadingSectionResizes">
+          <bool>true</bool>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>#</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>COURSE CODE</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>COURSE NAME</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>CREDIT</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>GRADE</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>SEMESTER</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="tableHeader_2">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>60</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>60</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QFrame { background-color: #f8fafc; border-radius: 14px 14px 0px 0px; border-bottom: 2px solid #e2e8f0; }</string>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <layout class="QHBoxLayout" name="tableHeaderLayout_2">
+          <property name="leftMargin">
+           <number>25</number>
+          </property>
+          <property name="topMargin">
+           <number>15</number>
+          </property>
+          <property name="rightMargin">
+           <number>25</number>
+          </property>
+          <property name="bottomMargin">
+           <number>15</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="labelTableTitle_2">
+            <property name="styleSheet">
+             <string notr="true">font-size: 18px; font-weight: bold; color: #2c3e50; background: transparent;</string>
+            </property>
+            <property name="text">
+             <string>Year [202X] Semster [2]</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="tableHeaderSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="labelSemesterGPA_2">
+            <property name="styleSheet">
+             <string notr="true">font-size: 15px; font-weight: 600; color: #64748b; background: transparent;</string>
+            </property>
+            <property name="text">
+             <string>Semester GPA: 3.80</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="labelSemesterCreditsCount_2">
+            <property name="styleSheet">
+             <string notr="true">font-size: 15px; font-weight: 600; color: #64748b; background: transparent; padding-left: 20px;</string>
+            </property>
+            <property name="text">
+             <string>Credits: 18</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTableWidget" name="tableCourses_2">
          <property name="minimumSize">
           <size>
            <width>0</width>

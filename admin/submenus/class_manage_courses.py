@@ -11,6 +11,7 @@ from PyQt6.QtCore import Qt
 
 from app_ui.admin_ui.submenus_ui.ui_manage_courses import Ui_ManageCourses
 from app_ui.admin_ui.submenus_ui.ui_add_courses_dialog import Ui_AddCourseDialog 
+from admin.submenus.class_add_courses import AddCoursesDialog
 
 from helper_files.shared_utilities import BaseLoginForm
 
@@ -218,8 +219,11 @@ class ManageCoursesController:
         )
     # ------------------ ADD COURSE ------------------
     def handle_add_course_clicked(self):
-        print("\nAdd Course button clicked (connect to dialog here)\n")
-
+        from admin.class_admin_utilities import admin
+        # Open our existing AddCoursesDialog
+        dialog = AddCoursesDialog(admin_utils=admin)  # pass your admin/db object
+        if dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+            self.load_courses()  # refresh table after a course is added
 
 
 
