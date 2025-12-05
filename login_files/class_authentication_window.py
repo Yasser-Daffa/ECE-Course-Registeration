@@ -41,7 +41,7 @@ from helper_files.validators import (
 # Database utilities
 # -----------------------------
 from database_files.class_database_uitlities import DatabaseUtilities
-
+from admin.class_admin_utilities import db
 
 # Placeholder imports for your future main windows
 # from student_dashboard.class_student_dashboard import StudentDashboard
@@ -59,10 +59,10 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
 
         # Call it to create/connect the database and return the connection and cursor
         # This ensures all required tables, triggers, and constraints exist
-        con, cur = initialize_database("university_database.db")  # runs the table creation if missing
+        # con, cur = initialize_database("university_database.db")  # runs the table creation if missing
 
         # Wrap the connection and cursor in your DatabaseUtilities helper for easy DB operations
-        self.db = DatabaseUtilities(con, cur)
+        self.db = db
         # Email sender instance
         self.email_sender = EmailSender()
 
