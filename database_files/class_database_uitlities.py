@@ -533,6 +533,35 @@ class DatabaseUtilities:
         except Exception as e:
             print(f"DB Error in register_student_to_section: {e}")
             return False
+        
+    # ------------------- Remove student registration -------------------
+    def remove_student_registration(self, student_id: int, course_code: str) -> bool:
+        """
+        Deletes a student's registration for a specific course.
+        Returns True if a row was deleted, False otherwise.
+        """
+        try:
+            # Get all section_ids for this course that the student is registered in
+            self.cur.execute(
+                "SELECT section_id FROM registrations "
+                "WHERE student_id = ? AND course_code = ?",
+                (student_id, course_code)
+            )
+            rows = self.cur.fetchall()
+            if not rows:
+                return False  # student not registered for this course
+
+            # Delete all registrations for this course (usually only one per course)
+            section_ids = [r[0] for r in rows]
+            self.cur.execute(
+                f"DELETE FROM registrations WHERE student_id = ? AND section_id IN ({','.join(['?']*len(section_ids))})",
+                [student_id, *section_ids]
+            )
+            self.con.commit()
+            return True
+        except Exception as e:
+            print(f"[ERROR] remove_student_registration failed: {e}")
+            return False
 
 
 

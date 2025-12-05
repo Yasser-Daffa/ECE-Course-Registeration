@@ -39,6 +39,32 @@ class Ui_CurrentSchedule(object):
         self.filterLayout.setObjectName("filterLayout")
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.filterLayout.addItem(spacerItem1)
+        self.buttonRefresh = QtWidgets.QPushButton(parent=self.filterFrame)
+        self.buttonRefresh.setMinimumSize(QtCore.QSize(100, 40))
+        self.buttonRefresh.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonRefresh.setStyleSheet("QPushButton {\n"
+"    background-color: #f8f9fa;     /* light grey background */\n"
+"    color: #5a6c7d;               /* text color */\n"
+"    border: 2px solid #e0e0e0;    /* default border */\n"
+"    border-radius: 8px;\n"
+"    font-size: 14px;\n"
+"    font-weight: bold;\n"
+"    padding: 10px 20px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    border-color: #6c5ce7;        /* purplish-blue border on hover */\n"
+"    color: #6c5ce7;               /* match text color to border */\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background-color: #e0e0e0;    /* slightly darker grey when pressed */\n"
+"    border-color: #6c5ce7;        /* keep border highlight */\n"
+"    color: #6c5ce7;               /* text color */\n"
+"}\n"
+"")
+        self.buttonRefresh.setObjectName("buttonRefresh")
+        self.filterLayout.addWidget(self.buttonRefresh)
         self.mainLayout.addWidget(self.filterFrame)
         self.tableFrame = QtWidgets.QFrame(parent=CurrentSchedule)
         self.tableFrame.setStyleSheet("background-color: white; border-radius: 12px;")
@@ -248,6 +274,7 @@ class Ui_CurrentSchedule(object):
     def retranslateUi(self, CurrentSchedule):
         _translate = QtCore.QCoreApplication.translate
         self.labelTitle.setText(_translate("CurrentSchedule", "📅Current Schedule"))
+        self.buttonRefresh.setText(_translate("CurrentSchedule", "🔄 Refresh"))
         self.tableTitle.setText(_translate("CurrentSchedule", "Current Courses registred"))
         self.buttonRemoveSelected.setText(_translate("CurrentSchedule", "❌ Remove Selected"))
         item = self.tableCourses.horizontalHeaderItem(0)

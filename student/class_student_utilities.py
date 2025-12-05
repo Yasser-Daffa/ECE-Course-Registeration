@@ -36,8 +36,37 @@ class StudentUtilities:
             if self.db.is_student_registered(self.student_id, sec_id) and (semester is None or sec[9] == semester):
                 registered.append(course_code)
         return registered
+    
 
-    # ================== Available courses ==================
+    def get_registered_courses_full(self, semester=None):
+        """
+        Return a list of dicts representing registered courses for this student.
+        Each dict contains: course_id, credit, section, days, time, room, instructor
+        """
+        sections = self.db.list_sections()
+        registered = []
+
+        for sec in sections:
+            sec_id, course_code, instructor_name, days, start_time, end_time, room, capacity, enrolled, sec_semester, state = sec
+            if self.db.is_student_registered(self.student_id, sec_id):
+                if semester is None or sec_semester == semester:
+                    # get course credit
+                    course_info = self.db.ListCourses()
+                    credit = next((c[2] for c in course_info if c[0] == course_code), 0)
+
+                    registered.append({
+                        "course_id": course_code,
+                        "credit": credit,
+                        "section": sec_id,
+                        "days": days or "",
+                        "time": f"{start_time}-{end_time}" if start_time and end_time else "",
+                        "room": room or "",
+                        "instructor": instructor_name or ""
+                    })
+        return registered
+
+
+    # ================== courses ==================
     def get_available_courses(self, semester):
         """
         ترجع قائمة بالمواد المتاحة للتسجيل لهذا الطالب في سمستر معيّن.
@@ -130,9 +159,21 @@ class StudentUtilities:
                 print(f"    Missing: {', '.join(c['missing_prereqs'])}")
 
         return can
+    
+        # ------------------- Remove registered course -------------------
+    def remove_registered_course(self, course_code):
+        """
+        Removes a registered course for the student.
+        Returns True if successful, False otherwise.
+        """
+        try:
+            return self.db.remove_student_registration(self.student_id, course_code)
+        except Exception as e:
+            print(f"[ERROR] Failed to remove course {course_code}: {e}")
+            return False
 
     # ================== Sections ==================
-    # inside class StudentUtilities
+    
     def get_all_sections(self):
         """
         Return all sections in a standardized dict format for the table.
