@@ -77,6 +77,10 @@ class TranscriptWidget(QWidget):
     # ==================== معلومات الطالب (اللي فوق) ====================
 
     def load_student_info(self):
+        """
+        يعرض فقط خطة الطالب (program) في labelMajor.
+        بدون اسم – بدون ID – بدون قسم.
+        """
         try:
             user = self.student_utils.db.get_user_by_id(self.student_id)
             # شكلها: (user_id, name, email, program, state, account_status)
@@ -84,23 +88,18 @@ class TranscriptWidget(QWidget):
             print(f"[ERROR] load_student_info: {e}")
             user = None
 
-        if not user:
-            # ما عندنا إلا الـ student_id، نوريه فوق
-            if hasattr(self.ui, "labelMajor"):
-                self.ui.labelMajor.setText(f"Student ID: {self.student_id}")
-            return
+        if user:
+            program = user[3]  # <-- الخطة الدراسية فقط
+        else:
+            program = "N/A"
 
-        user_id, name, email, program, state, account_status = user
-
-        # نستخدم العناصر الموجودة في التصميم كـ "مساحة عرض"
-        # labelMajor = نعرض فيها البرنامج + الاسم
+        # نعرض الخطة فقط
         if hasattr(self.ui, "labelMajor"):
-            major_text = program or "N/A"
-            self.ui.labelMajor.setText(f"{major_text}  |  {name} (ID: {user_id})")
+            self.ui.labelMajor.setText(f"{program}")
 
-        # القسم نخليه ثابت أو حسب برنامجك لو حاب تضبطه لاحقاً
+        # نخلي القسم فاضي
         if hasattr(self.ui, "labelDepartment"):
-            self.ui.labelDepartment.setText("Electrical Engineering Department")
+            self.ui.labelDepartment.setText("")
 
     # ==================== تحميل الـ Transcript ====================
 
