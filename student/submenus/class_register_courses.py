@@ -14,51 +14,79 @@ from student.class_student_utilities import StudentUtilities, db
 class RegisterCoursesWidget(QWidget):
     """
     Register courses widget:
-    - Table selectable
-    - Only courses meeting prerequisites are selectable
-    - View Sections button disabled until valid selection
+    - Supports multi-selection
+    - Still preserves prerequisite rules:
+        * ALL selected courses must be eligible (can_register=True)
+    - Opens a modal dialog showing sections for ALL selected courses
     """
 
     def __init__(self, student_id: int, semester: str, parent=None):
         super().__init__(parent)
 
-        # Setup UI
+        # Load UI
         self.ui = Ui_RegisterCourses()
         self.ui.setupUi(self)
 
+        # Utilities
         self.student_utils = StudentUtilities(db, student_id)
         self.semester = semester
-        self.sections_windows = []  # <-- store all opened section windows
-        self.all_courses = []
+        self.sections_windows = []    # old design, not used but kept for compatibility
+        self.all_courses = []         # full list of available courses
 
-        # Table settings
+        # -------------------------------
+        # TABLE CONFIGURATION
+        # -------------------------------
         table = self.ui.tableAllCourses
+
+        # Select entire rows
         table.setSelectionBehavior(table.SelectionBehavior.SelectRows)
-        table.setSelectionMode(table.SelectionMode.SingleSelection)
+
+        # ENABLE multi-selection instead of single-selection
+        table.setSelectionMode(table.SelectionMode.MultiSelection)
+
+        # Prevent editing table cells
         table.setEditTriggers(table.EditTrigger.NoEditTriggers)
+
+        # When selected rows change → recheck prerequisites
         table.itemSelectionChanged.connect(self.on_table_selection_changed)
 
-        # Button signals
+        # -------------------------------
+        # BUTTON SIGNALS
+        # -------------------------------
         self.ui.buttonRefresh.clicked.connect(self.load_courses)
         self.ui.lineEditSearch.textChanged.connect(self.apply_search_filter)
-        self.ui.buttonViewSections.clicked.connect(self.handle_view_sections)
-        self.ui.buttonViewSections.setEnabled(False)  # disabled until selection
 
+        # View Sections button stays disabled until valid selection
+        self.ui.buttonViewSections.setEnabled(False)
+        self.ui.buttonViewSections.clicked.connect(self.handle_view_sections)
+
+        # Load initial table
         self.load_courses()
         self.format_table()
 
-    # ---------------- Load courses ----------------
+    # ============================
+    # LOAD COURSES FROM DATABASE
+    # ============================
     def load_courses(self):
+        """
+        Fetch all available courses for this student for this semester.
+        """
         try:
             courses = self.student_utils.get_available_courses(self.semester)
         except Exception as e:
             show_msg(self, "Error", f"Failed to load courses:\n{e}")
             courses = []
+
         self.all_courses = courses
         self.fill_table(courses)
 
-    # ---------------- Fill table with courses ----------------
+    # ============================
+    # FILL TABLE WITH COURSES
+    # ============================
     def fill_table(self, rows):
+        """
+        Populate the table widget with course data.
+        """
         table = self.ui.tableAllCourses
         table.setRowCount(len(rows))
 
@@ -70,53 +98,67 @@ class RegisterCoursesWidget(QWidget):
             prereqs = ", ".join(course.get("prereqs", [])) or "None"
             level = course.get("level", "-")
 
-            # Row number
+            # Column: Row #
             table.setItem(i, 0, QTableWidgetItem(str(i + 1)))
             table.item(i, 0).setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
 
-            # Course code
+            # Column: Course Code
             code_item = QTableWidgetItem(code)
             code_item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             table.setItem(i, 1, code_item)
 
-            # Course name
+            # Column: Name
             name_item = QTableWidgetItem(name)
             name_item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             table.setItem(i, 2, name_item)
 
-            # Credits
+            # Column: Credits
             credits_item = QTableWidgetItem(str(credits))
             credits_item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             table.setItem(i, 3, credits_item)
 
-            # Level
+            # Column: Level
             level_item = QTableWidgetItem(level)
             level_item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             table.setItem(i, 4, level_item)
 
-            # Prerequisites
+            # Column: Prerequisites
             prereq_item = QTableWidgetItem(prereqs)
             prereq_item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             table.setItem(i, 5, prereq_item)
 
-            # Tooltip for prerequisites
+            # Tooltip for clarity
             for col in range(6):
                 item = table.item(i, col)
                 if item:
                     item.setToolTip(f"Prerequisites: {prereqs}")
 
-    # ---------------- Filter ----------------
+    # ============================
+    # SEARCH FILTER
+    # ============================
     def apply_search_filter(self):
+        """
+        Filter the table by course code or course name.
+        """
         text = self.ui.lineEditSearch.text().strip().lower()
         if not text:
             self.fill_table(self.all_courses)
             return
-        filtered = [c for c in self.all_courses
-                    if text in c["course_code"].lower() or text in c["course_name"].lower()]
+
+        filtered = [
+            c for c in self.all_courses
+            if text in c["course_code"].lower() or text in c["course_name"].lower()
+        ]
+
         self.fill_table(filtered)
 
-    # ---------------- Format table ----------------
+    # ============================
+    # TABLE FORMAT (HEADER, WIDTHS)
+    # ============================
     def format_table(self):
+        """
+        Setup and format the table columns and headers.
+        """
         table = self.ui.tableAllCourses
 
         headers = ["#", "Course Code", "Name", "Credits", "Level", "Prerequisites"]
@@ -124,11 +166,15 @@ class RegisterCoursesWidget(QWidget):
         table.setHorizontalHeaderLabels(headers)
 
         header = table.horizontalHeader()
+
+        # Configure selection again just to be safe
         table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
-        table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        table.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
         table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+
         table.verticalHeader().setDefaultSectionSize(60)
 
+        # Column widths
         table.setColumnWidth(0, 60)
         table.setColumnWidth(1, 150)
         table.setColumnWidth(2, 300)
@@ -136,52 +182,80 @@ class RegisterCoursesWidget(QWidget):
         table.setColumnWidth(4, 80)
         table.setColumnWidth(5, 200)
 
-        # Make columns sortable
+        # Allow resizing + sorting
         table.setSortingEnabled(True)
-
-        # Header resize mode
         for col in range(len(headers)):
             header.setSectionResizeMode(col, QHeaderView.ResizeMode.Interactive)
 
-    # ---------------- Enable/disable button ----------------
+    # ============================
+    # HANDLE SELECTION CHANGES
+    # ============================
     def on_table_selection_changed(self):
-        row = self.ui.tableAllCourses.currentRow()
-        if row < 0:
+        """
+        Enable or disable the View Sections button based on:
+        - whether rows are selected
+        - ALL selected courses must be eligible (prereqs met)
+        """
+        table = self.ui.tableAllCourses
+        selected_rows = table.selectionModel().selectedRows()
+
+        if not selected_rows:
+            # No selection -> button disabled
             self.ui.buttonViewSections.setEnabled(False)
             return
 
-        course_code = self.ui.tableAllCourses.item(row, 1).text()
-        course = next((c for c in self.all_courses if c["course_code"] == course_code), None)
-        self.ui.buttonViewSections.setEnabled(course["can_register"] if course else False)
+        # Check prerequisite eligibility for EVERY selected course
+        for row_index in selected_rows:
+            code = table.item(row_index.row(), 1).text()
+            course = next((c for c in self.all_courses if c["course_code"] == code), None)
 
+            # If any selected course CANNOT be registered → disable button
+            if not course or not course["can_register"]:
+                self.ui.buttonViewSections.setEnabled(False)
+                return
+
+        # All selected courses are allowed
+        self.ui.buttonViewSections.setEnabled(True)
+
+    # ============================
+    # VIEW SECTIONS FOR SELECTED COURSES
+    # ============================
     def handle_view_sections(self):
-        row = self.ui.tableAllCourses.currentRow()
-        if row < 0:
+        """
+        Open modal dialog with sections for ALL selected courses.
+        """
+        table = self.ui.tableAllCourses
+        selected_rows = table.selectionModel().selectedRows()
+
+        if not selected_rows:
             return
 
-        course_code = self.ui.tableAllCourses.item(row, 1).text()
+        # Extract codes for all selected courses
+        course_codes = [
+            table.item(r.row(), 1).text()
+            for r in selected_rows
+        ]
 
+        # Create modal dialog
         dialog = QtWidgets.QDialog(self)
         dialog.setWindowTitle("View Sections")
-        dialog.setModal(True)   # modal dialog
+        dialog.setModal(True)
 
-        # Layout for the dialog
+        # Layout for sections widget
         layout = QtWidgets.QVBoxLayout(dialog)
 
-        # Create the widget inside the dialog
+        # Create sections widget with multiple courses
         sections_widget = ViewSectionsWidget(
             student_id=self.student_utils.student_id,
             semester=self.semester,
-            course_codes=[course_code],
+            course_codes=course_codes,
             parent=dialog
         )
 
         layout.addWidget(sections_widget)
 
-        dialog.resize(900, 600)   # optional size
-        dialog.exec()             # BLOCKING modal dialog
-
-
+        dialog.resize(900, 600)
+        dialog.exec()
 
 
 # ---------------- Run standalone ----------------
