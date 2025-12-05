@@ -1,7 +1,6 @@
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 
-
 from PyQt6.QtCore import QPropertyAnimation, QEasingCurve, QTimer
 from PyQt6.QtWidgets import QApplication
 from PyQt6 import QtWidgets
@@ -12,7 +11,8 @@ from admin.class_admin_utilities import AdminUtilities, db
 # Subpage UI & Controller imports
 from app_ui.admin_ui.ui_admin_dashboard import Ui_AdminDashboard
 
-from app_ui.admin_ui.submenus_ui.ui_profile import Ui_Profile
+
+from admin.submenus.class_profile import ProfileWidget
 
 from app_ui.admin_ui.submenus_ui.ui_all_students import Ui_AllStudents
 from admin.submenus.class_all_students import AllStudentsController
@@ -32,6 +32,7 @@ from admin.submenus.class_manage_sections import ManageSectionsWidget
 from app_ui.admin_ui.submenus_ui.ui_program_plans import Ui_ProgramPlans
 from admin.submenus.class_program_plans import ProgramPlansWidget 
 
+from admin.submenus.class_manage_faculty import ManageFacultyWidget
 
 class AdminDashboard(QtWidgets.QMainWindow):
     """
@@ -39,7 +40,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
     Handles page switching via a QStackedWidget and initializes all sub-pages.
     """
     
-    def __init__(self, db: DatabaseUtilities):
+    def __init__(self, db, user: tuple):
         super().__init__()
 
         # -------------------------------
@@ -47,7 +48,9 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # -------------------------------
         self.ui = Ui_AdminDashboard()
         self.ui.setupUi(self)
+
         self.db = db
+        self.user_id, self.name, self.email, self.program, self.state, self.account_status, self.hashed_pw = user
         self.admin = AdminUtilities(self.db)
 
         # ------------------------
@@ -61,28 +64,28 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.ui.stackedWidget.addWidget(self.profile_page)
         self.ui.stackedWidget.addWidget(self.all_students_page)
         self.ui.stackedWidget.addWidget(self.pending_requests_page)
+
+        self.ui.stackedWidget.addWidget(self.manage_faculty_controller)
+
         self.ui.stackedWidget.addWidget(self.manage_courses_page)
         self.ui.stackedWidget.addWidget(self.manage_prereqs_page)
         self.ui.stackedWidget.addWidget(self.manage_sections_controller)
         self.ui.stackedWidget.addWidget(self.program_plans_controller)
-        # Add other pages similarly...
-
 
         # -------------------------------
-        # 3- Map buttons to their corresponding pages
+        # 3. Map buttons to their corresponding pages
         # -------------------------------
-
-        # Key: QPushButton object
-        # Value: Tuple of (page name string, QWidget page)
-        # Using a string here avoids printing emojis/unicode directly from button.text()
         self.page_mapping = {
             self.ui.buttonProfile: ("Profile", self.profile_page),
             self.ui.buttonAllStudents: ("All Students", self.all_students_page),
             self.ui.buttonPendingRequests: ("Pending Requests", self.pending_requests_page),
+
+            self.ui.buttonManageFaculty: ("Manage Faculty", self.manage_faculty_controller),
+
             self.ui.buttonManageCourses: ("Manage Courses", self.manage_courses_page),
             self.ui.buttonManagePrereqs: ("Manage Prereqs", self.manage_prereqs_page),
             self.ui.buttonManageSections: ("Manage Sections", self.manage_sections_controller),
-            self.ui.buttonProgramPlans: ("Program Plans", self.program_plans_controller)
+            self.ui.buttonProgramPlans: ("Program Plans", self.program_plans_controller),
         }
 
         # Connect buttons to page-switching logic
@@ -92,10 +95,9 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # Connect logout button
         self.ui.buttonLogout.clicked.connect(self.fade_and_logout)
 
-        # Show default page (should be profile first)
+        # Show profile by default
         self.switch_to_page(self.ui.buttonProfile)
-        # Disable manage faculty button do to it not being implemented yet
-        self.ui.buttonManageFaculty.setEnabled(False)
+        
 
     # -------------------------------
     # Initialize all sub-pages
@@ -103,14 +105,14 @@ class AdminDashboard(QtWidgets.QMainWindow):
     def init_sub_pages(self):
         """
         Create QWidget pages, set up their UI, and attach controllers.
-        Controllers must be initialized AFTER widget + UI exist.
         """
         # -------------------------------
         # Profile page
         # -------------------------------
-        self.profile_page = QtWidgets.QWidget()
-        self.profile_page_ui = Ui_Profile()
-        self.profile_page_ui.setupUi(self.profile_page)
+        # user tuple passed to ProfileWidget
+        self.profile_page = ProfileWidget(
+            (self.user_id, self.name, self.email, self.program, self.state, self.account_status)
+        )
 
         # -------------------------------
         # All Students page
@@ -118,7 +120,6 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.all_students_page = QtWidgets.QWidget()
         self.all_students_ui = Ui_AllStudents()
         self.all_students_ui.setupUi(self.all_students_page)
-        # Uses direct database_utilities access
         self.all_students_controller = AllStudentsController(self.all_students_ui, self.db)
 
         # -------------------------------
@@ -127,81 +128,80 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.pending_requests_page = QtWidgets.QWidget()
         self.pending_requests_ui = Ui_PendingRequestsWidget()
         self.pending_requests_ui.setupUi(self.pending_requests_page)
-        # Uses direct database_utilities access
         self.pending_requests_controller = PendingRequestsController(self.pending_requests_ui, self.db)
+
+
+        # -------------------------------
+        # Manage Faculty [new]
+        # -------------------------------
+        # uses database utilities
+        
+        self.manage_faculty_controller = ManageFacultyWidget(self.db)
+
 
         # -------------------------------
         # Manage courses
         # -------------------------------
+        # uses database utilities
         self.manage_courses_page = QtWidgets.QWidget()
         self.manage_courses_ui = Ui_ManageCourses()
         self.manage_courses_ui.setupUi(self.manage_courses_page)
-        # Uses direct database_utilities access
         self.manage_courses_controller = ManageCoursesController(self.manage_courses_ui, self.db)
+
 
         # -------------------------------
         # Manage prereqs
         # -------------------------------
+        # uses admin utilities and database utilities
         self.manage_prereqs_page = QtWidgets.QWidget()
         self.manage_prereqs_ui = Ui_ManagePrereqs()
         self.manage_prereqs_ui.setupUi(self.manage_prereqs_page)
-        # Uses admin_utilities and direct database_utilites
-        self.manage_prereqs_controller = ManagePrerequisitesController(self.manage_prereqs_ui, self.admin, self.db)
+        self.manage_prereqs_controller = ManagePrerequisitesController(
+            self.manage_prereqs_ui, self.admin, self.db
+        )
 
         # -------------------------------
         # Manage sections
         # -------------------------------
-
-        # # no need for all the extra junk since this page sets up its own ui internally. thanks to salem :)
+        # uses admin utilities
         self.manage_sections_controller = ManageSectionsWidget(self.admin)
-        
-        # -------------------------------
-        # Manage sections
-        # -------------------------------
 
-        # # this page sets up its own ui internally. and only uses admin utils class
+        # -------------------------------
+        # Program plans
+        # -------------------------------
+        # uses admin utilities
         self.program_plans_controller = ProgramPlansWidget(self.admin)
-        
 
     # -------------------------------
-    # Switch the stacked widget to the page associated with the clicked button
+    # Page switching with stacked widget
     # -------------------------------
     def switch_to_page(self, button):
-        # Retrieve the mapping info for the clicked button
         info = self.page_mapping.get(button)
         if info:
-            # Unpack the tuple into a readable name and the actual QWidget page
             name, page = info
-            
-            # Set the stacked widget to display the selected page
             self.ui.stackedWidget.setCurrentWidget(page)
-            
-            # Optional debug: safely print the human-readable name of the page
             print(f"Switched to page: {name}")
 
-    # ------- Cool Logout Functionality -----------
+    # -------------------------------
+    # Logout fade-out animation
+    # -------------------------------
     def fade_and_logout(self):
         from login_files.class_authentication_window import AuthenticationWindow
-        from PyQt6.QtCore import QPropertyAnimation, QEasingCurve, QTimer
 
-        # IMPORTANT: Prevent Qt from quitting
-        QtWidgets.QApplication.instance().setQuitOnLastWindowClosed(False)
+        QApplication.instance().setQuitOnLastWindowClosed(False)
 
-        # Create fade-out animation
         self.anim = QPropertyAnimation(self, b"windowOpacity")
         self.anim.setDuration(350)
         self.anim.setStartValue(1.0)
         self.anim.setEndValue(0.0)
         self.anim.setEasingCurve(QEasingCurve.Type.InOutQuad)
 
-        # When fade finishes → close → wait → show login
         self.anim.finished.connect(lambda: (
             self.close(),
             QTimer.singleShot(50, self.show_authentication_window)
         ))
 
         self.anim.start()
-
 
     def show_authentication_window(self):
         from login_files.class_authentication_window import AuthenticationWindow
@@ -213,6 +213,8 @@ class AdminDashboard(QtWidgets.QMainWindow):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
 
-    window = AdminDashboard(db)
-    window.show()
+    # Example usage:
+    # Replace "user" with a real tuple from login
+    # window = AdminDashboard(db, user)
+
     sys.exit(app.exec())

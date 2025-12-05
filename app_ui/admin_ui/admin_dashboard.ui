@@ -408,7 +408,7 @@ QScrollBar::sub-page:vertical {
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>-511</y>
+            <y>-355</y>
             <width>284</width>
             <height>947</height>
            </rect>
@@ -614,7 +614,7 @@ QPushButton:pressed {
            <item>
             <widget class="QPushButton" name="buttonManageFaculty">
              <property name="enabled">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <property name="minimumSize">
               <size>
@@ -665,7 +665,7 @@ QPushButton:disabled {
 </string>
              </property>
              <property name="text">
-              <string>👨‍🏫  Manage Faculty -WIP-</string>
+              <string>👨‍🏫  Manage Faculty</string>
              </property>
              <property name="checkable">
               <bool>true</bool>

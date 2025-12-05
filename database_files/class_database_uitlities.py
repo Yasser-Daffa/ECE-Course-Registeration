@@ -244,7 +244,7 @@ class DatabaseUtilities:
 
         return "Section deleted successfully" if self.cur.rowcount else "Section not found"
 
-    # *********************************************************************************************************
+    # ===================== USER DEALINGS  =====================
     def add_users(self, name, email, password, program, state):
         try:
             self.cur.execute("""

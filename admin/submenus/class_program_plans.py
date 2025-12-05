@@ -30,6 +30,7 @@ class ProgramPlansWidget(QWidget):
 
         # ربط الأزرار
         self.ui.buttonRefresh.clicked.connect(self.load_plans)
+        self.ui.buttonAddCourse.clicked.connect(self.on_add_course_clicked)
         self.ui.comboBoxSelectProgram.currentIndexChanged.connect(self.load_plans)
         self.ui.comboBoxStatusFilter.currentIndexChanged.connect(self.load_plans)
 
@@ -189,7 +190,9 @@ class ProgramPlansWidget(QWidget):
 
     # أزرار مستقبلية
     def on_add_course_clicked(self):
-        pass
+        from admin.submenus.class_add_course_to_plan import AddCourseToPlanDialog
+        dialog = AddCourseToPlanDialog(self.admin_utils)
+        dialog.exec()
 
     def on_edit_plan_clicked(self):
         pass
