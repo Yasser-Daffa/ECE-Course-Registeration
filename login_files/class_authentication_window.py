@@ -59,7 +59,7 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
 
         # Call it to create/connect the database and return the connection and cursor
         # This ensures all required tables, triggers, and constraints exist
-        con, cur = initialize_database("../university_database.db")  # runs the table creation if missing
+        con, cur = initialize_database("university_database.db")  # runs the table creation if missing
 
         # Wrap the connection and cursor in your DatabaseUtilities helper for easy DB operations
         self.db = DatabaseUtilities(con, cur)
@@ -199,8 +199,10 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
 
         # --- 8. Redirect to the correct dashboard ---
         if state == "student":
-            # self.student_dash = StudentDashboard(user_id)
-            # self.student_dash.show()
+            from student.class_student_dashboard import StudentDashboard
+            from student.class_student_utilities import db 
+            self.student_dash = StudentDashboard(db, user)
+            self.student_dash.show()
             pass
         elif state == "admin":
             # self.admin_dash = AdminDashboard(user_id)

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AdminDashboard</class>
- <widget class="QMainWindow" name="AdminDashboard">
+ <class>StudentDashboard</class>
+ <widget class="QMainWindow" name="StudentDashboard">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -419,7 +419,7 @@ QScrollBar::sub-page:vertical {
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>0</y>
+            <y>-131</y>
             <width>284</width>
             <height>567</height>
            </rect>
@@ -517,7 +517,7 @@ QPushButton:pressed {
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="buttonAllStudents">
+            <widget class="QPushButton" name="buttonCurrentSchedule">
              <property name="minimumSize">
               <size>
                <width>0</width>
@@ -580,7 +580,7 @@ QPushButton:pressed {
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="buttonManageCourses">
+            <widget class="QPushButton" name="buttonRegisterCourses">
              <property name="minimumSize">
               <size>
                <width>0</width>
@@ -633,7 +633,7 @@ QPushButton:pressed {
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="buttonPendingRequests">
+            <widget class="QPushButton" name="buttonTranscript">
              <property name="minimumSize">
               <size>
                <width>0</width>
