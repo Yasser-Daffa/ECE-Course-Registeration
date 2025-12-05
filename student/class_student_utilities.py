@@ -192,8 +192,13 @@ class StudentUtilities:
 
 
 
-    def register_section(self, section_id: int) -> bool:
-        return self.db.register_student_to_section(self.student_id, section_id)
+    def register_section(self, section_id: int, course_code: str) -> bool:
+        """
+        يسجل الطالب في سكشن معيّن (section_id) وكورس معيّن (course_code)
+        باستخدام جدول registrations الجديد.
+        """
+        return self.db.register_student_to_section(self.student_id, section_id, course_code)
+
 
 
     def get_sections_for_course(self, course_code, semester):
