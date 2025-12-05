@@ -484,55 +484,61 @@ class DatabaseUtilities:
                 registrations.append(sec)
         return registrations
     
-    def is_student_registered(self, student_id, section_id):
-        self.cur.execute("SELECT 1 FROM registrations WHERE student_id=? AND section_id=?", (student_id, section_id))
+    def is_student_registered(self, student_id, section_id, semester):
+        """
+        يتأكد هل الطالب مسجل في هذا السكشن في هذا السمستر.
+        نستخدم section_id + semester عشان لو نفس السكشن تكرر مستقبلاً بسمستر ثاني
+        يكون كل واحد له رقم مختلف أصلاً.
+        """
+        self.cur.execute(
+            """
+            SELECT 1 FROM registrations
+            WHERE student_id = ? AND section_id = ? AND semester = ?
+            """,
+            (student_id, section_id, semester)
+        )
         return self.cur.fetchone() is not None
+
     
 
-    def register_student_to_section(self, student_id: int, section_id: int, course_code: str) -> bool:
+    def register_student_to_section(self, student_id: int, section_id: int,
+                                    course_code: str, semester: str) -> bool:
         """
-        تسجيل طالب في سكشن معيّن في جدول registrations الجديد:
-        - يتأكد إن الطالب موجود.
-        - يتأكد إن السكشن موجود.
-        - يتأكد إنه مو مسجل نفس الكورس قبل كذا (حسب PRIMARY KEY (student_id, course_code)).
-        - بعدين يسوي INSERT في registrations (student_id, section_id, course_code).
+        تسجيل طالب في سكشن معيّن في سمستر معيّن.
+
+        - يمنع التسجيل المكرر لنفس (student_id, course_code, semester)
+          بسبب الـ PRIMARY KEY في جدول registrations.
         """
         try:
             cur = self.con.cursor()
 
-            # 1) نتأكد إن الطالب موجود
-            cur.execute("SELECT 1 FROM users WHERE user_id = ?", (student_id,))
-            if not cur.fetchone():
-                print(f"[DEBUG] register_student_to_section: no such student_id={student_id}")
-                return False
-
-            # 2) نتأكد إن السكشن موجود
-            cur.execute("SELECT 1 FROM sections WHERE section_id = ?", (section_id,))
-            if not cur.fetchone():
-                print(f"[DEBUG] register_student_to_section: no such section_id={section_id}")
-                return False
-
-            # 3) نتأكد إنه مو مسجل نفس الكورس قبل (حسب course_code)
+            # نتأكد أولاً إنه مو مسجل نفس الكورس في نفس السمستر
             cur.execute(
-                "SELECT 1 FROM registrations WHERE student_id = ? AND course_code = ?",
-                (student_id, course_code)
+                """
+                SELECT 1 FROM registrations
+                WHERE student_id = ? AND course_code = ? AND semester = ?
+                """,
+                (student_id, course_code, semester)
             )
             if cur.fetchone():
-                print(f"[DEBUG] register_student_to_section: already registered in course {course_code}")
+                # مسجل مسبقاً في نفس الكورس ونفس السمستر
                 return False
 
-            # 4) نسوي الإدخال الفعلي
+            # ندخل الصف الجديد
             cur.execute(
-                "INSERT INTO registrations (student_id, section_id, course_code) VALUES (?, ?, ?)",
-                (student_id, section_id, course_code)
+                """
+                INSERT INTO registrations (student_id, section_id, course_code, semester)
+                VALUES (?, ?, ?, ?)
+                """,
+                (student_id, section_id, course_code, semester)
             )
             self.con.commit()
-            print(f"[DEBUG] register_student_to_section: INSERT OK (student={student_id}, section={section_id}, course={course_code})")
             return True
 
         except Exception as e:
             print(f"DB Error in register_student_to_section: {e}")
             return False
+
         
     # ------------------- Remove student registration -------------------
     def remove_student_registration(self, student_id: int, course_code: str) -> bool:

@@ -26,13 +26,13 @@ class ViewSectionsWidget(QWidget):
     واجهة عرض السكاشن للمواد اللي الطالب اختارها من صفحة RegisterCourses:
     - تستقبل student_id + semester + قائمة بأكواد المواد المختارة.
     - تجيب السكاشن من الداتا بيس (لكل كورس).
-    - ما تعرض السكاشن اللي الطالب مسجلها مسبقاً (حسب registrations).
+    - ما تعرض السكاشن اللي الطالب مسجلها مسبقاً (حسب registrations) في نفس السمستر.
     - اختيار السكاشن عن طريق CheckBox في عمود REGISTERATION:
         * يلون الصف بالأصفر لما يتحدد.
-    - تمنع تسجيل أكثر من شعبة لنفس الكورس.
+    - تمنع تسجيل أكثر من شعبة لنفس الكورس في نفس السمستر.
     - تفحص التعارض الزمني بين السكاشن المختارة.
     - تسجّل في جدول registrations عن طريق:
-        StudentUtilities.register_section(section_id, course_code)
+        StudentUtilities.register_section(section_id, course_code, semester)
     """
 
     def __init__(self, student_id: int, semester: str, course_codes, parent=None):
@@ -44,7 +44,7 @@ class ViewSectionsWidget(QWidget):
 
         self.student_utils = StudentUtilities(db, student_id)
         self.student_id = student_id
-        self.semester = semester
+        self.semester = semester          # السمستر الحالي
         self.course_codes = list(course_codes)
 
         # list[dict]: كل سكشن معروض (غير مسجل مسبقاً)
@@ -77,7 +77,7 @@ class ViewSectionsWidget(QWidget):
         """
         يجيب السكاشن من الداتا بيس لكل كورس في course_codes:
         - يستخدم get_sections_for_course من StudentUtilities.
-        - يستثني السكاشن اللي الطالب مسجل فيها مسبقاً.
+        - يستثني السكاشن اللي الطالب مسجلها مسبقاً في نفس السمستر.
         """
         self.sections = []
 
@@ -99,9 +99,13 @@ class ViewSectionsWidget(QWidget):
                 semester = sec[9]
                 state = sec[10] or ""
 
-                # نستثني السكاشن المسجلة مسبقاً (من جدول registrations)
+                # نستثني السكاشن المسجّلة مسبقاً في نفس السمستر
                 try:
-                    if self.student_utils.db.is_student_registered(self.student_id, section_id):
+                    if self.student_utils.db.is_student_registered(
+                        self.student_id,
+                        section_id,
+                        self.semester
+                    ):
                         continue
                 except AttributeError:
                     # لو لسبب ما ما فيه الدالة، نكمّل بدون الفلترة
@@ -264,7 +268,15 @@ class ViewSectionsWidget(QWidget):
         if not cell:
             return
 
+        checkbox = cell.layout().itemAt(0).widget()
+        checked = checkbox.isChecked()
 
+        bg_color = Qt.GlobalColor.yellow if checked else Qt.GlobalColor.white
+
+        for col in range(table.columnCount()):
+            item = table.item(row, col)
+            if item:
+                item.setBackground(bg_color)
 
     # ==================== الضغط على الصف يقلب الـ CheckBox ====================
 
@@ -308,7 +320,7 @@ class ViewSectionsWidget(QWidget):
     def handle_confirm_registration(self):
         """
         1) تجمع السكاشن المختارة.
-        2) تمنع تسجيل أكثر من شعبة لنفس الكورس.
+        2) تمنع تسجيل أكثر من شعبة لنفس الكورس في نفس السمستر.
         3) تفحص التعارض الزمني.
         4) تسجّل في جدول registrations.
         5) تشيل الكورسات اللي تسجلت من الجدول.
@@ -319,7 +331,7 @@ class ViewSectionsWidget(QWidget):
             QMessageBox.warning(self, "No Sections", "Please select at least one section.")
             return
 
-        # منع تسجيل أكثر من شعبة لنفس الكورس
+        # منع تسجيل أكثر من شعبة لنفس الكورس في نفس السمستر
         code_counts = {}
         for sec in selected:
             code = sec["course_code"]
@@ -327,7 +339,7 @@ class ViewSectionsWidget(QWidget):
 
         duplicates = [c for c, n in code_counts.items() if n > 1]
         if duplicates:
-            msg = "لا يمكنك تسجيل أكثر من شعبة لنفس المادة:\n\n"
+            msg = "لا يمكنك تسجيل أكثر من شعبة لنفس المادة في نفس السمستر:\n\n"
             msg += "\n".join(f"- {c}" for c in duplicates)
             QMessageBox.warning(self, "Invalid Selection", msg)
             return
@@ -354,7 +366,7 @@ class ViewSectionsWidget(QWidget):
     def register_selected_sections(self, sections):
         """
         يسجّل السكاشن في الداتا بيس باستخدام
-        StudentUtilities.register_section(section_id, course_code)
+        StudentUtilities.register_section(section_id, course_code, semester)
         ثم يشيل هذه الكورسات من self.sections ويعيد تعبئة الجدول.
         """
         success = 0
@@ -364,7 +376,11 @@ class ViewSectionsWidget(QWidget):
         for sec in sections:
             section_id = sec["section_id"]
             course_code = sec["course_code"]
-            ok = self.student_utils.register_section(section_id, course_code)
+            ok = self.student_utils.register_section(
+                section_id,
+                course_code,
+                self.semester
+            )
             if ok:
                 success += 1
                 registered_codes.add(course_code)
@@ -401,7 +417,7 @@ if __name__ == "__main__":
     # عدّل القيم حسب الداتا بيس عندك
     test_student_id = 2500001
     test_semester = "First"
-    selected_course_codes = ["MATH204", "CIPT", "IE204","A","W"]
+    selected_course_codes = ["MATH204", "CIPT", "IE204", "A", "W"]
 
     w = ViewSectionsWidget(test_student_id, test_semester, selected_course_codes)
     w.show()
