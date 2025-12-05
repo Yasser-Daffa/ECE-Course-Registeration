@@ -25,7 +25,7 @@ class StudentUtilities:
         return user[3] if user else None  # index 3 is 'program'
 
     def get_completed_courses(self):
-        transcripts = self.db.ListTranscript(self.student_id)
+        transcripts = self.db.list_transcript(self.student_id)
         return [course for course, _, grade in transcripts if grade is not None]
 
     def get_registered_courses(self, semester=None):
@@ -199,9 +199,8 @@ class StudentUtilities:
         """
         return self.db.register_student_to_section(self.student_id, section_id, course_code)
 
-
-
     def get_sections_for_course(self, course_code, semester):
+        """ for getting sections for only one course"""
         return self.db.list_sections(course_code=course_code, semester=semester)
 
     def get_sections_for_courses(self, course_codes, semester):
@@ -282,7 +281,7 @@ class StudentUtilities:
 
     # ================== Transcript ==================
     def show_transcript(self):
-        transcript = self.db.ListTranscript(self.student_id)
+        transcript = self.db.list_transcript(self.student_id)
         print(f"\nTranscript for student {self.student_id}:")
         for course_code, semester, grade in transcript:
             print(f"  {semester} | {course_code} | {grade}")

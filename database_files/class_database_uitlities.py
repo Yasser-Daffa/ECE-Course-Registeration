@@ -342,7 +342,7 @@ class DatabaseUtilities:
 
     #*********************************************************************************************************
 
-    def AddTranscript(self, student_id, course_code, semester, grade=None):
+    def add_transcript(self, student_id, course_code, semester, grade=None):
         try:
             self.cur.execute("""INSERT INTO transcripts(student_id, course_code, semester, grade) VALUES (?, ?, ?, ?)
             """, (student_id, course_code, semester, grade))
@@ -351,7 +351,7 @@ class DatabaseUtilities:
         except sqlite3.IntegrityError:
             return " this course/semester is already in transcript for this student"
 
-    def ListTranscript(self, student_id):
+    def list_transcript(self, student_id):
 
         self.cur.execute("""
             SELECT course_code, semester, grade
@@ -361,7 +361,7 @@ class DatabaseUtilities:
         """, (student_id,))
         return self.cur.fetchall()
 
-    def UpdateTranscriptGrade(self, student_id, course_code, semester, new_grade):
+    def update_transcript_grade(self, student_id, course_code, semester, new_grade):
         """
         تعدل الدرجة فقط لمادة معيّنة في سمستر معين
         """

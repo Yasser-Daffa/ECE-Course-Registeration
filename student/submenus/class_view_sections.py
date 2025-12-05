@@ -1,173 +1,409 @@
 import os
 import sys
-from PyQt6.QtWidgets import QWidget, QTableWidgetItem, QMessageBox, QApplication, QGraphicsOpacityEffect
-from PyQt6.QtCore import Qt, QPropertyAnimation, QRect
 
-# Add main folder to path
+from PyQt6.QtWidgets import (
+    QApplication,
+    QWidget,
+    QTableWidgetItem,
+    QCheckBox,
+    QHBoxLayout,
+    QMessageBox,
+)
+from PyQt6.QtCore import Qt
+
+# عشان نضمن الوصول للمجلد الرئيسي للمشروع
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
-# UI
+# واجهة عرض السكاشن (تأكد من المسار واسم الكلاس)
 from app_ui.student_ui.submenus_ui.ui_view_sections import Ui_ViewSections
-from student.class_student_utilities import StudentUtilities
-from database_files.initialize_database import initialize_database
-from database_files.class_database_uitlities import DatabaseUtilities
-from helper_files.shared_utilities import show_msg, info, warning, error
 
-# ------------------------ StudentUtilities init ------------------------
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.abspath(os.path.join(BASE_DIR, "../../university_database.db"))
-con, cur = initialize_database(DB_PATH)
-db_util = DatabaseUtilities(con, cur)
+# منطق الطالب + الداتا بيس
+from student.class_student_utilities import StudentUtilities, db
 
 
-# ------------------------ Widget ------------------------
 class ViewSectionsWidget(QWidget):
-    def __init__(self, student_utils: StudentUtilities, course_code: str, parent=None):
+    """
+    واجهة عرض السكاشن للمواد اللي الطالب اختارها من صفحة RegisterCourses:
+    - تستقبل student_id + semester + قائمة بأكواد المواد المختارة.
+    - تجيب السكاشن من الداتا بيس (لكل كورس).
+    - ما تعرض السكاشن اللي الطالب مسجلها مسبقاً (حسب registrations).
+    - اختيار السكاشن عن طريق CheckBox في عمود REGISTERATION:
+        * يلون الصف بالأصفر لما يتحدد.
+    - تمنع تسجيل أكثر من شعبة لنفس الكورس.
+    - تفحص التعارض الزمني بين السكاشن المختارة.
+    - تسجّل في جدول registrations عن طريق:
+        StudentUtilities.register_section(section_id, course_code)
+    """
+
+    def __init__(self, student_id: int, semester: str, course_codes, parent=None):
         super().__init__(parent)
 
+        # واجهة Qt Designer
         self.ui = Ui_ViewSections()
         self.ui.setupUi(self)
 
-        self.student_utils = student_utils
-        self.course_code = course_code
-        self.all_sections = []
+        self.student_utils = StudentUtilities(db, student_id)
+        self.student_id = student_id
+        self.semester = semester
+        self.course_codes = list(course_codes)
 
-        # -------------- ANIMATION ---------------
+        # list[dict]: كل سكشن معروض (غير مسجل مسبقاً)
+        self.sections = []
+        # row_index -> dict سكشن (نستثني الصفوف الفاصلة)
+        self.row_to_section = {}
+        # نستخدم None كصف فاصل بين كل مادة والثانية
+        self.display_rows = []
 
-        # # Fade effect
-        # self.effect = QGraphicsOpacityEffect(self)
-        # self.setGraphicsEffect(self.effect)
+        table = self.ui.tableSections
+        table.setSelectionBehavior(table.SelectionBehavior.SelectRows)
+        table.setSelectionMode(table.SelectionMode.SingleSelection)
+        table.setEditTriggers(table.EditTrigger.NoEditTriggers)
 
-        # self.fade_anim = QPropertyAnimation(self.effect, b"opacity")
-        # self.fade_anim.setDuration(350)
-        # self.fade_anim.setStartValue(0.0)
-        # self.fade_anim.setEndValue(1.0)
+        # نخلي عمود REGISTERATION واضح
+        table.setColumnWidth(8, 130)
 
-        # # Slide effect
-        # start_rect = QRect(self.x() + 60, self.y(), self.width(), self.height())
-        # end_rect = QRect(self.x(), self.y(), self.width(), self.height())
+        # الضغط على أي خلية يبدّل حالة الـ CheckBox ويحدّث اللون
+        table.cellClicked.connect(self.handle_cell_clicked)
 
-        # self.slide_anim = QPropertyAnimation(self, b"geometry")
-        # self.slide_anim.setDuration(350)
-        # self.slide_anim.setStartValue(start_rect)
-        # self.slide_anim.setEndValue(end_rect)
+        # زر التسجيل
+        self.ui.buttonRegisterCourse.clicked.connect(self.handle_confirm_registration)
 
-        # # # Start both
-        # self.fade_anim.start()
-        # self.slide_anim.start()
-
-
-        # Connect signals
-        self.ui.buttonRefresh.clicked.connect(self.load_sections)
-        self.ui.lineEditSearch.textChanged.connect(self.filter_sections)
-        self.ui.comboBoxFilterCourses.currentIndexChanged.connect(self.filter_sections)
-        self.ui.comboBoxStatusFilter.currentIndexChanged.connect(self.filter_sections)
-        self.ui.buttonRegisterCourse.clicked.connect(self.register_course)
-
-        # Table settings
-        self.ui.tableSections.setSelectionBehavior(self.ui.tableSections.SelectionBehavior.SelectRows)
-        self.ui.tableSections.setSelectionMode(self.ui.tableSections.SelectionMode.SingleSelection)
-
-        # Populate course filter and load sections
-        self.setup_courses_combo()
+        # تحميل السكاشن
         self.load_sections()
 
-    # ---------------- Setup course filter ----------------
-    def setup_courses_combo(self):
-        cb = self.ui.comboBoxFilterCourses
-        cb.clear()
-        cb.addItem("All Courses", None)
+    # ==================== تحميل السكاشن ====================
 
-        courses = self.student_utils.get_available_courses(semester=None)
-        for course in courses:
-            cb.addItem(f"{course['course_code']} - {course['course_name']}", course['course_code'])
-
-    # ---------------- Load sections ----------------
     def load_sections(self):
-        """Loads all sections with user selected course code"""
-        self.all_sections = [
-            s for s in self.student_utils.get_all_sections()
-            if s["course_code"] == self.course_code
-        ]
+        """
+        يجيب السكاشن من الداتا بيس لكل كورس في course_codes:
+        - يستخدم get_sections_for_course من StudentUtilities.
+        - يستثني السكاشن اللي الطالب مسجل فيها مسبقاً.
+        """
+        self.sections = []
 
-        self.fill_table(self.all_sections)
-        self.update_stats()
+        for code in self.course_codes:
+            rows = self.student_utils.get_sections_for_course(code, self.semester)
+            # rows: list of tuples من list_sections:
+            # section_id, course_code, doctor_id, days, time_start, time_end,
+            # room, capacity, enrolled, semester, state
+            for sec in rows:
+                section_id = sec[0]
+                course_code = sec[1]
+                doctor_id = sec[2]
+                days = sec[3] or ""
+                time_start = sec[4]
+                time_end = sec[5]
+                room = sec[6] or ""
+                capacity = sec[7]
+                enrolled = sec[8]
+                semester = sec[9]
+                state = sec[10] or ""
 
+                # نستثني السكاشن المسجلة مسبقاً (من جدول registrations)
+                try:
+                    if self.student_utils.db.is_student_registered(self.student_id, section_id):
+                        continue
+                except AttributeError:
+                    # لو لسبب ما ما فيه الدالة، نكمّل بدون الفلترة
+                    pass
 
-    # ---------------- Populate table ----------------
-    def fill_table(self, sections):
+                self.sections.append({
+                    "section_id": section_id,
+                    "course_code": course_code,
+                    "doctor_id": doctor_id,
+                    "days": days,
+                    "time_start": time_start,
+                    "time_end": time_end,
+                    "room": room,
+                    "capacity": capacity,
+                    "enrolled": enrolled,
+                    "semester": semester,
+                    "state": state,
+                })
+
+        self.fill_table()
+
+    # ==================== تعبئة الجدول + صفوف فاصل ====================
+
+    def fill_table(self):
+        """
+        يعرض السكاشن في tableSections:
+        - يجمع السكاشن حسب course_code.
+        - يحط صف رمادي فاصل بين كل مادة والثانية.
+        - يربط الـ CheckBox مع تلوين الصف.
+        """
         table = self.ui.tableSections
-        table.setRowCount(0)
-        for idx, sec in enumerate(sections, start=1):
-            row = table.rowCount()
-            table.insertRow(row)
+        table.clearContents()
 
-            table.setItem(row, 0, QTableWidgetItem(str(idx)))
-            table.setItem(row, 1, QTableWidgetItem(str(sec['id'])))
-            table.setItem(row, 2, QTableWidgetItem(sec['course_code']))
-            table.setItem(row, 3, QTableWidgetItem(sec['name']))
-            table.setItem(row, 4, QTableWidgetItem(sec['instructor']))
-            table.setItem(row, 5, QTableWidgetItem(sec['schedule']))
-            table.setItem(row, 6, QTableWidgetItem(str(sec['enrolled'])))
-            table.setItem(row, 7, QTableWidgetItem(str(sec['capacity'])))
-            table.setItem(row, 8, QTableWidgetItem(sec['status']))
+        self.display_rows = []
+        self.row_to_section = {}
 
-    # ---------------- Update stats ----------------
-    def update_stats(self):
-        total = len(self.all_sections)
-        open_count = sum(1 for s in self.all_sections if s['status'] == 'Open')
-        closed_count = sum(1 for s in self.all_sections if s['status'] == 'Closed')
-        full_count = sum(1 for s in self.all_sections if s['status'] == 'Full')
+        # ترتيب: أولاً حسب كود المادة، ثم رقم السكشن
+        sorted_secs = sorted(
+            self.sections,
+            key=lambda s: (s["course_code"], s["section_id"])
+        )
 
-        self.ui.labelTotalSectionsCount.setText(str(total))
-        self.ui.labelOpenSectionsCount.setText(str(open_count))
-        self.ui.labelClosedSectionsCount.setText(str(closed_count))
-        self.ui.labelFullSectionsCount.setText(str(full_count))
+        last_code = None
+        for sec in sorted_secs:
+            code = sec["course_code"]
+            if last_code is not None and code != last_code:
+                # صف فاصل (رمادي)
+                self.display_rows.append(None)
+            self.display_rows.append(sec)
+            last_code = code
 
-    # ---------------- Filter sections ----------------
-    def filter_sections(self):
-        search_text = self.ui.lineEditSearch.text().lower()
-        course_filter = self.ui.comboBoxFilterCourses.currentData()
-        status_filter = self.ui.comboBoxStatusFilter.currentText()
+        table.setRowCount(len(self.display_rows))
 
-        filtered = []
-        for s in self.all_sections:
-            if search_text and search_text not in str(s['id']).lower():
+        for row, sec in enumerate(self.display_rows):
+            if sec is None:
+                # صف فاصل
+                for col in range(table.columnCount()):
+                    item = QTableWidgetItem("")
+                    item.setFlags(Qt.ItemFlag.NoItemFlags)
+                    item.setBackground(Qt.GlobalColor.lightGray)
+                    table.setItem(row, col, item)
                 continue
-            if course_filter and s['course_code'] != course_filter:
-                continue
-            if status_filter != "All Status" and s['status'] != status_filter:
-                continue
-            filtered.append(s)
 
-        self.fill_table(filtered)
+            self.row_to_section[row] = sec
 
-    # ---------------- Register ----------------
-    def register_course(self):
-        row = self.ui.tableSections.currentRow()
-        if row < 0:
-            show_msg(self, "No Selection", "Please select a section to register.", QMessageBox.Icon.Warning)
+            section_id = sec["section_id"]
+            course_code = sec["course_code"]
+            days = sec["days"]
+            time_start = sec["time_start"]
+            time_end = sec["time_end"]
+            room = sec["room"]
+            enrolled = sec["enrolled"]
+            capacity = sec["capacity"]
+            state = (sec["state"] or "").capitalize()
+
+            # 0: #
+            item_index = QTableWidgetItem(str(row + 1))
+            item_index.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            table.setItem(row, 0, item_index)
+
+            # 1: ID (رقم السكشن)
+            item_id = QTableWidgetItem(str(section_id))
+            item_id.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            table.setItem(row, 1, item_id)
+
+            # 2: COURSE
+            item_course = QTableWidgetItem(course_code)
+            item_course.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            table.setItem(row, 2, item_course)
+
+            # 3: INSTRUCTOR (فاضي حالياً)
+            item_instr = QTableWidgetItem("")
+            item_instr.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            table.setItem(row, 3, item_instr)
+
+            # 4: SCHEDULE (days + time + room)
+            schedule_str = days
+            if time_start and time_end:
+                schedule_str += f"  {time_start}-{time_end}"
+            if room:
+                schedule_str += f"  ({room})"
+            item_sched = QTableWidgetItem(schedule_str.strip())
+            item_sched.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            table.setItem(row, 4, item_sched)
+
+            # 5: ENROLLED
+            item_enrolled = QTableWidgetItem(
+                "" if enrolled is None else str(enrolled)
+            )
+            item_enrolled.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            table.setItem(row, 5, item_enrolled)
+
+            # 6: CAPACITY
+            item_cap = QTableWidgetItem(
+                "" if capacity is None else str(capacity)
+            )
+            item_cap.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            table.setItem(row, 6, item_cap)
+
+            # 7: STATUS
+            item_status = QTableWidgetItem(state)
+            item_status.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            table.setItem(row, 7, item_status)
+
+            # 8: REGISTERATION (CheckBox)
+            checkbox = QCheckBox()
+            checkbox.setStyleSheet(
+                "QCheckBox::indicator { width: 20px; height: 20px; }"
+            )
+
+            # لما يتغير الـ CheckBox => نحدّث لون الصف
+            checkbox.stateChanged.connect(
+                lambda _state, r=row: self.update_row_highlight(r)
+            )
+
+            layout = QHBoxLayout()
+            layout.addWidget(checkbox)
+            layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            cell = QWidget()
+            cell.setLayout(layout)
+            table.setCellWidget(row, 8, cell)
+
+            # لون افتراضي
+            self.update_row_highlight(row)
+
+        table.setColumnWidth(8, 130)
+
+    # ==================== تلوين الصف حسب التحديد ====================
+
+    def update_row_highlight(self, row: int):
+        """
+        يلوّن الصف بالأصفر إذا الـ CheckBox في هذا الصف محدد،
+        ويرجع للون الأبيض إذا ملغي.
+        """
+        if row not in self.row_to_section:
+            return  # صف فاصل
+
+        table = self.ui.tableSections
+        cell = table.cellWidget(row, 8)
+        if not cell:
             return
 
-        section_id = int(self.ui.tableSections.item(row, 1).text())
-        success = self.student_utils.register_section(section_id)
-        if success:
-            show_msg(self, "Success", f"Successfully registered for section {section_id}.", QMessageBox.Icon.Information)
-            self.load_sections()
+
+
+    # ==================== الضغط على الصف يقلب الـ CheckBox ====================
+
+    def handle_cell_clicked(self, row: int, column: int):
+        """
+        لما تضغط أي خلية في صف حقيقي:
+        - نقلب حالة الـ CheckBox في عمود REGISTERATION (8).
+        """
+        if row not in self.row_to_section:
+            return  # صف فاصل
+
+        table = self.ui.tableSections
+        cell = table.cellWidget(row, 8)
+        if not cell:
+            return
+
+        checkbox = cell.layout().itemAt(0).widget()
+        checkbox.setChecked(not checkbox.isChecked())
+
+    # ==================== السكاشن المختارة ====================
+
+    def get_selected_sections(self):
+        """
+        ترجع list بالسكاشن اللي عليها صح (CheckBox).
+        """
+        table = self.ui.tableSections
+        selected = []
+
+        for row, sec in self.row_to_section.items():
+            cell = table.cellWidget(row, 8)
+            if not cell:
+                continue
+            checkbox = cell.layout().itemAt(0).widget()
+            if checkbox.isChecked():
+                selected.append(sec)
+
+        return selected
+
+    # ==================== التعارض + منع نفس الكورس + التسجيل ====================
+
+    def handle_confirm_registration(self):
+        """
+        1) تجمع السكاشن المختارة.
+        2) تمنع تسجيل أكثر من شعبة لنفس الكورس.
+        3) تفحص التعارض الزمني.
+        4) تسجّل في جدول registrations.
+        5) تشيل الكورسات اللي تسجلت من الجدول.
+        """
+        selected = self.get_selected_sections()
+
+        if not selected:
+            QMessageBox.warning(self, "No Sections", "Please select at least one section.")
+            return
+
+        # منع تسجيل أكثر من شعبة لنفس الكورس
+        code_counts = {}
+        for sec in selected:
+            code = sec["course_code"]
+            code_counts[code] = code_counts.get(code, 0) + 1
+
+        duplicates = [c for c, n in code_counts.items() if n > 1]
+        if duplicates:
+            msg = "لا يمكنك تسجيل أكثر من شعبة لنفس المادة:\n\n"
+            msg += "\n".join(f"- {c}" for c in duplicates)
+            QMessageBox.warning(self, "Invalid Selection", msg)
+            return
+
+        # فحص التعارض الزمني بين السكاشن المختارة
+        if len(selected) > 1:
+            for i in range(len(selected)):
+                for j in range(i + 1, len(selected)):
+                    s1 = selected[i]
+                    s2 = selected[j]
+                    if self.student_utils.check_time_conflict(s1, s2):
+                        msg = (
+                            "لا يمكنك تسجيل هذه الشعب لأنها متعارضة في الوقت أو الأيام:\n\n"
+                            f"- {s1['course_code']} (section {s1['section_id']})\n"
+                            f"- {s2['course_code']} (section {s2['section_id']})\n\n"
+                            "الرجاء تغيير الشعبة لأحد المادتين ثم المحاولة مرة أخرى."
+                        )
+                        QMessageBox.warning(self, "Time Conflict", msg)
+                        return
+
+        # التسجيل الفعلي + تحديث الجدول
+        self.register_selected_sections(selected)
+
+    def register_selected_sections(self, sections):
+        """
+        يسجّل السكاشن في الداتا بيس باستخدام
+        StudentUtilities.register_section(section_id, course_code)
+        ثم يشيل هذه الكورسات من self.sections ويعيد تعبئة الجدول.
+        """
+        success = 0
+        fail = 0
+        registered_codes = set()
+
+        for sec in sections:
+            section_id = sec["section_id"]
+            course_code = sec["course_code"]
+            ok = self.student_utils.register_section(section_id, course_code)
+            if ok:
+                success += 1
+                registered_codes.add(course_code)
+            else:
+                fail += 1
+
+        # نشيل الكورسات اللي تسجلت من القائمة الداخلية
+        if registered_codes:
+            self.sections = [
+                s for s in self.sections if s["course_code"] not in registered_codes
+            ]
+            self.fill_table()
+
+        if success and not fail:
+            QMessageBox.information(self, "Registration", "تم تسجيل جميع الشعب بنجاح.")
+        elif success and fail:
+            QMessageBox.warning(
+                self,
+                "Registration",
+                f"تم تسجيل {success} شعبة، وفشل تسجيل {fail} شعبة.",
+            )
         else:
-            warning(self, "Cannot register for this section (full, conflict, or already registered).")
+            QMessageBox.critical(
+                self,
+                "Registration",
+                "فشل تسجيل جميع الشعب. تأكد من إعدادات قاعدة البيانات.",
+            )
 
 
-# ------------------------ Run standalone test ------------------------
+# ===== تجربة سريعة من نفس الملف =====
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
-    student_id = 5000002  # example student
-    course_code = "SALEM" # example 'student' selected course
+    # عدّل القيم حسب الداتا بيس عندك
+    test_student_id = 2500001
+    test_semester = "First"
+    selected_course_codes = ["MATH204", "CIPT", "IE204","A","W"]
 
-    student_utils = StudentUtilities(db_util, student_id)
-
-    w = ViewSectionsWidget(student_utils, course_code)
-
+    w = ViewSectionsWidget(test_student_id, test_semester, selected_course_codes)
     w.show()
+
     sys.exit(app.exec())

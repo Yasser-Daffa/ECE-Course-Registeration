@@ -256,7 +256,6 @@ class AddSectionDialog(QDialog, BaseLoginForm):
             return
 
         self.show_info(msg)
-        self.accept()
 
 
 # =============================== MAIN (تشغيل مباشر) ===============================
