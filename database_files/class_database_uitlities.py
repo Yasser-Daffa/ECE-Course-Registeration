@@ -489,63 +489,50 @@ class DatabaseUtilities:
         return self.cur.fetchone() is not None
     
 
-    def register_student_to_section(self, student_id: int, section_id: int) -> bool:
+    def register_student_to_section(self, student_id: int, section_id: int, course_code: str) -> bool:
         """
-        يسجل الطالب في سكشن معيّن في جدول registrations
-        - يتأكد إن السكشن موجود
-        - يتأكد إن الطالب مو مسجل مسبقاً في نفس السكشن
-        - يتأكد إن السعة ما امتلأت
-        - يحدث عدد المسجلين في جدول sections
-        يرجع True لو نجحت العملية، False لو صار خطأ أو ما ينفع التسجيل.
+        تسجيل طالب في سكشن معيّن في جدول registrations الجديد:
+        - يتأكد إن الطالب موجود.
+        - يتأكد إن السكشن موجود.
+        - يتأكد إنه مو مسجل نفس الكورس قبل كذا (حسب PRIMARY KEY (student_id, course_code)).
+        - بعدين يسوي INSERT في registrations (student_id, section_id, course_code).
         """
         try:
-            # 1) نتأكد إن السكشن موجود
-            self.cur.execute(
-                "SELECT capacity, enrolled FROM sections WHERE section_id = ?",
-                (section_id,),
-            )
-            row = self.cur.fetchone()
-            if not row:
-                print(f"[DB] Section {section_id} not found.")
+            cur = self.con.cursor()
+
+            # 1) نتأكد إن الطالب موجود
+            cur.execute("SELECT 1 FROM users WHERE user_id = ?", (student_id,))
+            if not cur.fetchone():
+                print(f"[DEBUG] register_student_to_section: no such student_id={student_id}")
                 return False
 
-            capacity, enrolled = row
-
-            # 2) نتأكد إن الطالب مو مسجل أصلاً في هذا السكشن
-            self.cur.execute(
-                "SELECT 1 FROM registrations WHERE student_id = ? AND section_id = ?",
-                (student_id, section_id),
-            )
-            if self.cur.fetchone():
-                print(f"[DB] Student {student_id} already registered in section {section_id}.")
+            # 2) نتأكد إن السكشن موجود
+            cur.execute("SELECT 1 FROM sections WHERE section_id = ?", (section_id,))
+            if not cur.fetchone():
+                print(f"[DEBUG] register_student_to_section: no such section_id={section_id}")
                 return False
 
-            # 3) نتأكد من السعة
-            if enrolled is not None and capacity is not None and enrolled >= capacity:
-                print(f"[DB] Section {section_id} is full: {enrolled}/{capacity}.")
+            # 3) نتأكد إنه مو مسجل نفس الكورس قبل (حسب course_code)
+            cur.execute(
+                "SELECT 1 FROM registrations WHERE student_id = ? AND course_code = ?",
+                (student_id, course_code)
+            )
+            if cur.fetchone():
+                print(f"[DEBUG] register_student_to_section: already registered in course {course_code}")
                 return False
 
-            # 4) ندخّل في جدول registrations
-            self.cur.execute(
-                "INSERT INTO registrations (student_id, section_id) VALUES (?, ?)",
-                (student_id, section_id),
+            # 4) نسوي الإدخال الفعلي
+            cur.execute(
+                "INSERT INTO registrations (student_id, section_id, course_code) VALUES (?, ?, ?)",
+                (student_id, section_id, course_code)
             )
-
-            # 5) نحدّث عدد المسجلين في جدول sections
-            self.cur.execute(
-                "UPDATE sections SET enrolled = COALESCE(enrolled, 0) + 1 WHERE section_id = ?",
-                (section_id,),
-            )
-
-            self.commit()
-            print(f"[DB] Registered student {student_id} to section {section_id} successfully.")
+            self.con.commit()
+            print(f"[DEBUG] register_student_to_section: INSERT OK (student={student_id}, section={section_id}, course={course_code})")
             return True
 
         except Exception as e:
-            print("DB Error in register_student_to_section:", e)
+            print(f"DB Error in register_student_to_section: {e}")
             return False
-
-
 
 
 

@@ -108,9 +108,11 @@ def initialize_database(db_path="../university_database.db"):
     create table if not exists registrations(
         student_id integer not null,
         section_id integer not null,
-        primary key (student_id, section_id), -- Prevent duplicate registration
-        foreign key (student_id) references students(student_id) on delete cascade on update cascade,
-        foreign key (section_id) references sections(section_id) on delete cascade on update cascade
+        course_code text not null,
+        primary key (student_id, course_code), -- Prevent duplicate registration
+        foreign key (student_id) references users(user_id) on delete cascade on update cascade,
+        foreign key (section_id) references sections(section_id) on delete cascade on update cascade,
+        foreign key (course_code) references courses(code) on delete cascade on update cascade
     );
     """)
 
@@ -122,7 +124,7 @@ def initialize_database(db_path="../university_database.db"):
         semester text not null,
         grade text,
         primary key (student_id, course_code, semester), -- Prevent duplicates for same semester
-        foreign key (student_id) references students(student_id) on delete cascade on update cascade,
+        foreign key (student_id) references users(user_id) on delete cascade on update cascade,
         foreign key (course_code) references courses(code) on update cascade
     );
     """)
