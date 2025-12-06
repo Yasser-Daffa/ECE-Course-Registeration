@@ -26,6 +26,7 @@ from student.submenus.class_view_program_plans import ViewProgramPlansWidget
 from app_ui.student_ui.submenus_ui.ui_transcript import Ui_Transcript
 from student.submenus.class_transcript import TranscriptWidget
 
+
 # CANT TEST THIS CLASS IN HERE UNLESS WE HAVE THE REQUIRED INFORMATION FROM USERS
 
 class StudentDashboard(QtWidgets.QMainWindow):
