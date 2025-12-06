@@ -252,11 +252,11 @@ class Ui_Profile(object):
         self.buttonsLayout.setObjectName("buttonsLayout")
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.buttonsLayout.addItem(spacerItem1)
-        self.buttonSave = QtWidgets.QPushButton(parent=self.adminInfoBody)
-        self.buttonSave.setEnabled(False)
-        self.buttonSave.setMinimumSize(QtCore.QSize(120, 40))
-        self.buttonSave.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.buttonSave.setStyleSheet("QPushButton {\n"
+        self.buttonEditEmail = QtWidgets.QPushButton(parent=self.adminInfoBody)
+        self.buttonEditEmail.setEnabled(False)
+        self.buttonEditEmail.setMinimumSize(QtCore.QSize(120, 40))
+        self.buttonEditEmail.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonEditEmail.setStyleSheet("QPushButton {\n"
 "    background-color: #f5576c;\n"
 "    color: white;\n"
 "    border: none;\n"
@@ -279,8 +279,8 @@ class Ui_Profile(object):
 "    color: #999999;\n"
 "}\n"
 "")
-        self.buttonSave.setObjectName("buttonSave")
-        self.buttonsLayout.addWidget(self.buttonSave)
+        self.buttonEditEmail.setObjectName("buttonEditEmail")
+        self.buttonsLayout.addWidget(self.buttonEditEmail)
         self.adminInfoBodyLayout.addLayout(self.buttonsLayout)
         self.adminInfoMainLayout.addWidget(self.adminInfoBody)
         self.mainLayout.addWidget(self.adminInfoFrame)
@@ -313,4 +313,4 @@ class Ui_Profile(object):
         self.labelDepatment.setText(_translate("Profile", "Department"))
         self.lineEditName.setText(_translate("Profile", "admin_user"))
         self.labelUsername.setText(_translate("Profile", "Username"))
-        self.buttonSave.setText(_translate("Profile", "Save Changes"))
+        self.buttonEditEmail.setText(_translate("Profile", "Edit Email"))

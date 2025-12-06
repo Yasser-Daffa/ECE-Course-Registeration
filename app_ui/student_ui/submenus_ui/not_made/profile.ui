@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>863</width>
-    <height>905</height>
+    <height>900</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -107,7 +107,7 @@
            <string notr="true">background-color: #e8eaf6; border-radius: 10px; font-size: 24px;</string>
           </property>
           <property name="text">
-           <string>👥</string>
+           <string>⭐</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -115,7 +115,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="totalUsersValue">
+         <widget class="QLabel" name="labelGpaCount">
           <property name="styleSheet">
            <string notr="true">font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;</string>
           </property>
@@ -125,12 +125,12 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="totalUsersLabel">
+         <widget class="QLabel" name="labelGpa">
           <property name="styleSheet">
            <string notr="true">font-size: 14px; color: #7f8c8d; background: transparent;</string>
           </property>
           <property name="text">
-           <string>Total Users</string>
+           <string>GPA</string>
           </property>
          </widget>
         </item>
@@ -194,7 +194,7 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
            <string notr="true">background-color: #fff3e0; border-radius: 10px; font-size: 24px;</string>
           </property>
           <property name="text">
-           <string>📔</string>
+           <string>🎯</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -202,7 +202,7 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="pendingRequestsValue_2">
+         <widget class="QLabel" name="labelCompletedCreditsCount">
           <property name="styleSheet">
            <string notr="true">font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;</string>
           </property>
@@ -212,12 +212,12 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="pendingRequestsLabel_2">
+         <widget class="QLabel" name="labelCompletedCredits">
           <property name="styleSheet">
            <string notr="true">font-size: 14px; color: #7f8c8d; background: transparent;</string>
           </property>
           <property name="text">
-           <string>Total Faculty</string>
+           <string>Completed Credits</string>
           </property>
          </widget>
         </item>
@@ -278,7 +278,7 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
            <string notr="true">background-color: #fce4ec; border-radius: 10px; font-size: 24px;</string>
           </property>
           <property name="text">
-           <string>⚡</string>
+           <string>📝</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -286,7 +286,7 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="totalStudentsValue">
+         <widget class="QLabel" name="labelCurrentCreditsCount">
           <property name="styleSheet">
            <string notr="true">font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;</string>
           </property>
@@ -296,12 +296,12 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="totalStudentsLabel">
+         <widget class="QLabel" name="labelCurrentCredits">
           <property name="styleSheet">
            <string notr="true">font-size: 14px; color: #7f8c8d; background: transparent;</string>
           </property>
           <property name="text">
-           <string>Total Students</string>
+           <string>Current Credits</string>
           </property>
          </widget>
         </item>
@@ -362,7 +362,7 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
            <string notr="true">background-color: #fff3e0; border-radius: 10px; font-size: 24px;</string>
           </property>
           <property name="text">
-           <string>⏳</string>
+           <string>📚</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -370,7 +370,7 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="pendingRequestsValue">
+         <widget class="QLabel" name="labelRegisteredCoursesCount">
           <property name="styleSheet">
            <string notr="true">font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;</string>
           </property>
@@ -380,12 +380,12 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="pendingRequestsLabel">
+         <widget class="QLabel" name="labelRegisteredCourses">
           <property name="styleSheet">
            <string notr="true">font-size: 14px; color: #7f8c8d; background: transparent;</string>
           </property>
           <property name="text">
-           <string>Pending Requests</string>
+           <string>Registered Courses</string>
           </property>
          </widget>
         </item>
@@ -452,12 +452,12 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
           <number>20</number>
          </property>
          <item>
-          <widget class="QLabel" name="adminInfoTitle">
+          <widget class="QLabel" name="labelTitleInfo">
            <property name="styleSheet">
             <string notr="true">font-size: 20px; font-weight: bold; color: #2c3e50; background: transparent;</string>
            </property>
            <property name="text">
-            <string>Admin Information</string>
+            <string>Student Information</string>
            </property>
           </widget>
          </item>
@@ -503,8 +503,28 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
            <property name="spacing">
             <number>20</number>
            </property>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="lineEditEmail">
+           <item row="0" column="0">
+            <widget class="QLabel" name="labelUsername">
+             <property name="styleSheet">
+              <string notr="true">font-size: 13px; color: #718096; font-weight: bold; background: transparent;</string>
+             </property>
+             <property name="text">
+              <string>Username</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLabel" name="labelProgram">
+             <property name="styleSheet">
+              <string notr="true">font-size: 13px; color: #718096; font-weight: bold; background: transparent;</string>
+             </property>
+             <property name="text">
+              <string>Program</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLineEdit" name="lineEditName">
              <property name="enabled">
               <bool>true</bool>
              </property>
@@ -532,15 +552,25 @@ QLineEdit[readOnly=&quot;true&quot;] {
 </string>
              </property>
              <property name="text">
-              <string>admin@university.edu</string>
+              <string>student_user</string>
              </property>
              <property name="readOnly">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
-            <widget class="QLineEdit" name="lineEditDepartment">
+           <item row="2" column="0">
+            <widget class="QLabel" name="labelDepatment">
+             <property name="styleSheet">
+              <string notr="true">font-size: 13px; color: #718096; font-weight: bold; background: transparent;</string>
+             </property>
+             <property name="text">
+              <string>Department</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="lineEditProgram">
              <property name="enabled">
               <bool>true</bool>
              </property>
@@ -585,18 +615,8 @@ QLineEdit[readOnly=&quot;true&quot;] {
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="labelDepatment">
-             <property name="styleSheet">
-              <string notr="true">font-size: 13px; color: #718096; font-weight: bold; background: transparent;</string>
-             </property>
-             <property name="text">
-              <string>Department</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLineEdit" name="lineEditName">
+           <item row="3" column="0">
+            <widget class="QLineEdit" name="lineEditDepartment">
              <property name="enabled">
               <bool>true</bool>
              </property>
@@ -624,20 +644,46 @@ QLineEdit[readOnly=&quot;true&quot;] {
 </string>
              </property>
              <property name="text">
-              <string>admin_user</string>
+              <string>Electrical and Computer Engineering</string>
              </property>
              <property name="readOnly">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="labelUsername">
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="lineEditEmail">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>45</height>
+              </size>
+             </property>
              <property name="styleSheet">
-              <string notr="true">font-size: 13px; color: #718096; font-weight: bold; background: transparent;</string>
+              <string notr="true">QLineEdit {
+    padding: 10px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #f8f9fa;
+    color: #222222;        /* slightly dark text */
+}
+/* Read-only state */
+QLineEdit[readOnly=&quot;true&quot;] {
+    background-color: #f0f0f0;       /* softer to indicate non-editable */
+    color: #555555;                  /* slightly faded text */
+}
+
+</string>
              </property>
              <property name="text">
-              <string>Username</string>
+              <string>student@university.edu</string>
+             </property>
+             <property name="readOnly">
+              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -674,22 +720,24 @@ QLineEdit[readOnly=&quot;true&quot;] {
              </property>
              <property name="styleSheet">
               <string notr="true">QPushButton {
-    background-color: #f5576c;
-    color: white;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #667EEA, stop:1 #764BA2);
+    color: #ffffff;
     border: none;
     border-radius: 8px;
     font-size: 14px;
     font-weight: bold;
     padding: 10px 20px;
+    transition: background 150ms;
 }
 
 QPushButton:hover {
-    background-color: #e5475c;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #4F63C6, stop:1 #5D3F9E);
 }
 
 QPushButton:pressed {
-    background-color: #d93f53; /* slightly darker for click feedback */
+    background-color: #3C4A99;
 }
+
 
 QPushButton:disabled {
     background-color: #e0e0e0;
