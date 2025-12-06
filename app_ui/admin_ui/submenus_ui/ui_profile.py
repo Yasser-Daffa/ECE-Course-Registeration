@@ -194,70 +194,6 @@ class Ui_Profile(object):
         self.fieldsGrid = QtWidgets.QGridLayout()
         self.fieldsGrid.setSpacing(20)
         self.fieldsGrid.setObjectName("fieldsGrid")
-        self.labelEmail = QtWidgets.QLabel(parent=self.adminInfoBody)
-        self.labelEmail.setStyleSheet("font-size: 13px; color: #718096; font-weight: bold; background: transparent;")
-        self.labelEmail.setObjectName("labelEmail")
-        self.fieldsGrid.addWidget(self.labelEmail, 0, 1, 1, 1)
-        self.labelPassword = QtWidgets.QLabel(parent=self.adminInfoBody)
-        self.labelPassword.setStyleSheet("font-size: 13px; color: #718096; font-weight: bold; background: transparent;")
-        self.labelPassword.setObjectName("labelPassword")
-        self.fieldsGrid.addWidget(self.labelPassword, 4, 0, 1, 1)
-        self.labelUsername = QtWidgets.QLabel(parent=self.adminInfoBody)
-        self.labelUsername.setStyleSheet("font-size: 13px; color: #718096; font-weight: bold; background: transparent;")
-        self.labelUsername.setObjectName("labelUsername")
-        self.fieldsGrid.addWidget(self.labelUsername, 0, 0, 1, 1)
-        self.buttonChangePassword = QtWidgets.QPushButton(parent=self.adminInfoBody)
-        self.buttonChangePassword.setEnabled(False)
-        self.buttonChangePassword.setMinimumSize(QtCore.QSize(120, 40))
-        self.buttonChangePassword.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.buttonChangePassword.setStyleSheet("QPushButton {\n"
-"    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #667EEA, stop:1 #764BA2);\n"
-"    color: #ffffff;\n"
-"    border: none;\n"
-"    border-radius: 8px;\n"
-"    font-size: 14px;\n"
-"    font-weight: bold;\n"
-"    padding: 10px 20px;\n"
-"    transition: background 150ms;\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #4F63C6, stop:1 #5D3F9E);\n"
-"}\n"
-"\n"
-"QPushButton:pressed {\n"
-"    background-color: #3C4A99;\n"
-"}\n"
-"\n"
-"\n"
-"QPushButton:disabled {\n"
-"    background-color: #e0e0e0;\n"
-"    color: #999999;\n"
-"}\n"
-"")
-        self.buttonChangePassword.setObjectName("buttonChangePassword")
-        self.fieldsGrid.addWidget(self.buttonChangePassword, 5, 1, 1, 1)
-        self.lineEditName = QtWidgets.QLineEdit(parent=self.adminInfoBody)
-        self.lineEditName.setEnabled(True)
-        self.lineEditName.setMinimumSize(QtCore.QSize(0, 45))
-        self.lineEditName.setStyleSheet("QLineEdit {\n"
-"    padding: 10px 15px;\n"
-"    border: 2px solid #e0e0e0;\n"
-"    border-radius: 8px;\n"
-"    font-size: 14px;\n"
-"    background-color: #f8f9fa;\n"
-"    color: #222222;        /* slightly dark text */\n"
-"}\n"
-"/* Read-only state */\n"
-"QLineEdit[readOnly=\"true\"] {\n"
-"    background-color: #f0f0f0;       /* softer to indicate non-editable */\n"
-"    color: #555555;                  /* slightly faded text */\n"
-"}\n"
-"\n"
-"")
-        self.lineEditName.setReadOnly(True)
-        self.lineEditName.setObjectName("lineEditName")
-        self.fieldsGrid.addWidget(self.lineEditName, 1, 0, 1, 1)
         self.lineEditEmail = QtWidgets.QLineEdit(parent=self.adminInfoBody)
         self.lineEditEmail.setEnabled(True)
         self.lineEditEmail.setMinimumSize(QtCore.QSize(0, 45))
@@ -276,7 +212,7 @@ class Ui_Profile(object):
 "}\n"
 "\n"
 "")
-        self.lineEditEmail.setReadOnly(True)
+        self.lineEditEmail.setReadOnly(False)
         self.lineEditEmail.setObjectName("lineEditEmail")
         self.fieldsGrid.addWidget(self.lineEditEmail, 1, 1, 1, 1)
         self.lineEditDepartment = QtWidgets.QLineEdit(parent=self.adminInfoBody)
@@ -297,17 +233,21 @@ class Ui_Profile(object):
 "}\n"
 "\n"
 "")
-        self.lineEditDepartment.setReadOnly(True)
+        self.lineEditDepartment.setReadOnly(False)
         self.lineEditDepartment.setObjectName("lineEditDepartment")
         self.fieldsGrid.addWidget(self.lineEditDepartment, 3, 0, 1, 1)
+        self.labelEmail = QtWidgets.QLabel(parent=self.adminInfoBody)
+        self.labelEmail.setStyleSheet("font-size: 13px; color: #718096; font-weight: bold; background: transparent;")
+        self.labelEmail.setObjectName("labelEmail")
+        self.fieldsGrid.addWidget(self.labelEmail, 0, 1, 1, 1)
         self.labelDepatment = QtWidgets.QLabel(parent=self.adminInfoBody)
         self.labelDepatment.setStyleSheet("font-size: 13px; color: #718096; font-weight: bold; background: transparent;")
         self.labelDepatment.setObjectName("labelDepatment")
         self.fieldsGrid.addWidget(self.labelDepatment, 2, 0, 1, 1)
-        self.lineEditPassword = QtWidgets.QLineEdit(parent=self.adminInfoBody)
-        self.lineEditPassword.setEnabled(True)
-        self.lineEditPassword.setMinimumSize(QtCore.QSize(0, 45))
-        self.lineEditPassword.setStyleSheet("QLineEdit {\n"
+        self.lineEditName = QtWidgets.QLineEdit(parent=self.adminInfoBody)
+        self.lineEditName.setEnabled(True)
+        self.lineEditName.setMinimumSize(QtCore.QSize(0, 45))
+        self.lineEditName.setStyleSheet("QLineEdit {\n"
 "    padding: 10px 15px;\n"
 "    border: 2px solid #e0e0e0;\n"
 "    border-radius: 8px;\n"
@@ -322,9 +262,13 @@ class Ui_Profile(object):
 "}\n"
 "\n"
 "")
-        self.lineEditPassword.setReadOnly(True)
-        self.lineEditPassword.setObjectName("lineEditPassword")
-        self.fieldsGrid.addWidget(self.lineEditPassword, 5, 0, 1, 1)
+        self.lineEditName.setReadOnly(False)
+        self.lineEditName.setObjectName("lineEditName")
+        self.fieldsGrid.addWidget(self.lineEditName, 1, 0, 1, 1)
+        self.labelUsername = QtWidgets.QLabel(parent=self.adminInfoBody)
+        self.labelUsername.setStyleSheet("font-size: 13px; color: #718096; font-weight: bold; background: transparent;")
+        self.labelUsername.setObjectName("labelUsername")
+        self.fieldsGrid.addWidget(self.labelUsername, 0, 0, 1, 1)
         self.adminInfoBodyLayout.addLayout(self.fieldsGrid)
         self.buttonsLayout = QtWidgets.QHBoxLayout()
         self.buttonsLayout.setObjectName("buttonsLayout")
@@ -416,14 +360,11 @@ class Ui_Profile(object):
         self.pendingRequestsLabel.setText(_translate("Profile", "Pending Requests"))
         self.adminInfoTitle.setText(_translate("Profile", "Admin Information"))
         self.buttonEdit.setText(_translate("Profile", "Edit Profile"))
-        self.labelEmail.setText(_translate("Profile", "Email Address"))
-        self.labelPassword.setText(_translate("Profile", "Password"))
-        self.labelUsername.setText(_translate("Profile", "Username"))
-        self.buttonChangePassword.setText(_translate("Profile", "Change Password"))
-        self.lineEditName.setText(_translate("Profile", "admin_user"))
         self.lineEditEmail.setText(_translate("Profile", "admin@university.edu"))
         self.lineEditDepartment.setText(_translate("Profile", "Electrical and Computer Engineering"))
+        self.labelEmail.setText(_translate("Profile", "Email Address"))
         self.labelDepatment.setText(_translate("Profile", "Department"))
-        self.lineEditPassword.setText(_translate("Profile", "••••••••"))
+        self.lineEditName.setText(_translate("Profile", "admin_user"))
+        self.labelUsername.setText(_translate("Profile", "Username"))
         self.buttonCancel.setText(_translate("Profile", "Cancel"))
         self.buttonSave.setText(_translate("Profile", "Save Changes"))

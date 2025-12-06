@@ -74,7 +74,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.ui.stackedWidget.addWidget(self.all_students_page)
         self.ui.stackedWidget.addWidget(self.pending_requests_page)
 
-        # self.ui.stackedWidget.addWidget(self.manage_faculty_controller)
+        self.ui.stackedWidget.addWidget(self.manage_faculty_controller)
 
         self.ui.stackedWidget.addWidget(self.manage_courses_page)
         self.ui.stackedWidget.addWidget(self.manage_prereqs_page)
@@ -95,7 +95,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
             self.ui.buttonPendingRequests: ("Pending Requests", self.pending_requests_page),
 
             # self.ui.buttonStudentsFaculty: ("Manage Students", self.manage_Students_controller),
-            # self.ui.buttonManageFaculty: ("Manage Faculty", self.manage_faculty_controller),
+            self.ui.buttonManageFaculty: ("Manage Faculty", self.manage_faculty_controller),
 
             self.ui.buttonManageCourses: ("Manage Courses", self.manage_courses_page),
             self.ui.buttonManagePrereqs: ("Manage Prereqs", self.manage_prereqs_page),
@@ -165,7 +165,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # Manage facutly page
         # -------------------------------
         # uses database utils
-        # self.manage_faculty_controller = ManageFacultyWidget(db)
+        self.manage_faculty_controller = ManageFacultyWidget(db)
 
         # -------------------------------
         # Manage courses
@@ -191,7 +191,6 @@ class AdminDashboard(QtWidgets.QMainWindow):
 
         # # no need for all the extra junk since this page sets up its own ui internally. thanks to salem :)
         self.manage_sections_controller = ManageSectionsWidget(self.admin)
-        self.ui.stackedWidget.addWidget(self.manage_sections_controller)
 
     # -------------------------------
     # Switch the stacked widget to the page associated with the clicked button

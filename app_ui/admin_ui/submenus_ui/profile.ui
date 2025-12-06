@@ -538,118 +538,6 @@ QPushButton:pressed {
            <property name="spacing">
             <number>20</number>
            </property>
-           <item row="0" column="1">
-            <widget class="QLabel" name="labelEmail">
-             <property name="styleSheet">
-              <string notr="true">font-size: 13px; color: #718096; font-weight: bold; background: transparent;</string>
-             </property>
-             <property name="text">
-              <string>Email Address</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="labelPassword">
-             <property name="styleSheet">
-              <string notr="true">font-size: 13px; color: #718096; font-weight: bold; background: transparent;</string>
-             </property>
-             <property name="text">
-              <string>Password</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="labelUsername">
-             <property name="styleSheet">
-              <string notr="true">font-size: 13px; color: #718096; font-weight: bold; background: transparent;</string>
-             </property>
-             <property name="text">
-              <string>Username</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="1">
-            <widget class="QPushButton" name="buttonChangePassword">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>120</width>
-               <height>40</height>
-              </size>
-             </property>
-             <property name="cursor">
-              <cursorShape>PointingHandCursor</cursorShape>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">QPushButton {
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #667EEA, stop:1 #764BA2);
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: bold;
-    padding: 10px 20px;
-    transition: background 150ms;
-}
-
-QPushButton:hover {
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #4F63C6, stop:1 #5D3F9E);
-}
-
-QPushButton:pressed {
-    background-color: #3C4A99;
-}
-
-
-QPushButton:disabled {
-    background-color: #e0e0e0;
-    color: #999999;
-}
-</string>
-             </property>
-             <property name="text">
-              <string>Change Password</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLineEdit" name="lineEditName">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>45</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">QLineEdit {
-    padding: 10px 15px;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 14px;
-    background-color: #f8f9fa;
-    color: #222222;        /* slightly dark text */
-}
-/* Read-only state */
-QLineEdit[readOnly=&quot;true&quot;] {
-    background-color: #f0f0f0;       /* softer to indicate non-editable */
-    color: #555555;                  /* slightly faded text */
-}
-
-</string>
-             </property>
-             <property name="text">
-              <string>admin_user</string>
-             </property>
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
            <item row="1" column="1">
             <widget class="QLineEdit" name="lineEditEmail">
              <property name="enabled">
@@ -682,7 +570,7 @@ QLineEdit[readOnly=&quot;true&quot;] {
               <string>admin@university.edu</string>
              </property>
              <property name="readOnly">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -718,7 +606,17 @@ QLineEdit[readOnly=&quot;true&quot;] {
               <string>Electrical and Computer Engineering</string>
              </property>
              <property name="readOnly">
-              <bool>true</bool>
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="labelEmail">
+             <property name="styleSheet">
+              <string notr="true">font-size: 13px; color: #718096; font-weight: bold; background: transparent;</string>
+             </property>
+             <property name="text">
+              <string>Email Address</string>
              </property>
             </widget>
            </item>
@@ -732,8 +630,8 @@ QLineEdit[readOnly=&quot;true&quot;] {
              </property>
             </widget>
            </item>
-           <item row="5" column="0">
-            <widget class="QLineEdit" name="lineEditPassword">
+           <item row="1" column="0">
+            <widget class="QLineEdit" name="lineEditName">
              <property name="enabled">
               <bool>true</bool>
              </property>
@@ -761,10 +659,20 @@ QLineEdit[readOnly=&quot;true&quot;] {
 </string>
              </property>
              <property name="text">
-              <string>••••••••</string>
+              <string>admin_user</string>
              </property>
              <property name="readOnly">
-              <bool>true</bool>
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="labelUsername">
+             <property name="styleSheet">
+              <string notr="true">font-size: 13px; color: #718096; font-weight: bold; background: transparent;</string>
+             </property>
+             <property name="text">
+              <string>Username</string>
              </property>
             </widget>
            </item>
