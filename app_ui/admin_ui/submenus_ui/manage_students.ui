@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AllStudents</class>
- <widget class="QWidget" name="AllStudents">
+ <class>ManageStudents</class>
+ <widget class="QWidget" name="ManageStudents">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -253,6 +253,11 @@ QComboBox[error=&quot;true&quot;] {
         </property>
         <item>
          <property name="text">
+          <string>All Programs</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>Computer</string>
          </property>
         </item>
@@ -408,7 +413,7 @@ QPushButton:pressed {
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="buttonAddStudent_2">
+          <widget class="QPushButton" name="buttonAddGrades">
            <property name="enabled">
             <bool>true</bool>
            </property>

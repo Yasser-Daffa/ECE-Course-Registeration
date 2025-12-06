@@ -9,25 +9,25 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 
-class Ui_AllStudents(object):
-    def setupUi(self, AllStudents):
-        AllStudents.setObjectName("AllStudents")
-        AllStudents.resize(1200, 809)
-        AllStudents.setWindowTitle("")
-        AllStudents.setStyleSheet("background-color: #f5f7fa;")
-        self.mainLayout = QtWidgets.QVBoxLayout(AllStudents)
+class Ui_ManageStudents(object):
+    def setupUi(self, ManageStudents):
+        ManageStudents.setObjectName("ManageStudents")
+        ManageStudents.resize(1200, 809)
+        ManageStudents.setWindowTitle("")
+        ManageStudents.setStyleSheet("background-color: #f5f7fa;")
+        self.mainLayout = QtWidgets.QVBoxLayout(ManageStudents)
         self.mainLayout.setContentsMargins(40, 40, 40, 20)
         self.mainLayout.setSpacing(30)
         self.mainLayout.setObjectName("mainLayout")
         self.headerLayout = QtWidgets.QHBoxLayout()
         self.headerLayout.setObjectName("headerLayout")
-        self.labelTitle = QtWidgets.QLabel(parent=AllStudents)
+        self.labelTitle = QtWidgets.QLabel(parent=ManageStudents)
         self.labelTitle.setStyleSheet("font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;")
         self.labelTitle.setObjectName("labelTitle")
         self.headerLayout.addWidget(self.labelTitle)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.headerLayout.addItem(spacerItem)
-        self.labelTotalStudentsCount = QtWidgets.QLabel(parent=AllStudents)
+        self.labelTotalStudentsCount = QtWidgets.QLabel(parent=ManageStudents)
         self.labelTotalStudentsCount.setStyleSheet("font-size: 16px;\n"
 "color: #1a73e8;               /* blue text for emphasis */\n"
 "font-weight: bold;\n"
@@ -38,7 +38,7 @@ class Ui_AllStudents(object):
         self.labelTotalStudentsCount.setObjectName("labelTotalStudentsCount")
         self.headerLayout.addWidget(self.labelTotalStudentsCount)
         self.mainLayout.addLayout(self.headerLayout)
-        self.filterFrame = QtWidgets.QFrame(parent=AllStudents)
+        self.filterFrame = QtWidgets.QFrame(parent=ManageStudents)
         self.filterFrame.setMinimumSize(QtCore.QSize(0, 70))
         self.filterFrame.setMaximumSize(QtCore.QSize(16777215, 70))
         self.filterFrame.setStyleSheet("background-color: white; border-radius: 12px;")
@@ -160,6 +160,7 @@ class Ui_AllStudents(object):
         self.comboBoxSelectProgram.addItem("")
         self.comboBoxSelectProgram.addItem("")
         self.comboBoxSelectProgram.addItem("")
+        self.comboBoxSelectProgram.addItem("")
         self.filterLayout.addWidget(self.comboBoxSelectProgram)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.filterLayout.addItem(spacerItem1)
@@ -189,7 +190,7 @@ class Ui_AllStudents(object):
         self.buttonRefresh.setObjectName("buttonRefresh")
         self.filterLayout.addWidget(self.buttonRefresh)
         self.mainLayout.addWidget(self.filterFrame)
-        self.tableFrame = QtWidgets.QFrame(parent=AllStudents)
+        self.tableFrame = QtWidgets.QFrame(parent=ManageStudents)
         self.tableFrame.setStyleSheet("background-color: white; border-radius: 12px;")
         self.tableFrame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.tableFrame.setObjectName("tableFrame")
@@ -212,11 +213,11 @@ class Ui_AllStudents(object):
         self.tableHeaderLayout.addWidget(self.tableTitle)
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.tableHeaderLayout.addItem(spacerItem2)
-        self.buttonAddStudent_2 = QtWidgets.QPushButton(parent=self.tableHeader)
-        self.buttonAddStudent_2.setEnabled(True)
-        self.buttonAddStudent_2.setMinimumSize(QtCore.QSize(120, 40))
-        self.buttonAddStudent_2.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.buttonAddStudent_2.setStyleSheet("QPushButton {\n"
+        self.buttonAddGrades = QtWidgets.QPushButton(parent=self.tableHeader)
+        self.buttonAddGrades.setEnabled(True)
+        self.buttonAddGrades.setMinimumSize(QtCore.QSize(120, 40))
+        self.buttonAddGrades.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonAddGrades.setStyleSheet("QPushButton {\n"
 "    background-color: #f5576c;\n"
 "    color: #ffffff;\n"
 "    border: none;\n"
@@ -236,8 +237,8 @@ class Ui_AllStudents(object):
 "    background-color: #cccccc;  /* gray background for disabled */\n"
 "    color: #666666;             /* darker gray text */\n"
 "}")
-        self.buttonAddStudent_2.setObjectName("buttonAddStudent_2")
-        self.tableHeaderLayout.addWidget(self.buttonAddStudent_2)
+        self.buttonAddGrades.setObjectName("buttonAddGrades")
+        self.tableHeaderLayout.addWidget(self.buttonAddGrades)
         self.buttonAddStudent = QtWidgets.QPushButton(parent=self.tableHeader)
         self.buttonAddStudent.setEnabled(False)
         self.buttonAddStudent.setMinimumSize(QtCore.QSize(120, 40))
@@ -438,33 +439,34 @@ class Ui_AllStudents(object):
         spacerItem3 = QtWidgets.QSpacerItem(20, 60, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Maximum)
         self.mainLayout.addItem(spacerItem3)
 
-        self.retranslateUi(AllStudents)
-        QtCore.QMetaObject.connectSlotsByName(AllStudents)
+        self.retranslateUi(ManageStudents)
+        QtCore.QMetaObject.connectSlotsByName(ManageStudents)
 
-    def retranslateUi(self, AllStudents):
+    def retranslateUi(self, ManageStudents):
         _translate = QtCore.QCoreApplication.translate
-        self.labelTitle.setText(_translate("AllStudents", "Students Management"))
-        self.labelTotalStudentsCount.setText(_translate("AllStudents", "200 Total Students"))
-        self.lineEditSearch.setPlaceholderText(_translate("AllStudents", "🔍  Search by student name or ID..."))
-        self.comboBoxSelectProgram.setPlaceholderText(_translate("AllStudents", "Filter Program..."))
-        self.comboBoxSelectProgram.setItemText(0, _translate("AllStudents", "Computer"))
-        self.comboBoxSelectProgram.setItemText(1, _translate("AllStudents", "Communication"))
-        self.comboBoxSelectProgram.setItemText(2, _translate("AllStudents", "Power"))
-        self.comboBoxSelectProgram.setItemText(3, _translate("AllStudents", "Biomedical"))
-        self.buttonRefresh.setText(_translate("AllStudents", "🔄 Refresh"))
-        self.tableTitle.setText(_translate("AllStudents", "Registered Students"))
-        self.buttonAddStudent_2.setText(_translate("AllStudents", "📝 Add Grades"))
-        self.buttonAddStudent.setText(_translate("AllStudents", "➕ Register Course for student"))
-        self.buttonRemoveSelected.setText(_translate("AllStudents", "❌ Remove Course for student"))
+        self.labelTitle.setText(_translate("ManageStudents", "Students Management"))
+        self.labelTotalStudentsCount.setText(_translate("ManageStudents", "200 Total Students"))
+        self.lineEditSearch.setPlaceholderText(_translate("ManageStudents", "🔍  Search by student name or ID..."))
+        self.comboBoxSelectProgram.setPlaceholderText(_translate("ManageStudents", "Filter Program..."))
+        self.comboBoxSelectProgram.setItemText(0, _translate("ManageStudents", "All Programs"))
+        self.comboBoxSelectProgram.setItemText(1, _translate("ManageStudents", "Computer"))
+        self.comboBoxSelectProgram.setItemText(2, _translate("ManageStudents", "Communication"))
+        self.comboBoxSelectProgram.setItemText(3, _translate("ManageStudents", "Power"))
+        self.comboBoxSelectProgram.setItemText(4, _translate("ManageStudents", "Biomedical"))
+        self.buttonRefresh.setText(_translate("ManageStudents", "🔄 Refresh"))
+        self.tableTitle.setText(_translate("ManageStudents", "Registered Students"))
+        self.buttonAddGrades.setText(_translate("ManageStudents", "📝 Add Grades"))
+        self.buttonAddStudent.setText(_translate("ManageStudents", "➕ Register Course for student"))
+        self.buttonRemoveSelected.setText(_translate("ManageStudents", "❌ Remove Course for student"))
         item = self.tableAllStudents.horizontalHeaderItem(0)
-        item.setText(_translate("AllStudents", "#"))
+        item.setText(_translate("ManageStudents", "#"))
         item = self.tableAllStudents.horizontalHeaderItem(1)
-        item.setText(_translate("AllStudents", "ID"))
+        item.setText(_translate("ManageStudents", "ID"))
         item = self.tableAllStudents.horizontalHeaderItem(2)
-        item.setText(_translate("AllStudents", "NAME"))
+        item.setText(_translate("ManageStudents", "NAME"))
         item = self.tableAllStudents.horizontalHeaderItem(3)
-        item.setText(_translate("AllStudents", "EMAIL"))
+        item.setText(_translate("ManageStudents", "EMAIL"))
         item = self.tableAllStudents.horizontalHeaderItem(4)
-        item.setText(_translate("AllStudents", "PROGRAM"))
+        item.setText(_translate("ManageStudents", "PROGRAM"))
         item = self.tableAllStudents.horizontalHeaderItem(5)
-        item.setText(_translate("AllStudents", "STATE"))
+        item.setText(_translate("ManageStudents", "STATE"))
