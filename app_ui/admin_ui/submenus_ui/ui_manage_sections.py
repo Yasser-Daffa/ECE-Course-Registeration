@@ -26,6 +26,70 @@ class Ui_ManageSections(object):
         self.headerLayout.addWidget(self.labelTitle)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.headerLayout.addItem(spacerItem)
+        self.buttonOpenAll = QtWidgets.QPushButton(parent=ManageSections)
+        self.buttonOpenAll.setMinimumSize(QtCore.QSize(120, 40))
+        self.buttonOpenAll.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonOpenAll.setStyleSheet("QPushButton {\n"
+"    background-color: #f8f9fa;\n"
+"    color: #5a6c7d;\n"
+"    border: 2px solid #dcdcdc;\n"
+"    border-radius: 8px;\n"
+"    font-size: 14px;\n"
+"    font-weight: bold;\n"
+"    padding: 10px 20px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    border-color: #f5b562;      /* warm yellow-gold */\n"
+"    color: #d7984d;             /* matching soft text */\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background-color: #e9ecef;\n"
+"    border-color: #e49c46;\n"
+"    color: #c37b32;\n"
+"}\n"
+"\n"
+"QPushButton:disabled {\n"
+"    background-color: #f1f3f4;\n"
+"    border-color: #d0d0d0;\n"
+"    color: #9aa3ab;\n"
+"}\n"
+"")
+        self.buttonOpenAll.setObjectName("buttonOpenAll")
+        self.headerLayout.addWidget(self.buttonOpenAll)
+        self.buttonCloseAll = QtWidgets.QPushButton(parent=ManageSections)
+        self.buttonCloseAll.setMinimumSize(QtCore.QSize(120, 40))
+        self.buttonCloseAll.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonCloseAll.setStyleSheet("QPushButton {\n"
+"    background-color: #f8f9fa;\n"
+"    color: #5a6c7d;\n"
+"    border: 2px solid #dcdcdc;\n"
+"    border-radius: 8px;\n"
+"    font-size: 14px;\n"
+"    font-weight: bold;\n"
+"    padding: 10px 20px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    border-color: #f5b562;      /* warm yellow-gold */\n"
+"    color: #d7984d;             /* matching soft text */\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background-color: #e9ecef;\n"
+"    border-color: #e49c46;\n"
+"    color: #c37b32;\n"
+"}\n"
+"\n"
+"QPushButton:disabled {\n"
+"    background-color: #f1f3f4;\n"
+"    border-color: #d0d0d0;\n"
+"    color: #9aa3ab;\n"
+"}\n"
+"")
+        self.buttonCloseAll.setObjectName("buttonCloseAll")
+        self.headerLayout.addWidget(self.buttonCloseAll)
         self.mainLayout.addLayout(self.headerLayout)
         self.statsLayout = QtWidgets.QHBoxLayout()
         self.statsLayout.setSpacing(20)
@@ -363,6 +427,10 @@ class Ui_ManageSections(object):
         self.buttonRefresh.setObjectName("buttonRefresh")
         self.filterLayout.addWidget(self.buttonRefresh)
         self.mainLayout.addWidget(self.filterFrame)
+        self.labelStatus = QtWidgets.QLabel(parent=ManageSections)
+        self.labelStatus.setStyleSheet("font-size: 18px; font-weight: bold; color: #2c3e50; background: transparent;")
+        self.labelStatus.setObjectName("labelStatus")
+        self.mainLayout.addWidget(self.labelStatus)
         self.sectionsTableFrame = QtWidgets.QFrame(parent=ManageSections)
         self.sectionsTableFrame.setStyleSheet("background-color: white; border-radius: 12px;")
         self.sectionsTableFrame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
@@ -386,70 +454,6 @@ class Ui_ManageSections(object):
         self.tableHeaderLayout.addWidget(self.labelTableTitle)
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.tableHeaderLayout.addItem(spacerItem2)
-        self.buttonOpenAll = QtWidgets.QPushButton(parent=self.tableHeader)
-        self.buttonOpenAll.setMinimumSize(QtCore.QSize(120, 40))
-        self.buttonOpenAll.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.buttonOpenAll.setStyleSheet("QPushButton {\n"
-"    background-color: #f8f9fa;\n"
-"    color: #5a6c7d;\n"
-"    border: 2px solid #dcdcdc;\n"
-"    border-radius: 8px;\n"
-"    font-size: 14px;\n"
-"    font-weight: bold;\n"
-"    padding: 10px 20px;\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"    border-color: #f5b562;      /* warm yellow-gold */\n"
-"    color: #d7984d;             /* matching soft text */\n"
-"}\n"
-"\n"
-"QPushButton:pressed {\n"
-"    background-color: #e9ecef;\n"
-"    border-color: #e49c46;\n"
-"    color: #c37b32;\n"
-"}\n"
-"\n"
-"QPushButton:disabled {\n"
-"    background-color: #f1f3f4;\n"
-"    border-color: #d0d0d0;\n"
-"    color: #9aa3ab;\n"
-"}\n"
-"")
-        self.buttonOpenAll.setObjectName("buttonOpenAll")
-        self.tableHeaderLayout.addWidget(self.buttonOpenAll)
-        self.buttonCloseAll = QtWidgets.QPushButton(parent=self.tableHeader)
-        self.buttonCloseAll.setMinimumSize(QtCore.QSize(120, 40))
-        self.buttonCloseAll.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.buttonCloseAll.setStyleSheet("QPushButton {\n"
-"    background-color: #f8f9fa;\n"
-"    color: #5a6c7d;\n"
-"    border: 2px solid #dcdcdc;\n"
-"    border-radius: 8px;\n"
-"    font-size: 14px;\n"
-"    font-weight: bold;\n"
-"    padding: 10px 20px;\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"    border-color: #f5b562;      /* warm yellow-gold */\n"
-"    color: #d7984d;             /* matching soft text */\n"
-"}\n"
-"\n"
-"QPushButton:pressed {\n"
-"    background-color: #e9ecef;\n"
-"    border-color: #e49c46;\n"
-"    color: #c37b32;\n"
-"}\n"
-"\n"
-"QPushButton:disabled {\n"
-"    background-color: #f1f3f4;\n"
-"    border-color: #d0d0d0;\n"
-"    color: #9aa3ab;\n"
-"}\n"
-"")
-        self.buttonCloseAll.setObjectName("buttonCloseAll")
-        self.tableHeaderLayout.addWidget(self.buttonCloseAll)
         spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Maximum, QtWidgets.QSizePolicy.Policy.Minimum)
         self.tableHeaderLayout.addItem(spacerItem3)
         self.buttonEditSection = QtWidgets.QPushButton(parent=self.tableHeader)
@@ -689,6 +693,8 @@ class Ui_ManageSections(object):
         _translate = QtCore.QCoreApplication.translate
         ManageSections.setWindowTitle(_translate("ManageSections", "Manage Sections"))
         self.labelTitle.setText(_translate("ManageSections", "Manage Course Sections"))
+        self.buttonOpenAll.setText(_translate("ManageSections", "🔓 OPEN REGISTRATION"))
+        self.buttonCloseAll.setText(_translate("ManageSections", "🔒 CLOSE REGISTRATION"))
         self.totalSectionsIcon.setText(_translate("ManageSections", "📚"))
         self.labelTotalSectionsCount.setText(_translate("ManageSections", "85"))
         self.labelTotalSections.setText(_translate("ManageSections", "Total Sections"))
@@ -708,9 +714,8 @@ class Ui_ManageSections(object):
         self.comboBoxStatusFilter.setItemText(2, _translate("ManageSections", "Closed"))
         self.comboBoxStatusFilter.setItemText(3, _translate("ManageSections", "Full"))
         self.buttonRefresh.setText(_translate("ManageSections", "🔄 Refresh"))
+        self.labelStatus.setText(_translate("ManageSections", "REGISTRATION STATUS: OPEN"))
         self.labelTableTitle.setText(_translate("ManageSections", "All Course Sections"))
-        self.buttonOpenAll.setText(_translate("ManageSections", "🔓 Open All"))
-        self.buttonCloseAll.setText(_translate("ManageSections", "🔒 Close All"))
         self.buttonEditSection.setText(_translate("ManageSections", "Edit Section"))
         self.buttonAddSection.setText(_translate("ManageSections", "+ Add Section"))
         self.buttonRemoveSelected.setText(_translate("ManageSections", "❌ Remove Selected"))

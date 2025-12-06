@@ -57,6 +57,96 @@
        </property>
       </spacer>
      </item>
+     <item>
+      <widget class="QPushButton" name="buttonOpenAll">
+       <property name="minimumSize">
+        <size>
+         <width>120</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    background-color: #f8f9fa;
+    color: #5a6c7d;
+    border: 2px solid #dcdcdc;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 20px;
+}
+
+QPushButton:hover {
+    border-color: #f5b562;      /* warm yellow-gold */
+    color: #d7984d;             /* matching soft text */
+}
+
+QPushButton:pressed {
+    background-color: #e9ecef;
+    border-color: #e49c46;
+    color: #c37b32;
+}
+
+QPushButton:disabled {
+    background-color: #f1f3f4;
+    border-color: #d0d0d0;
+    color: #9aa3ab;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>🔓 OPEN REGISTRATION</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonCloseAll">
+       <property name="minimumSize">
+        <size>
+         <width>120</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    background-color: #f8f9fa;
+    color: #5a6c7d;
+    border: 2px solid #dcdcdc;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 20px;
+}
+
+QPushButton:hover {
+    border-color: #f5b562;      /* warm yellow-gold */
+    color: #d7984d;             /* matching soft text */
+}
+
+QPushButton:pressed {
+    background-color: #e9ecef;
+    border-color: #e49c46;
+    color: #c37b32;
+}
+
+QPushButton:disabled {
+    background-color: #f1f3f4;
+    border-color: #d0d0d0;
+    color: #9aa3ab;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>🔒 CLOSE REGISTRATION</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -741,6 +831,16 @@ QPushButton:pressed {
     </widget>
    </item>
    <item>
+    <widget class="QLabel" name="labelStatus">
+     <property name="styleSheet">
+      <string notr="true">font-size: 18px; font-weight: bold; color: #2c3e50; background: transparent;</string>
+     </property>
+     <property name="text">
+      <string>REGISTRATION STATUS: OPEN</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QFrame" name="sectionsTableFrame">
      <property name="styleSheet">
       <string notr="true">background-color: white; border-radius: 12px;</string>
@@ -819,96 +919,6 @@ QPushButton:pressed {
             </size>
            </property>
           </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="buttonOpenAll">
-           <property name="minimumSize">
-            <size>
-             <width>120</width>
-             <height>40</height>
-            </size>
-           </property>
-           <property name="cursor">
-            <cursorShape>PointingHandCursor</cursorShape>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
-    background-color: #f8f9fa;
-    color: #5a6c7d;
-    border: 2px solid #dcdcdc;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: bold;
-    padding: 10px 20px;
-}
-
-QPushButton:hover {
-    border-color: #f5b562;      /* warm yellow-gold */
-    color: #d7984d;             /* matching soft text */
-}
-
-QPushButton:pressed {
-    background-color: #e9ecef;
-    border-color: #e49c46;
-    color: #c37b32;
-}
-
-QPushButton:disabled {
-    background-color: #f1f3f4;
-    border-color: #d0d0d0;
-    color: #9aa3ab;
-}
-</string>
-           </property>
-           <property name="text">
-            <string>🔓 Open All</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="buttonCloseAll">
-           <property name="minimumSize">
-            <size>
-             <width>120</width>
-             <height>40</height>
-            </size>
-           </property>
-           <property name="cursor">
-            <cursorShape>PointingHandCursor</cursorShape>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
-    background-color: #f8f9fa;
-    color: #5a6c7d;
-    border: 2px solid #dcdcdc;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: bold;
-    padding: 10px 20px;
-}
-
-QPushButton:hover {
-    border-color: #f5b562;      /* warm yellow-gold */
-    color: #d7984d;             /* matching soft text */
-}
-
-QPushButton:pressed {
-    background-color: #e9ecef;
-    border-color: #e49c46;
-    color: #c37b32;
-}
-
-QPushButton:disabled {
-    background-color: #f1f3f4;
-    border-color: #d0d0d0;
-    color: #9aa3ab;
-}
-</string>
-           </property>
-           <property name="text">
-            <string>🔒 Close All</string>
-           </property>
-          </widget>
          </item>
          <item>
           <spacer name="tableTitleSpacer">
