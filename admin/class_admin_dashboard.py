@@ -44,10 +44,14 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.ui = Ui_AdminDashboard()
         self.ui.setupUi(self)
         self.db = db
+        self.user_info = user_info
         self.user_id, self.name, self.email, self.program, self.state, self.account_status, self.hashed_pw = user_info
         self.admin = AdminUtilities(self.db)
+        
+        # Displays the name at the top-left side near the pfp
+        self.ui.labelAdminName.setText(self.name)
 
-        # نجيب آخر تسجيل دخول من قاعدة البيانات
+        # Get last login (Last online) from stored in database from authentication window :]
         last_login = self.db.get_last_login(self.user_id)
 
         if last_login:

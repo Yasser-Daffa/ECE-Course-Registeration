@@ -14,42 +14,7 @@ from helper_files.shared_utilities import BaseLoginForm, info, warning, error
 from helper_files.validators import validate_email, validate_full_name, hash_password
 from login_files.class_authentication_window import AuthenticationWindow
 
-
-
-class AddFacultyDialog(QDialog):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Add New Faculty")
-        self.setFixedSize(350, 250)
-
-        layout = QVBoxLayout(self)
-
-        self.input_name = QLineEdit()
-        self.input_name.setPlaceholderText("Full Name")
-        layout.addWidget(QLabel("Full Name"))
-        layout.addWidget(self.input_name)
-
-        self.input_email = QLineEdit()
-        self.input_email.setPlaceholderText("Email")
-        layout.addWidget(QLabel("Email"))
-        layout.addWidget(self.input_email)
-
-        self.input_password = QLineEdit()
-        self.input_password.setPlaceholderText("Temporary Password")
-        self.input_password.setEchoMode(QLineEdit.EchoMode.Password)
-        layout.addWidget(QLabel("Password"))
-        layout.addWidget(self.input_password)
-
-        btn = QPushButton("Continue")
-        btn.clicked.connect(self.accept)
-        layout.addWidget(btn)
-
-    def get_data(self):
-        return (
-            self.input_name.text().strip(),
-            self.input_email.text().strip(),
-            self.input_password.text().strip()
-        )
+from login_files.create_account_for_admin import SignupAndConfirmWindow
 
 
 
@@ -201,57 +166,13 @@ class ManageFacultyWidget(QWidget):
 
     # -------------------------------------------------------------
     def add_new_faculty(self):
-        dialog = AddFacultyDialog()
+        dialog = SignupAndConfirmWindow()
 
         if dialog.exec() != QDialog.Accepted:
             return
 
-        name, email, password = dialog.get_data()
-
-        # validate
-        parts, name_err = validate_full_name(name)
-        if name_err:
-            warning("Invalid", name_err)
-            return
-
-        email_err = validate_email(email)
-        if email_err:
-            warning("Invalid Email", email_err)
-            return
-
-        # check duplicate
-        exists = self.db.fetchone("SELECT user_id FROM users WHERE email=?", (email,))
-        if exists:
-            warning("Duplicate", "A user with this email already exists.")
-            return
-
-        # Start authentication window
-        auth = AuthenticationWindow()
-        auth.mode = "add_faculty"
-        auth.new_user_data = {
-            "name": name,
-            "email": email,
-            "password": password,
-            "program": None,
-            "state": "instructor"
-        }
-
-        auth.code_generators[email] = auth.code_generators.get(email) or auth.code_generators.setdefault(email, None)
-        auth.send_verification_code(email)
-        auth.ui.stackedWidgetAuth.setCurrentWidget(auth.confirm_email_page)
-
-        result = auth.exec()
-
-        if result == QDialog.Accepted:
-            hashed = hash_password(password)
-
-            self.db.execute("""
-                INSERT INTO users (name, email, program, password_h, state, account_status)
-                VALUES (?, ?, NULL, ?, 'instructor', 'active')
-            """, (name, email, hashed))
-
-            info("Success", "Faculty member added.")
-            self.load_faculty()
+        info("Success", "Faculty member added.")
+        self.load_faculty()
 
 
     # -------------------------------------------------------------

@@ -24,7 +24,7 @@ class ProfileWidget(QWidget):
     - Writes updates to DB using update_user()
     """
 
-    def __init__(self, admin_user_data, parent=None):
+    def __init__(self, user_data, parent=None):
         """
         admin_user_data → (user_id, name, email, program, state, account_status)
         """
@@ -36,10 +36,10 @@ class ProfileWidget(QWidget):
 
         # Store DB and user info
         self.db = db
-        self.admin_id = admin_user_data[0]
-        self.name = admin_user_data[1]
-        self.email = admin_user_data[2]
-        self.program = admin_user_data[3]  # unused for admin but kept for consistency
+        self.user_id = user_data[0]
+        self.name = user_data[1]
+        self.email = user_data[2]
+        self.program = user_data[3]  # unused for admin but kept for consistency
 
         # Load data into UI
         self.load_initial_data()
