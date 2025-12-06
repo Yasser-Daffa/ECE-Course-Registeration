@@ -17,16 +17,16 @@ class PendingRequestsController:
     """
     Controller for pending student approval requests.
 
-    This version uses only AdminUtilities, not raw SQL.
-    Student rows are provided by admin_list_pending_students(), which
-    returns only inactive, pending student accounts.
+    Uses only AdminUtilities (no raw SQL).
+    Students are fetched using admin_list_pending_students(), which returns all
+    inactive student accounts waiting for approval.
 
     Features:
-    - Display pending student accounts
-    - Search by name or ID
-    - Approve or reject individual students
-    - Approve or reject all or selected students
-    - Send email notification on approval or rejection
+        - Display pending student list
+        - Search by name or ID
+        - Approve or reject individual students
+        - Approve or reject all or only selected students
+        - Send email notification upon approval or rejection
     """
 
     def __init__(self, ui: Ui_PendingRequestsWidget, admin_utils=admin):
@@ -37,32 +37,30 @@ class PendingRequestsController:
         self.blf = BaseLoginForm()
         self.es = EmailSender()                # Email sending helper
 
-        # Connect UI events
+        # Bind UI events
         self.connect_ui_signals()
 
-        # Load initial pending students
+        # Load initial data
         self.load_pending_students()
         self.format_table()
 
-        # Listen for checkbox updates
+        # Checkbox listener for enabling or disabling mass actions
         self.ui.tableRequests.itemChanged.connect(self.update_approve_reject_button_state)
 
     # ----------------------------------------------------------------------
-    # UI SIGNAL CONNECTIONS
+    # SIGNAL CONNECTIONS
     # ----------------------------------------------------------------------
     def connect_ui_signals(self):
-        # Text search box
         if hasattr(self.ui, "lineEditSearch"):
             self.ui.lineEditSearch.textChanged.connect(self.search_students)
 
-        # Buttons for mass approve/reject
         if hasattr(self.ui, "btnApproveAll"):
             self.ui.btnApproveAll.clicked.connect(self.approve_selected_students)
 
         if hasattr(self.ui, "btnRejectAll"):
             self.ui.btnRejectAll.clicked.connect(self.reject_selected_students)
 
-        # Refresh button
+        # Load initially with refresh animation
         self.handle_refresh()
         self.ui.btnRefresh.clicked.connect(self.handle_refresh)
 
@@ -71,11 +69,8 @@ class PendingRequestsController:
     # ----------------------------------------------------------------------
     def load_pending_students(self):
         """
-        Loads all pending students using the admin_list_pending_students() method.
-
-        This method already filters:
-        - state = student
-        - account_status = inactive
+        Loads all pending students using AdminUtilities.
+        Only inactive student accounts are returned.
         """
         self.students_data = self.admin.admin_list_pending_students()
         self.ui.tableRequests.setRowCount(0)
@@ -84,7 +79,7 @@ class PendingRequestsController:
 
     def handle_refresh(self):
         """
-        Plays the animated refresh effect and reloads data afterward.
+        Runs refresh animation then reloads data.
         """
         self.animate(
             self.ui.labelPendingCount,
@@ -99,13 +94,13 @@ class PendingRequestsController:
     # ----------------------------------------------------------------------
     def fill_table(self, students):
         """
-        Populates the table with the given list of pending students.
+        Populates the table widget with pending student information.
         """
         table = self.ui.tableRequests
         table.setRowCount(len(students))
 
         for row_idx, student in enumerate(students):
-            # Row number (for display only)
+            # Row number
             item_number = QTableWidgetItem(str(row_idx + 1))
             item_number.setFlags(Qt.ItemFlag.ItemIsEnabled)
             table.setItem(row_idx, 1, item_number)
@@ -113,7 +108,7 @@ class PendingRequestsController:
             # Student ID
             table.setItem(row_idx, 2, QTableWidgetItem(str(student["user_id"])))
 
-            # Name, Email, Program, State
+            # Student info columns
             table.setItem(row_idx, 3, QTableWidgetItem(student["name"]))
             table.setItem(row_idx, 4, QTableWidgetItem(student["email"]))
             table.setItem(row_idx, 5, QTableWidgetItem(student["program"] or ""))
@@ -143,7 +138,7 @@ class PendingRequestsController:
                 functools.partial(self.reject_student, student["user_id"])
             )
 
-            # Place Approve + Reject in same cell
+            # Buttons inside same cell
             container = QWidget()
             layout = QHBoxLayout(container)
             layout.setContentsMargins(0, 0, 0, 0)
@@ -152,7 +147,7 @@ class PendingRequestsController:
             layout.addWidget(btnReject)
             table.setCellWidget(row_idx, 7, container)
 
-            # Checkbox for multi-select
+            # Checkbox for bulk processing
             chk_item = QTableWidgetItem()
             chk_item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsUserCheckable)
             chk_item.setCheckState(Qt.CheckState.Unchecked)
@@ -169,87 +164,92 @@ class PendingRequestsController:
 
         header = table.horizontalHeader()
 
-        # Fixed width for checkbox
+        # Fixed size for checkbox column
         header.setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
         table.setColumnWidth(0, 40)
 
-        # Remaining columns adjustable
+        # Other columns can resize
         for col in range(1, len(headers)):
             header.setSectionResizeMode(col, QHeaderView.ResizeMode.Interactive)
 
         table.verticalHeader().setDefaultSectionSize(100)
 
     # ----------------------------------------------------------------------
-    # SEARCH BAR FILTER
+    # SEARCH BAR
     # ----------------------------------------------------------------------
     def search_students(self):
         text = self.ui.lineEditSearch.text().lower()
+
         filtered = [
             s for s in self.students_data
             if text in s["name"].lower() or text in str(s["user_id"])
         ]
+
         self.fill_table(filtered)
 
     # ----------------------------------------------------------------------
-    # APPROVE / REJECT INDIVIDUAL STUDENTS
+    # INDIVIDUAL APPROVE / REJECT
     # ----------------------------------------------------------------------
     def approve_student(self, user_id):
         """
-        Approves a single pending student and sends email.
+        Approves a single student and sends email.
         """
         reply = self.blf.show_confirmation(
             "Approve Student",
             f"Are you sure you want to approve student ID {user_id}?"
         )
-        if reply == QMessageBox.StandardButton.Yes:
-            username, email = self.get_user_name_email(user_id)
-            msg = self.admin.admin_approve_student(user_id)
+        if reply != QMessageBox.StandardButton.Yes:
+            return
 
-            # Send approval email
-            self.send_approval_email(username, email)
+        name, email = self.get_user_name_email(user_id)
+        msg = self.admin.admin_approve_student(user_id)
 
-            print("[ADMIN]", msg)
-            self.load_pending_students()
+        self.send_approval_email(name, email, user_id)
+
+        print("[ADMIN]", msg)
+        self.load_pending_students()
 
     def reject_student(self, user_id):
         """
-        Rejects a single pending student and sends email.
+        Rejects a single student and sends email.
         """
         reply = self.blf.show_confirmation(
             "Reject Student",
             f"Are you sure you want to reject student ID {user_id}?"
         )
-        if reply == QMessageBox.StandardButton.Yes:
-            username, email = self.get_user_name_email(user_id)
-            msg = self.admin.admin_reject_student(user_id)
+        if reply != QMessageBox.StandardButton.Yes:
+            return
 
-            # Send rejection email
-            self.send_rejection_email(username, email)
+        name, email = self.get_user_name_email(user_id)
+        msg = self.admin.admin_reject_student(user_id)
 
-            print("[ADMIN]", msg)
-            self.load_pending_students()
+        self.send_rejection_email(name, email)
+
+        print("[ADMIN]", msg)
+        self.load_pending_students()
 
     # ----------------------------------------------------------------------
     # BULK APPROVE / REJECT
     # ----------------------------------------------------------------------
     def get_selected_user_ids(self):
         """
-        Returns the list of selected user IDs from checked rows.
+        Returns IDs of all selected rows via checkbox.
         """
         table = self.ui.tableRequests
-        user_ids = []
+        ids = []
+
         for row in range(table.rowCount()):
             item = table.item(row, 0)
             if item and item.checkState() == Qt.CheckState.Checked:
-                user_id = int(table.item(row, 2).text())
-                user_ids.append(user_id)
-        return user_ids
+                ids.append(int(table.item(row, 2).text()))
+
+        return ids
 
     def approve_selected_students(self):
         selected_ids = self.get_selected_user_ids()
 
+        # Case 1: No selection, approve ALL students shown
         if not selected_ids:
-            # Apply to all pending students
             reply = self.blf.show_confirmation(
                 "Approve All Students",
                 "Approve all pending students?"
@@ -258,14 +258,14 @@ class PendingRequestsController:
                 return
 
             for s in self.students_data:
-                self.send_approval_email(s["name"], s["email"])
+                self.send_approval_email(s["name"], s["email"], s["user_id"])
 
             msg = self.admin.admin_approve_all_pending_students()
             print("[ADMIN]", msg)
             self.load_pending_students()
             return
 
-        # Approve selected only
+        # Case 2: Approve selected students only
         reply = self.blf.show_confirmation(
             "Approve Selected Students",
             f"Approve {len(selected_ids)} selected student(s)?"
@@ -274,15 +274,16 @@ class PendingRequestsController:
             return
 
         for uid in selected_ids:
-            username, email = self.get_user_name_email(uid)
+            name, email = self.get_user_name_email(uid)
             self.admin.admin_approve_student(uid)
-            self.send_approval_email(username, email)
+            self.send_approval_email(name, email, uid)
 
         self.load_pending_students()
 
     def reject_selected_students(self):
         selected_ids = self.get_selected_user_ids()
 
+        # Case 1: Reject all if none selected
         if not selected_ids:
             reply = self.blf.show_confirmation(
                 "Reject All Students",
@@ -299,6 +300,7 @@ class PendingRequestsController:
             self.load_pending_students()
             return
 
+        # Case 2: Reject selected only
         reply = self.blf.show_confirmation(
             "Reject Selected Students",
             f"Reject {len(selected_ids)} selected student(s)?"
@@ -307,28 +309,27 @@ class PendingRequestsController:
             return
 
         for uid in selected_ids:
-            username, email = self.get_user_name_email(uid)
+            name, email = self.get_user_name_email(uid)
             self.admin.admin_reject_student(uid)
-            self.send_rejection_email(username, email)
+            self.send_rejection_email(name, email)
 
         self.load_pending_students()
 
     # ----------------------------------------------------------------------
-    # EMAIL SENDING HELPERS
+    # EMAIL HELPERS
     # ----------------------------------------------------------------------
     def get_user_name_email(self, user_id):
         """
-        Helper: returns (name, email) for given user_id from students_data.
-        This avoids additional database queries.
+        Returns (name, email) for a user based on cached students_data.
         """
         for s in self.students_data:
             if s["user_id"] == user_id:
                 return s["name"], s["email"]
         return None, None
 
-    def send_approval_email(self, name, email):
+    def send_approval_email(self, name, email, user_id):
         """
-        Sends approval notification email to the student.
+        Sends approval email containing student name and student ID.
         """
         if email is None:
             return
@@ -337,14 +338,15 @@ class PendingRequestsController:
         body = (
             f"Hello {name},\n\n"
             f"Your university account has been approved.\n"
-            f"You can now log in and access all available student services.\n\n"
+            f"Your Student ID: {user_id}\n\n"
+            f"You may now log in and use all student services.\n\n"
             f"Regards,\nUniversity Administration"
         )
         self.es.send_email(email, subject, body)
 
     def send_rejection_email(self, name, email):
         """
-        Sends rejection notification email to the student.
+        Sends rejection email to student.
         """
         if email is None:
             return
@@ -353,15 +355,19 @@ class PendingRequestsController:
         body = (
             f"Hello {name},\n\n"
             f"Your university account request has been rejected.\n"
-            f"If you believe this is an error, please contact support.\n\n"
+            f"If you believe this is an error, you may contact support.\n\n"
             f"Regards,\nUniversity Administration"
         )
         self.es.send_email(email, subject, body)
 
     # ----------------------------------------------------------------------
-    # UPDATE BUTTON LABELS BASED ON SELECTION COUNT
+    # BUTTON STATE CONTROL
     # ----------------------------------------------------------------------
     def update_approve_reject_button_state(self):
+        """
+        Updates text and enabled state of the Approve/Reject buttons based on
+        how many checkboxes are selected.
+        """
         table = self.ui.tableRequests
         selected_count = 0
 
@@ -382,7 +388,7 @@ class PendingRequestsController:
             self.ui.btnRejectAll.setEnabled(bool(self.students_data))
 
     # ----------------------------------------------------------------------
-    # UPDATE STUDENT COUNTER LABEL
+    # UPDATE COUNTER LABEL
     # ----------------------------------------------------------------------
     def update_pending_counter(self):
         self.ui.labelPendingCount.setText(f"Total Pending: {len(self.students_data)}")

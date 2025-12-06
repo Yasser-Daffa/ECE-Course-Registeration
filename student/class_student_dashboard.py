@@ -12,7 +12,7 @@ from app_ui.student_ui.ui_student_dashboard import Ui_StudentDashboard
 
 # # not finished yet
 # from app_ui.student_ui.submenus_ui.ui_profile import Ui_Profile
-# from student.submenus.class_profile import ProfileWidget
+from student.submenus.class_profile import ProfileWidget
 
 from student.submenus.class_current_schedule import CurrentScheduleWidget
 
@@ -66,7 +66,7 @@ class StudentDashboard(QtWidgets.QMainWindow):
         # ------------------------
         # 2. Add pages to stacked widget
         # ------------------------
-        # self.ui.stackedWidget.addWidget(self.profile_page)
+        self.ui.stackedWidget.addWidget(self.profile_page)
         self.ui.stackedWidget.addWidget(self.current_schedule_page)
         self.ui.stackedWidget.addWidget(self.register_courses_page)
         self.ui.stackedWidget.addWidget(self.view_program_plans_page)
@@ -83,7 +83,7 @@ class StudentDashboard(QtWidgets.QMainWindow):
         # Value: Tuple of (page name string, QWidget page)
         # Using a string here avoids printing emojis/unicode directly from button.text()
         self.page_mapping = {
-            # self.ui.buttonProfile: ("Profile", self.profile_page),
+            self.ui.buttonProfile: ("Profile", self.profile_page),
             self.ui.buttonCurrentSchedule: ("Current Schedule", self.current_schedule_page),
             self.ui.buttonRegisterCourses: ("Manage Courses", self.register_courses_page),
             # self.ui.buttonViewPrereqs: ("View Prereqs", self.view_prereqs_page),
@@ -100,7 +100,7 @@ class StudentDashboard(QtWidgets.QMainWindow):
 
         # Show default page (should be profile first)
         self.switch_to_page(self.ui.buttonProfile)
-        # Disable manage faculty button do to it not being implemented yet
+        
 
     # -------------------------------
     # Initialize all sub-pages
@@ -113,7 +113,7 @@ class StudentDashboard(QtWidgets.QMainWindow):
         # # -------------------------------
         # # Profile page
         # # -------------------------------
-        # self.profile_page = ProfileWidget(self.user_info)
+        self.profile_page = ProfileWidget(self.user_info)
 
         # -------------------------------
         # Current Sched page

@@ -29,7 +29,11 @@ from admin.submenus.class_manage_sections import ManageSectionsWidget
 
 from admin.submenus.class_manage_faculty import ManageFacultyWidget
 
+from app_ui.admin_ui.submenus_ui.ui_manage_students import Ui_ManageStudents
 from admin.submenus.class_manage_students import ManageStudentsController
+
+
+
 
 class AdminDashboard(QtWidgets.QMainWindow):
     """
@@ -65,8 +69,6 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # 1. Initialize all pages
         # ------------------------
         self.init_sub_pages()
-        # نجيب آخر تسجيل دخول من قاعدة البيانات
-
 
 
         # ------------------------
@@ -76,7 +78,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.ui.stackedWidget.addWidget(self.all_students_page)
         self.ui.stackedWidget.addWidget(self.pending_requests_page)
 
-        # self.ui.stackedWidget.addWidget(self.manage_students_controller)
+        self.ui.stackedWidget.addWidget(self.manage_students_page)
         self.ui.stackedWidget.addWidget(self.manage_faculty_controller)
 
         self.ui.stackedWidget.addWidget(self.manage_courses_page)
@@ -97,7 +99,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
             self.ui.buttonAllStudents: ("All Students", self.all_students_page),
             self.ui.buttonPendingRequests: ("Pending Requests", self.pending_requests_page),
 
-            # self.ui.buttonManageStudents: ("Manage Students", self.manage_Students_controller),
+            self.ui.buttonManageStudents: ("Manage Students", self.manage_students_page),
             self.ui.buttonManageFaculty: ("Manage Faculty", self.manage_faculty_controller),
 
             self.ui.buttonManageCourses: ("Manage Courses", self.manage_courses_page),
@@ -156,8 +158,11 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # -------------------------------
         # Manage students page
         # -------------------------------
-        # uses database utils
-        # self.manage_students_controller = ManageStudentsController(db)
+        self.manage_students_page = QtWidgets.QWidget()
+        self.manage_students_ui = Ui_ManageStudents()
+        self.manage_students_ui.setupUi(self.manage_students_page)
+        # uses direct database access
+        self.manage_students_controller = ManageStudentsController(self.manage_students_ui, self.admin)
 
 
         # -------------------------------
