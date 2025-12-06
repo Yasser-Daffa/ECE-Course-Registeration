@@ -504,6 +504,31 @@ class DatabaseUtilities:
 
 
 
+    def list_registrations(self, student_id=None, course_code=None, semester=None):
+        """
+        Returns rows from registrations table.
+        Each row: (student_id, section_id, course_code, semester)
+        Filters are optional.
+        """
+        query = "SELECT student_id, section_id, course_code, semester FROM registrations WHERE 1=1"
+        params = []
+
+        if student_id is not None:
+            query += " AND student_id = ?"
+            params.append(student_id)
+
+        if course_code is not None:
+            query += " AND course_code = ?"
+            params.append(course_code)
+
+        if semester is not None:
+            query += " AND semester = ?"
+            params.append(semester)
+
+        self.cur.execute(query, params)
+        return self.cur.fetchall()
+
+
 
     def register_student_to_section(self, student_id: int, section_id: int,
                                     course_code: str, semester: str) -> bool:

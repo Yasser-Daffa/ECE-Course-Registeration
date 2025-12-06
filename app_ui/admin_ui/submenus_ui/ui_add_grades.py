@@ -9,18 +9,18 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 
-class Ui_AddCourseDialog(object):
-    def setupUi(self, AddCourseDialog):
-        AddCourseDialog.setObjectName("AddCourseDialog")
-        AddCourseDialog.resize(505, 444)
-        AddCourseDialog.setMinimumSize(QtCore.QSize(0, 0))
-        AddCourseDialog.setMaximumSize(QtCore.QSize(780, 580))
-        AddCourseDialog.setStyleSheet("background-color: #f5f7fa;")
-        self.mainLayout = QtWidgets.QVBoxLayout(AddCourseDialog)
+class Ui_AddGradesDialog(object):
+    def setupUi(self, AddGradesDialog):
+        AddGradesDialog.setObjectName("AddGradesDialog")
+        AddGradesDialog.resize(505, 444)
+        AddGradesDialog.setMinimumSize(QtCore.QSize(0, 0))
+        AddGradesDialog.setMaximumSize(QtCore.QSize(780, 580))
+        AddGradesDialog.setStyleSheet("background-color: #f5f7fa;")
+        self.mainLayout = QtWidgets.QVBoxLayout(AddGradesDialog)
         self.mainLayout.setContentsMargins(0, 0, 0, 0)
         self.mainLayout.setSpacing(0)
         self.mainLayout.setObjectName("mainLayout")
-        self.headerFrame = QtWidgets.QFrame(parent=AddCourseDialog)
+        self.headerFrame = QtWidgets.QFrame(parent=AddGradesDialog)
         self.headerFrame.setMinimumSize(QtCore.QSize(0, 80))
         self.headerFrame.setMaximumSize(QtCore.QSize(16777215, 80))
         self.headerFrame.setStyleSheet("background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #f093fb, stop:1 #f5576c); border-radius: 0px;")
@@ -36,7 +36,7 @@ class Ui_AddCourseDialog(object):
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.headerLayout.addItem(spacerItem)
         self.mainLayout.addWidget(self.headerFrame)
-        self.scrollArea = QtWidgets.QScrollArea(parent=AddCourseDialog)
+        self.scrollArea = QtWidgets.QScrollArea(parent=AddGradesDialog)
         self.scrollArea.setStyleSheet("border: none; background-color: #f5f7fa;")
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
@@ -52,19 +52,19 @@ class Ui_AddCourseDialog(object):
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.labelCourseName = QtWidgets.QLabel(parent=self.scrollContent)
-        self.labelCourseName.setStyleSheet("font-size: 13px; color: #718096; font-weight: bold; background: transparent;")
-        self.labelCourseName.setObjectName("labelCourseName")
-        self.verticalLayout.addWidget(self.labelCourseName)
-        self.comboBoxSelectProgram = QtWidgets.QComboBox(parent=self.scrollContent)
+        self.labelStudentID = QtWidgets.QLabel(parent=self.scrollContent)
+        self.labelStudentID.setStyleSheet("font-size: 13px; color: #718096; font-weight: bold; background: transparent;")
+        self.labelStudentID.setObjectName("labelStudentID")
+        self.verticalLayout.addWidget(self.labelStudentID)
+        self.comboBoxStudentID = QtWidgets.QComboBox(parent=self.scrollContent)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.comboBoxSelectProgram.sizePolicy().hasHeightForWidth())
-        self.comboBoxSelectProgram.setSizePolicy(sizePolicy)
-        self.comboBoxSelectProgram.setMinimumSize(QtCore.QSize(150, 40))
-        self.comboBoxSelectProgram.setMaximumSize(QtCore.QSize(16777215, 65))
-        self.comboBoxSelectProgram.setStyleSheet("/* ----------------- QComboBox Base ----------------- */\n"
+        sizePolicy.setHeightForWidth(self.comboBoxStudentID.sizePolicy().hasHeightForWidth())
+        self.comboBoxStudentID.setSizePolicy(sizePolicy)
+        self.comboBoxStudentID.setMinimumSize(QtCore.QSize(150, 40))
+        self.comboBoxStudentID.setMaximumSize(QtCore.QSize(16777215, 65))
+        self.comboBoxStudentID.setStyleSheet("/* ----------------- QComboBox Base ----------------- */\n"
 "QComboBox {\n"
 "    border: 2px solid #E0E0E0;          /* main border */\n"
 "    border-radius: 10px;\n"
@@ -139,12 +139,13 @@ class Ui_AddCourseDialog(object):
 "QComboBox[error=\"true\"] {\n"
 "    border: 2px solid #FF4A4A;\n"
 "}")
-        self.comboBoxSelectProgram.setObjectName("comboBoxSelectProgram")
-        self.comboBoxSelectProgram.addItem("")
-        self.comboBoxSelectProgram.addItem("")
-        self.comboBoxSelectProgram.addItem("")
-        self.comboBoxSelectProgram.addItem("")
-        self.verticalLayout.addWidget(self.comboBoxSelectProgram)
+        self.comboBoxStudentID.setEditable(True)
+        self.comboBoxStudentID.setObjectName("comboBoxStudentID")
+        self.comboBoxStudentID.addItem("")
+        self.comboBoxStudentID.addItem("")
+        self.comboBoxStudentID.addItem("")
+        self.comboBoxStudentID.addItem("")
+        self.verticalLayout.addWidget(self.comboBoxStudentID)
         self.gridLayout_3.addLayout(self.verticalLayout, 0, 0, 1, 1)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setSpacing(0)
@@ -155,6 +156,7 @@ class Ui_AddCourseDialog(object):
         self.verticalLayout_2.addWidget(self.labelCourseCode)
         self.comboBoxSelectCourse = QtWidgets.QComboBox(parent=self.scrollContent)
         self.comboBoxSelectCourse.setMinimumSize(QtCore.QSize(200, 45))
+        self.comboBoxSelectCourse.setMaximumSize(QtCore.QSize(16777215, 65))
         self.comboBoxSelectCourse.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         self.comboBoxSelectCourse.setStyleSheet("/* ----------------- QComboBox Base ----------------- */\n"
 "QComboBox {\n"
@@ -243,15 +245,15 @@ class Ui_AddCourseDialog(object):
         self.labelCreditHours.setStyleSheet("font-size: 13px; color: #718096; font-weight: bold; background: transparent;")
         self.labelCreditHours.setObjectName("labelCreditHours")
         self.verticalLayout_3.addWidget(self.labelCreditHours)
-        self.comboBoxSelectProgram_2 = QtWidgets.QComboBox(parent=self.scrollContent)
+        self.comboBoxGrade = QtWidgets.QComboBox(parent=self.scrollContent)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.comboBoxSelectProgram_2.sizePolicy().hasHeightForWidth())
-        self.comboBoxSelectProgram_2.setSizePolicy(sizePolicy)
-        self.comboBoxSelectProgram_2.setMinimumSize(QtCore.QSize(150, 40))
-        self.comboBoxSelectProgram_2.setMaximumSize(QtCore.QSize(16777215, 65))
-        self.comboBoxSelectProgram_2.setStyleSheet("/* ----------------- QComboBox Base ----------------- */\n"
+        sizePolicy.setHeightForWidth(self.comboBoxGrade.sizePolicy().hasHeightForWidth())
+        self.comboBoxGrade.setSizePolicy(sizePolicy)
+        self.comboBoxGrade.setMinimumSize(QtCore.QSize(100, 40))
+        self.comboBoxGrade.setMaximumSize(QtCore.QSize(16777215, 65))
+        self.comboBoxGrade.setStyleSheet("/* ----------------- QComboBox Base ----------------- */\n"
 "QComboBox {\n"
 "    border: 2px solid #E0E0E0;          /* main border */\n"
 "    border-radius: 10px;\n"
@@ -326,20 +328,72 @@ class Ui_AddCourseDialog(object):
 "QComboBox[error=\"true\"] {\n"
 "    border: 2px solid #FF4A4A;\n"
 "}")
-        self.comboBoxSelectProgram_2.setObjectName("comboBoxSelectProgram_2")
-        self.comboBoxSelectProgram_2.addItem("")
-        self.comboBoxSelectProgram_2.addItem("")
-        self.comboBoxSelectProgram_2.addItem("")
-        self.comboBoxSelectProgram_2.addItem("")
-        self.comboBoxSelectProgram_2.addItem("")
-        self.comboBoxSelectProgram_2.addItem("")
-        self.comboBoxSelectProgram_2.addItem("")
-        self.comboBoxSelectProgram_2.addItem("")
-        self.comboBoxSelectProgram_2.addItem("")
-        self.verticalLayout_3.addWidget(self.comboBoxSelectProgram_2)
+        self.comboBoxGrade.setObjectName("comboBoxGrade")
+        self.comboBoxGrade.addItem("")
+        self.comboBoxGrade.addItem("")
+        self.comboBoxGrade.addItem("")
+        self.comboBoxGrade.addItem("")
+        self.comboBoxGrade.addItem("")
+        self.comboBoxGrade.addItem("")
+        self.comboBoxGrade.addItem("")
+        self.comboBoxGrade.addItem("")
+        self.comboBoxGrade.addItem("")
+        self.verticalLayout_3.addWidget(self.comboBoxGrade)
         self.gridLayout_3.addLayout(self.verticalLayout_3, 1, 0, 1, 1)
         self.gridLayout = QtWidgets.QGridLayout()
         self.gridLayout.setObjectName("gridLayout")
+        self.labelSemesterYear = QtWidgets.QLabel(parent=self.scrollContent)
+        self.labelSemesterYear.setStyleSheet("font-size: 13px; color: #718096; font-weight: bold; background: transparent;")
+        self.labelSemesterYear.setObjectName("labelSemesterYear")
+        self.gridLayout.addWidget(self.labelSemesterYear, 0, 0, 1, 1)
+        self.spinBoxSemesterYear = QtWidgets.QSpinBox(parent=self.scrollContent)
+        self.spinBoxSemesterYear.setMinimumSize(QtCore.QSize(100, 40))
+        self.spinBoxSemesterYear.setMaximumSize(QtCore.QSize(16777215, 65))
+        self.spinBoxSemesterYear.setStyleSheet("QSpinBox {\n"
+"    border: 2px solid #E0E0E0;\n"
+"    border-radius: 10px;\n"
+"    padding: 8px 10px;\n"
+"    background: rgba(250, 250, 250, 200);\n"
+"    font-size: 11pt;\n"
+"    color: #111111;\n"
+"}\n"
+"\n"
+"/* Focus border (same as QLineEdit) */\n"
+"QSpinBox:focus {\n"
+"    border: 2px solid #667EEA;\n"
+"    background: rgba(250, 250, 250, 220);\n"
+"}\n"
+"\n"
+"/* Internal text area matches QLineEdit text style */\n"
+"QSpinBox QLineEdit {\n"
+"    border: none;\n"
+"    background: transparent;\n"
+"    font-size: 11pt;\n"
+"    color: #111111;\n"
+"}\n"
+"\n"
+"/* Placeholder-like behavior when disabled */\n"
+"QSpinBox:disabled,\n"
+"QSpinBox QLineEdit:disabled {\n"
+"    background: #ededed;\n"
+"    color: #a1a8b3;\n"
+"}\n"
+"\n"
+"/* Hide up/down buttons (matches your modern clean UI) */\n"
+"QSpinBox::up-button,\n"
+"QSpinBox::down-button {\n"
+"    width: 0;\n"
+"    height: 0;\n"
+"    border: none;\n"
+"}\n"
+"")
+        self.spinBoxSemesterYear.setButtonSymbols(QtWidgets.QAbstractSpinBox.ButtonSymbols.NoButtons)
+        self.spinBoxSemesterYear.setAccelerated(False)
+        self.spinBoxSemesterYear.setMaximum(3000)
+        self.spinBoxSemesterYear.setProperty("value", 2025)
+        self.spinBoxSemesterYear.setDisplayIntegerBase(10)
+        self.spinBoxSemesterYear.setObjectName("spinBoxSemesterYear")
+        self.gridLayout.addWidget(self.spinBoxSemesterYear, 1, 0, 1, 1)
         self.gridLayout_3.addLayout(self.gridLayout, 1, 1, 1, 1)
         spacerItem1 = QtWidgets.QSpacerItem(17, 30, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Minimum)
         self.gridLayout_3.addItem(spacerItem1, 2, 0, 1, 1)
@@ -348,7 +402,7 @@ class Ui_AddCourseDialog(object):
         self.pushButton.setObjectName("pushButton")
         self.scrollArea.setWidget(self.scrollContent)
         self.mainLayout.addWidget(self.scrollArea)
-        self.footerFrame = QtWidgets.QFrame(parent=AddCourseDialog)
+        self.footerFrame = QtWidgets.QFrame(parent=AddGradesDialog)
         self.footerFrame.setMinimumSize(QtCore.QSize(0, 80))
         self.footerFrame.setMaximumSize(QtCore.QSize(16777215, 80))
         self.footerFrame.setStyleSheet("background-color: white; border-top: 2px solid #e0e0e0;")
@@ -412,32 +466,33 @@ class Ui_AddCourseDialog(object):
         self.footerLayout.addWidget(self.buttonSave)
         self.mainLayout.addWidget(self.footerFrame)
 
-        self.retranslateUi(AddCourseDialog)
-        QtCore.QMetaObject.connectSlotsByName(AddCourseDialog)
+        self.retranslateUi(AddGradesDialog)
+        QtCore.QMetaObject.connectSlotsByName(AddGradesDialog)
 
-    def retranslateUi(self, AddCourseDialog):
+    def retranslateUi(self, AddGradesDialog):
         _translate = QtCore.QCoreApplication.translate
-        AddCourseDialog.setWindowTitle(_translate("AddCourseDialog", "Add Grades"))
-        self.labelTitle.setText(_translate("AddCourseDialog", "📝  Add Grades"))
-        self.labelCourseName.setText(_translate("AddCourseDialog", "Student ID *"))
-        self.comboBoxSelectProgram.setPlaceholderText(_translate("AddCourseDialog", "ID..."))
-        self.comboBoxSelectProgram.setItemText(0, _translate("AddCourseDialog", "Computer"))
-        self.comboBoxSelectProgram.setItemText(1, _translate("AddCourseDialog", "Communication"))
-        self.comboBoxSelectProgram.setItemText(2, _translate("AddCourseDialog", "Power"))
-        self.comboBoxSelectProgram.setItemText(3, _translate("AddCourseDialog", "Biomedical"))
-        self.labelCourseCode.setText(_translate("AddCourseDialog", "Course Name *"))
-        self.comboBoxSelectCourse.setItemText(0, _translate("AddCourseDialog", "Select a course..."))
-        self.labelCreditHours.setText(_translate("AddCourseDialog", "Grade *"))
-        self.comboBoxSelectProgram_2.setPlaceholderText(_translate("AddCourseDialog", "Select Grade..."))
-        self.comboBoxSelectProgram_2.setItemText(0, _translate("AddCourseDialog", "A+"))
-        self.comboBoxSelectProgram_2.setItemText(1, _translate("AddCourseDialog", "A"))
-        self.comboBoxSelectProgram_2.setItemText(2, _translate("AddCourseDialog", "B+"))
-        self.comboBoxSelectProgram_2.setItemText(3, _translate("AddCourseDialog", "B"))
-        self.comboBoxSelectProgram_2.setItemText(4, _translate("AddCourseDialog", "C+"))
-        self.comboBoxSelectProgram_2.setItemText(5, _translate("AddCourseDialog", "C"))
-        self.comboBoxSelectProgram_2.setItemText(6, _translate("AddCourseDialog", "D+"))
-        self.comboBoxSelectProgram_2.setItemText(7, _translate("AddCourseDialog", "D"))
-        self.comboBoxSelectProgram_2.setItemText(8, _translate("AddCourseDialog", "F"))
-        self.pushButton.setText(_translate("AddCourseDialog", "PushButton"))
-        self.buttonCancel.setText(_translate("AddCourseDialog", "Cancel"))
-        self.buttonSave.setText(_translate("AddCourseDialog", "💾  Save"))
+        AddGradesDialog.setWindowTitle(_translate("AddGradesDialog", "Add Grades"))
+        self.labelTitle.setText(_translate("AddGradesDialog", "📝  Add Grades"))
+        self.labelStudentID.setText(_translate("AddGradesDialog", "Student ID *"))
+        self.comboBoxStudentID.setPlaceholderText(_translate("AddGradesDialog", "ID..."))
+        self.comboBoxStudentID.setItemText(0, _translate("AddGradesDialog", "Computer"))
+        self.comboBoxStudentID.setItemText(1, _translate("AddGradesDialog", "Communication"))
+        self.comboBoxStudentID.setItemText(2, _translate("AddGradesDialog", "Power"))
+        self.comboBoxStudentID.setItemText(3, _translate("AddGradesDialog", "Biomedical"))
+        self.labelCourseCode.setText(_translate("AddGradesDialog", "Course Code *"))
+        self.comboBoxSelectCourse.setItemText(0, _translate("AddGradesDialog", "Select a course..."))
+        self.labelCreditHours.setText(_translate("AddGradesDialog", "Grade *"))
+        self.comboBoxGrade.setPlaceholderText(_translate("AddGradesDialog", "Select Grade..."))
+        self.comboBoxGrade.setItemText(0, _translate("AddGradesDialog", "A+"))
+        self.comboBoxGrade.setItemText(1, _translate("AddGradesDialog", "A"))
+        self.comboBoxGrade.setItemText(2, _translate("AddGradesDialog", "B+"))
+        self.comboBoxGrade.setItemText(3, _translate("AddGradesDialog", "B"))
+        self.comboBoxGrade.setItemText(4, _translate("AddGradesDialog", "C+"))
+        self.comboBoxGrade.setItemText(5, _translate("AddGradesDialog", "C"))
+        self.comboBoxGrade.setItemText(6, _translate("AddGradesDialog", "D+"))
+        self.comboBoxGrade.setItemText(7, _translate("AddGradesDialog", "D"))
+        self.comboBoxGrade.setItemText(8, _translate("AddGradesDialog", "F"))
+        self.labelSemesterYear.setText(_translate("AddGradesDialog", "Semester year *"))
+        self.pushButton.setText(_translate("AddGradesDialog", "PushButton"))
+        self.buttonCancel.setText(_translate("AddGradesDialog", "Cancel"))
+        self.buttonSave.setText(_translate("AddGradesDialog", "💾  Save"))

@@ -63,7 +63,5 @@ class ProfileWidget(QWidget):
         # Department static for all users
         self.ui.lineEditDepartment.setText("Electrical and Computer Engineering")
 
-        # Password is masked placeholder
-        self.ui.lineEditPassword.setText("••••••••")
 
 

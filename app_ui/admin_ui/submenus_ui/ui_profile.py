@@ -161,10 +161,10 @@ class Ui_Profile(object):
         self.adminInfoHeaderLayout.addWidget(self.adminInfoTitle)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.adminInfoHeaderLayout.addItem(spacerItem)
-        self.buttonEdit = QtWidgets.QPushButton(parent=self.adminInfoHeader)
-        self.buttonEdit.setMinimumSize(QtCore.QSize(120, 40))
-        self.buttonEdit.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.buttonEdit.setStyleSheet("QPushButton {\n"
+        self.buttonEditName = QtWidgets.QPushButton(parent=self.adminInfoHeader)
+        self.buttonEditName.setMinimumSize(QtCore.QSize(120, 40))
+        self.buttonEditName.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonEditName.setStyleSheet("QPushButton {\n"
 "    background-color: #f5576c;\n"
 "    color: #ffffff;\n"
 "    border: none;\n"
@@ -181,8 +181,30 @@ class Ui_Profile(object):
 "    background-color: #d43f52;\n"
 "}\n"
 "")
-        self.buttonEdit.setObjectName("buttonEdit")
-        self.adminInfoHeaderLayout.addWidget(self.buttonEdit)
+        self.buttonEditName.setObjectName("buttonEditName")
+        self.adminInfoHeaderLayout.addWidget(self.buttonEditName)
+        self.buttonEditEmail = QtWidgets.QPushButton(parent=self.adminInfoHeader)
+        self.buttonEditEmail.setMinimumSize(QtCore.QSize(120, 40))
+        self.buttonEditEmail.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonEditEmail.setStyleSheet("QPushButton {\n"
+"    background-color: #f5576c;\n"
+"    color: #ffffff;\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    font-size: 14px;\n"
+"    font-weight: bold;\n"
+"    padding: 10px 20px;\n"
+"    transition: background-color 150ms;\n"
+"}\n"
+"QPushButton:hover {\n"
+"    background-color: #e5475c;\n"
+"}\n"
+"QPushButton:pressed {\n"
+"    background-color: #d43f52;\n"
+"}\n"
+"")
+        self.buttonEditEmail.setObjectName("buttonEditEmail")
+        self.adminInfoHeaderLayout.addWidget(self.buttonEditEmail)
         self.adminInfoMainLayout.addWidget(self.adminInfoHeader)
         self.adminInfoBody = QtWidgets.QWidget(parent=self.adminInfoFrame)
         self.adminInfoBody.setStyleSheet("background: transparent;")
@@ -212,7 +234,7 @@ class Ui_Profile(object):
 "}\n"
 "\n"
 "")
-        self.lineEditEmail.setReadOnly(False)
+        self.lineEditEmail.setReadOnly(True)
         self.lineEditEmail.setObjectName("lineEditEmail")
         self.fieldsGrid.addWidget(self.lineEditEmail, 1, 1, 1, 1)
         self.lineEditDepartment = QtWidgets.QLineEdit(parent=self.adminInfoBody)
@@ -233,7 +255,7 @@ class Ui_Profile(object):
 "}\n"
 "\n"
 "")
-        self.lineEditDepartment.setReadOnly(False)
+        self.lineEditDepartment.setReadOnly(True)
         self.lineEditDepartment.setObjectName("lineEditDepartment")
         self.fieldsGrid.addWidget(self.lineEditDepartment, 3, 0, 1, 1)
         self.labelEmail = QtWidgets.QLabel(parent=self.adminInfoBody)
@@ -262,7 +284,7 @@ class Ui_Profile(object):
 "}\n"
 "\n"
 "")
-        self.lineEditName.setReadOnly(False)
+        self.lineEditName.setReadOnly(True)
         self.lineEditName.setObjectName("lineEditName")
         self.fieldsGrid.addWidget(self.lineEditName, 1, 0, 1, 1)
         self.labelUsername = QtWidgets.QLabel(parent=self.adminInfoBody)
@@ -274,65 +296,6 @@ class Ui_Profile(object):
         self.buttonsLayout.setObjectName("buttonsLayout")
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.buttonsLayout.addItem(spacerItem1)
-        self.buttonCancel = QtWidgets.QPushButton(parent=self.adminInfoBody)
-        self.buttonCancel.setEnabled(False)
-        self.buttonCancel.setMinimumSize(QtCore.QSize(120, 40))
-        self.buttonCancel.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.buttonCancel.setStyleSheet("QPushButton {\n"
-"    background-color: #f8f9fa;\n"
-"    color: #5a6c7d;\n"
-"    border: 2px solid #e0e0e0;\n"
-"    border-radius: 8px;\n"
-"    font-size: 14px;\n"
-"    font-weight: bold;\n"
-"    padding: 10px 20px;\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"    border-color: #f5576c;\n"
-"    color: #f5576c;\n"
-"}\n"
-"\n"
-"QPushButton:pressed {\n"
-"    background-color: #e0e0e0; /* darker grey for pressed feedback */\n"
-"    border-color: #f5576c;\n"
-"    color: #f5576c;\n"
-"}\n"
-"QPushButton:disabled {\n"
-"    background-color: #e0e0e0;\n"
-"    color: #999999;\n"
-"}")
-        self.buttonCancel.setObjectName("buttonCancel")
-        self.buttonsLayout.addWidget(self.buttonCancel)
-        self.buttonSave = QtWidgets.QPushButton(parent=self.adminInfoBody)
-        self.buttonSave.setEnabled(False)
-        self.buttonSave.setMinimumSize(QtCore.QSize(120, 40))
-        self.buttonSave.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.buttonSave.setStyleSheet("QPushButton {\n"
-"    background-color: #f5576c;\n"
-"    color: white;\n"
-"    border: none;\n"
-"    border-radius: 8px;\n"
-"    font-size: 14px;\n"
-"    font-weight: bold;\n"
-"    padding: 10px 20px;\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"    background-color: #e5475c;\n"
-"}\n"
-"\n"
-"QPushButton:pressed {\n"
-"    background-color: #d93f53; /* slightly darker for click feedback */\n"
-"}\n"
-"\n"
-"QPushButton:disabled {\n"
-"    background-color: #e0e0e0;\n"
-"    color: #999999;\n"
-"}\n"
-"")
-        self.buttonSave.setObjectName("buttonSave")
-        self.buttonsLayout.addWidget(self.buttonSave)
         self.adminInfoBodyLayout.addLayout(self.buttonsLayout)
         self.adminInfoMainLayout.addWidget(self.adminInfoBody)
         self.mainLayout.addWidget(self.adminInfoFrame)
@@ -359,12 +322,11 @@ class Ui_Profile(object):
         self.pendingRequestsValue.setText(_translate("Profile", "12"))
         self.pendingRequestsLabel.setText(_translate("Profile", "Pending Requests"))
         self.adminInfoTitle.setText(_translate("Profile", "Admin Information"))
-        self.buttonEdit.setText(_translate("Profile", "Edit Profile"))
+        self.buttonEditName.setText(_translate("Profile", "Edit Profile"))
+        self.buttonEditEmail.setText(_translate("Profile", "Edit Email"))
         self.lineEditEmail.setText(_translate("Profile", "admin@university.edu"))
         self.lineEditDepartment.setText(_translate("Profile", "Electrical and Computer Engineering"))
         self.labelEmail.setText(_translate("Profile", "Email Address"))
         self.labelDepatment.setText(_translate("Profile", "Department"))
         self.lineEditName.setText(_translate("Profile", "admin_user"))
         self.labelUsername.setText(_translate("Profile", "Username"))
-        self.buttonCancel.setText(_translate("Profile", "Cancel"))
-        self.buttonSave.setText(_translate("Profile", "Save Changes"))
