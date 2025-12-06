@@ -49,6 +49,8 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # 1. Initialize all pages
         # ------------------------
         self.init_sub_pages()
+        # نجيب آخر تسجيل دخول من قاعدة البيانات
+
 
         # ------------------------
         # 2. Add pages to stacked widget
@@ -101,6 +103,9 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # -------------------------------
         # Profile page
         # -------------------------------
+        # نجيب آخر تسجيل دخول من قاعدة البيانات
+
+
         self.profile_page = QtWidgets.QWidget()
         self.profile_page_ui = Ui_Profile()
         self.profile_page_ui.setupUi(self.profile_page)

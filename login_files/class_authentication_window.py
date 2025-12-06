@@ -215,6 +215,9 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
 
         # --- 7. Successful login ---
         self.labelStatus.setText("Login successful!")
+        # سجل آخر دخول لهذا المستخدم
+        last_login = self.db.update_last_login(user_id)
+
         self.labelStatus.setStyleSheet("color: green;")
         print(f"Login successful for {name} ({state})")
 

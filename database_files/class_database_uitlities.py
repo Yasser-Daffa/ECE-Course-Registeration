@@ -646,6 +646,44 @@ class DatabaseUtilities:
 
         return False
 
+    def get_last_login(self, user_id: int):
+        """
+        يرجع آخر وقت دخول للمستخدم من جدول login.
+        """
+        self.cur.execute(
+            "SELECT last_login FROM login WHERE user_id = ? ORDER BY last_login DESC LIMIT 1",
+            (user_id,)
+        )
+        row = self.cur.fetchone()
+        return row[0] if row else None
+
+    def update_last_login(self, user_id: int):
+        """
+        يحدّث آخر دخول للمستخدم في جدول login.
+        إذا كان موجود → تحديث.
+        إذا ما كان موجود → إدراج جديد.
+        """
+        import datetime
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        # إذا له صف، حدثه
+        self.cur.execute("SELECT 1 FROM login WHERE user_id = ?", (user_id,))
+        exists = self.cur.fetchone()
+
+        if exists:
+            self.cur.execute(
+                "UPDATE login SET last_login = ? WHERE user_id = ?",
+                (timestamp, user_id)
+            )
+        else:
+            self.cur.execute(
+                "INSERT INTO login (user_id, last_login) VALUES (?, ?)",
+                (user_id, timestamp)
+            )
+
+        self.con.commit()
+        return timestamp
+
 
 
 
