@@ -166,7 +166,7 @@ class ViewSectionsWidget(QWidget):
                 # صف فاصل
                 for col in range(table.columnCount()):
                     item = QTableWidgetItem("")
-                    item.setFlags(Qt.ItemFlag.NoItemFlags)
+                    item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
                     item.setBackground(Qt.GlobalColor.lightGray)
                     table.setItem(row, col, item)
                 continue
@@ -185,22 +185,22 @@ class ViewSectionsWidget(QWidget):
 
             # 0: #
             item_index = QTableWidgetItem(str(row + 1))
-            item_index.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            item_index.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             table.setItem(row, 0, item_index)
 
             # 1: ID (رقم السكشن)
             item_id = QTableWidgetItem(str(section_id))
-            item_id.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            item_id.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             table.setItem(row, 1, item_id)
 
             # 2: COURSE
             item_course = QTableWidgetItem(course_code)
-            item_course.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            item_course.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             table.setItem(row, 2, item_course)
 
             # 3: INSTRUCTOR (فاضي حالياً)
             item_instr = QTableWidgetItem("")
-            item_instr.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            item_instr.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             table.setItem(row, 3, item_instr)
 
             # 4: SCHEDULE (days + time + room)
@@ -210,26 +210,26 @@ class ViewSectionsWidget(QWidget):
             if room:
                 schedule_str += f"  ({room})"
             item_sched = QTableWidgetItem(schedule_str.strip())
-            item_sched.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            item_sched.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             table.setItem(row, 4, item_sched)
 
             # 5: ENROLLED
             item_enrolled = QTableWidgetItem(
                 "" if enrolled is None else str(enrolled)
             )
-            item_enrolled.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            item_enrolled.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             table.setItem(row, 5, item_enrolled)
 
             # 6: CAPACITY
             item_cap = QTableWidgetItem(
                 "" if capacity is None else str(capacity)
             )
-            item_cap.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            item_cap.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             table.setItem(row, 6, item_cap)
 
             # 7: STATUS
             item_status = QTableWidgetItem(state)
-            item_status.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            item_status.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             table.setItem(row, 7, item_status)
 
             # 8: REGISTERATION (CheckBox)
