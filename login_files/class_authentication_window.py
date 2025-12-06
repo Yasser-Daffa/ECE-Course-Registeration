@@ -224,14 +224,15 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
             from student.class_student_utilities import db 
             self.student_dash = StudentDashboard(db, user)
             self.student_dash.show()
-            
+
         elif state == "admin":
             from admin.class_admin_dashboard import AdminDashboard
-            from admin.class_admin_dashboard import db 
-            self.admin_dash = AdminDashboard(db, user)
+
+        # نستخدم self.db اللي فوق ربطناه أصلاً بـ DatabaseUtilities
+            self.admin_dash = AdminDashboard(self.db)
             self.admin_dash.show()
-            pass
-            
+
+
 
         # --- 9. Close authentication window ---
         self.close()
