@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ProgramPlans</class>
- <widget class="QWidget" name="ProgramPlans">
+ <class>ViewProgramPlans</class>
+ <widget class="QWidget" name="ViewProgramPlans">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -258,7 +258,7 @@ QComboBox[error=&quot;true&quot;] {
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBoxStatusFilter">
+       <widget class="QComboBox" name="comboBoxLevel">
         <property name="minimumSize">
          <size>
           <width>150</width>
