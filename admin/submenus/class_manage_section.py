@@ -1,33 +1,35 @@
-import os, sys, functools
+import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
 from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import (
-    QWidget, QTableWidgetItem, QHeaderView
+    QWidget, QTableWidgetItem, QMessageBox
 )
 from PyQt6.QtCore import Qt
 
-# واجهة Manage Students الجديدة
 from app_ui.admin_ui.submenus_ui.ui_manage_students import Ui_ManageStudents
-
 from helper_files.shared_utilities import BaseLoginForm
 from database_files.initialize_database import initialize_database
 from database_files.class_database_uitlities import DatabaseUtilities
 from admin.class_admin_utilities import AdminUtilities
 
+# صفحة تسجيل المواد للطالب
+from student.submenus.class_register_courses import RegisterCoursesWidget
+# صفحة الجدول الحالي (حذف الشعب) 👈 الجديد
+from student.submenus.class_current_schedule import CurrentScheduleWidget
+
 
 class ManageStudentsController:
     """
-    يعرض كل الطلاب (STATE = 'student' و ACCOUNT_STATUS = 'active')
-    مع:
-    - بحث بالنص (الاسم / الإيميل / ID / البرنامج)
-    - فلترة بالبرنامج من الكومبو بوكس
-    - عدّاد Total Students
-    * أزرار:
-        - Add Grades
-        - Register Course for student
-        - Remove Course for student
-      >>> متروكة بدون ربط كما طلبت.
+    نفس فكرة AllStudentsController لكن شغالة مع Ui_ManageStudents:
+    - تعرض فقط الطلاب (state = 'student' و account_status = 'active')
+    - فلتر بالنص (name / id / email / program)
+    - فلتر بالبرنامج من comboBoxSelectProgram
+    - تحدث عدّاد الطلاب في labelTotalStudentsCount
+    - أزرار:
+        * buttonAddGrades      -> لا مربوطة الآن
+        * buttonAddStudent     -> تفتح صفحة RegisterCoursesWidget للطالب المحدد
+        * buttonRemoveSelected -> تفتح صفحة CurrentScheduleWidget للطالب المحدد
     """
 
     def __init__(self, ui: Ui_ManageStudents, admin_utils: AdminUtilities):
@@ -37,7 +39,15 @@ class ManageStudentsController:
         self.students_data = []           # كل الطلاب (active فقط)
         self.blf = BaseLoginForm()
 
-        # --- ربط إشارات الواجهة (بدون ربط الأزرار الثلاثة) ---
+        # نحتفظ بالنوافذ عشان ما تنحذف من الـ GC
+        self.register_window = None
+        self.current_schedule_window = None
+
+        # نخلي الأزرار مقفلة مبدئياً
+        self.ui.buttonAddStudent.setEnabled(False)
+        self.ui.buttonRemoveSelected.setEnabled(False)
+
+        # --- ربط إشارات الواجهة المهمة فقط ---
         self.connect_ui_signals()
 
         # --- تحميل أولي ---
@@ -52,28 +62,38 @@ class ManageStudentsController:
         # فلتر البرنامج من الكومبو بوكس
         self.ui.comboBoxSelectProgram.currentIndexChanged.connect(self.search_and_filter)
 
-        # زر التحديث فقط
+        # زر التحديث
         self.ui.buttonRefresh.clicked.connect(self.handle_refresh)
 
-        # ما نربط:
-        # self.ui.buttonAddGrades
-        # self.ui.buttonAddStudent
-        # self.ui.buttonRemoveSelected
-        # تترك فاضية عشان تستخدمها لاحقاً للكورسات / الجريد
+        # زر Register Course for student
+        self.ui.buttonAddStudent.clicked.connect(self.handle_add_student_courses)
+
+        # زر Remove Course for student 👈 الجديد
+        self.ui.buttonRemoveSelected.clicked.connect(self.handle_remove_student_courses)
+
+        # لما يتغيّر الاختيار في الجدول → نفعّل/نلغي الأزرار
+        self.ui.tableAllStudents.selectionModel().selectionChanged.connect(
+            self.on_selection_changed
+        )
 
         # أول مرة نعمل Refresh أنيميشن + تحميل
         self.handle_refresh()
 
     # ----------------- LOAD / POPULATE TABLE -----------------
     def load_students(self):
-        """يجلب كل الطلاب active من جدول users ويعبّي self.students_data"""
+        """
+        تجيب كل المستخدمين من db.list_users
+        ثم نفلترهم:
+          - account_status = 'active'
+          - state = 'student'
+        ونخزنهم في self.students_data
+        """
         self.students_data.clear()
         self.ui.tableAllStudents.setRowCount(0)
 
         rows = self.db.list_users()
         # row = (user_id, name, email, program, state, account_status, password_h)
 
-        # نجيب فقط الطلاب اللي حالتهم active و state = student
         active_rows = [
             row for row in rows
             if row[5] == "active" and row[4] == "student"
@@ -96,6 +116,9 @@ class ManageStudentsController:
         self.update_total_counter()
 
     def handle_refresh(self):
+        """
+        أنيميشن بسيطة على العداد وبعدين تعيد تحميل الطلاب.
+        """
         BaseLoginForm.animate_label_with_dots(
             self.ui.labelTotalStudentsCount,
             base_text="Refreshing",
@@ -105,41 +128,45 @@ class ManageStudentsController:
         )
 
     def format_table(self):
-        """تظبيط أحجام الأعمدة وشكل الجدول"""
+        """
+        تنسيق أعمدة الجدول (عدد الأعمدة مضبوط أصلاً من الـ UI: 6 أعمدة)
+        (#, ID, NAME, EMAIL, PROGRAM, STATE)
+        """
         table = self.ui.tableAllStudents
-
         header = table.horizontalHeader()
         header.setStretchLastSection(True)
 
         table.verticalHeader().setVisible(False)
         table.verticalHeader().setDefaultSectionSize(60)
 
-        # عندك 6 أعمدة: #, ID, NAME, EMAIL, PROGRAM, STATE
         table.setColumnWidth(0, 60)    # #
-        table.setColumnWidth(1, 120)   # ID
+        table.setColumnWidth(1, 100)   # ID
         table.setColumnWidth(2, 220)   # NAME
         table.setColumnWidth(3, 260)   # EMAIL
-        table.setColumnWidth(4, 120)   # PROGRAM
+        table.setColumnWidth(4, 110)   # PROGRAM
         table.setColumnWidth(5, 100)   # STATE
-
-        table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
-        table.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.SingleSelection)
-        table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
 
     # ----------------- POPULATE TABLE -----------------
     def fill_table(self, students):
+        """
+        تعبئة الجدول بالطلاب المعطين في list[dict].
+        """
         table = self.ui.tableAllStudents
         table.setRowCount(len(students))
 
         for row_idx, student in enumerate(students):
             # 0: Row number
             item_number = QTableWidgetItem(str(row_idx + 1))
-            item_number.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
+            item_number.setFlags(
+                Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
+            )
             table.setItem(row_idx, 0, item_number)
 
             # 1: Student ID
             item_id = QTableWidgetItem(str(student["user_id"]))
-            item_id.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
+            item_id.setFlags(
+                Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
+            )
             table.setItem(row_idx, 1, item_id)
 
             # 2: Name
@@ -149,7 +176,7 @@ class ManageStudentsController:
             table.setItem(row_idx, 3, QTableWidgetItem(student["email"] or ""))
 
             # 4: Program
-            prog_text = student["program"] or ""
+            prog_text = student["program"] or ""   # مهم عشان ما يكرش لو None
             table.setItem(row_idx, 4, QTableWidgetItem(prog_text))
 
             # 5: State
@@ -160,7 +187,7 @@ class ManageStudentsController:
         """
         يطبق فلتر النص + فلتر البرنامج معاً.
         - النص: name / id / email / program
-        - البرنامج: من الكومبوبوكس (All / Computer / Communication / Power / Biomedical)
+        - البرنامج: من الكومبو بوكس (All Programs / Computer / Communication / Power / Biomedical)
         """
         text = self.ui.lineEditSearch.text().strip().lower()
 
@@ -205,14 +232,126 @@ class ManageStudentsController:
         ]
 
         self.fill_table(filtered)
-        # نحدّث العداد بناء على الفلتر الحالي؟ لو تبي:
-        # self.ui.labelTotalStudentsCount.setText(f"Total Students: {len(filtered)}")
-        # أو تخلي العداد يمثل كل الطلاب:
-        self.update_total_counter()
+
+    # ----------------- تفعيل الأزرار حسب الاختيار -----------------
+    def on_selection_changed(self, *_):
+        """
+        يتفعّل الأزرار فقط إذا فيه طالب واحد على الأقل محدد.
+        (لو تبغاهم لطالب واحد فقط نقدر نغيّر الشرط لـ == 1)
+        """
+        selected_rows = self.ui.tableAllStudents.selectionModel().selectedRows()
+        has_selection = len(selected_rows) > 0
+
+        self.ui.buttonAddStudent.setEnabled(has_selection)
+        self.ui.buttonRemoveSelected.setEnabled(has_selection)
+
+    # ----------------- زر Register Course for student -----------------
+    def handle_add_student_courses(self):
+        """
+        - يتأكد إن فيه طالب واحد بس محدد.
+        - ياخذ الـ ID من العمود 1.
+        - يفتح RegisterCoursesWidget لهذا الطالب.
+        """
+        table = self.ui.tableAllStudents
+        selected_rows = table.selectionModel().selectedRows()
+
+        if not selected_rows:
+            QMessageBox.warning(
+                None,
+                "No Student Selected",
+                "Please select a student first."
+            )
+            return
+
+        if len(selected_rows) > 1:
+            QMessageBox.warning(
+                None,
+                "Multiple Students Selected",
+                "Please select only ONE student to register courses."
+            )
+            return
+
+        row = selected_rows[0].row()
+        id_item = table.item(row, 1)  # عمود ID
+
+        if not id_item:
+            QMessageBox.warning(
+                None,
+                "Error",
+                "Cannot read student ID from the selected row."
+            )
+            return
+
+        try:
+            student_id = int(id_item.text())
+        except ValueError:
+            QMessageBox.warning(
+                None,
+                "Error",
+                "Invalid student ID value."
+            )
+            return
+
+        # هنا تقدر تحدد السمستر لو عندك قيمة معيّنة، حالياً None
+        self.register_window = RegisterCoursesWidget(student_id, semester=None)
+        self.register_window.show()
+
+    # ----------------- زر Remove Course for student (يفتح CurrentSchedule) -----------------
+    def handle_remove_student_courses(self):
+        """
+        - يتأكد إن فيه طالب واحد بس محدد.
+        - ياخذ الـ ID من العمود 1.
+        - يفتح CurrentScheduleWidget لهذا الطالب عشان يحذف الشعب.
+        """
+        table = self.ui.tableAllStudents
+        selected_rows = table.selectionModel().selectedRows()
+
+        if not selected_rows:
+            QMessageBox.warning(
+                None,
+                "No Student Selected",
+                "Please select a student first."
+            )
+            return
+
+        if len(selected_rows) > 1:
+            QMessageBox.warning(
+                None,
+                "Multiple Students Selected",
+                "Please select only ONE student to remove sections."
+            )
+            return
+
+        row = selected_rows[0].row()
+        id_item = table.item(row, 1)  # عمود ID
+
+        if not id_item:
+            QMessageBox.warning(
+                None,
+                "Error",
+                "Cannot read student ID from the selected row."
+            )
+            return
+
+        try:
+            student_id = int(id_item.text())
+        except ValueError:
+            QMessageBox.warning(
+                None,
+                "Error",
+                "Invalid student ID value."
+            )
+            return
+
+        # نفتح صفحة الجدول الحالي للطالب (CurrentScheduleWidget)
+        self.current_schedule_window = CurrentScheduleWidget(student_id)
+        self.current_schedule_window.show()
 
     # ----------------- UPDATE TOTAL COUNTER -----------------
     def update_total_counter(self):
-        self.ui.labelTotalStudentsCount.setText(f"Total Students: {len(self.students_data)}")
+        self.ui.labelTotalStudentsCount.setText(
+            f"Total Students: {len(self.students_data)}"
+        )
 
 
 # ---------------- MAIN APP (للاختبار فقط) ----------------

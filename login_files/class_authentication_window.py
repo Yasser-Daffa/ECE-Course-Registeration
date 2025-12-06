@@ -44,8 +44,7 @@ from database_files.class_database_uitlities import DatabaseUtilities
 from admin.class_admin_utilities import db
 
 
-
-class AuthenticationWindow(BaseLoginForm, EmailSender): 
+class AuthenticationWindow(BaseLoginForm, EmailSender):
     def __init__(self):
         super().__init__()
 
@@ -55,7 +54,7 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
 
         # For logout button
         QApplication.instance().setQuitOnLastWindowClosed(True)
-        
+
         # using the database we called from admin utils
         self.db = db
         # Email sender instance
@@ -65,7 +64,6 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
         # it will be; mode = edit_profile for example
         self.mode = None
         self.profile_edit_email = None
-
 
         # --- 1. Load UI ---
         self.ui = Ui_AuthStackedWidget()
@@ -100,7 +98,6 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
         # --- 6. disable general status labels initially ---
         self.login_page.ui.labelGeneralStatus.setText("")
         self.create_account_page.ui.labelGeneralStatus.setText("")
-        
 
         # --- 7. Connect login action ---
         self.login_page.ui.buttonLogin.clicked.connect(self.handle_login)
@@ -138,7 +135,6 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
         self.confirm_email_page.ui.lineEditVerificationCode.clear()
         self.ui.stackedWidgetAuth.setCurrentIndex(3)
 
-
     def start_profile_edit_verification(self, email):
         """
         Activates the email verification mode used when editing the profile.
@@ -156,8 +152,6 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
 
         # Jump directly to confirmation page
         self.ui.stackedWidgetAuth.setCurrentWidget(self.confirm_email_page)
-
-
 
     # =========================================================
     #                     LOGIN LOGIC
@@ -224,7 +218,7 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
         # --- 8. Redirect to the correct dashboard ---
         if state == "student":
             from student.class_student_dashboard import StudentDashboard
-            from student.class_student_utilities import db 
+            from student.class_student_utilities import db
             self.student_dash = StudentDashboard(db, user)
             self.student_dash.show()
 
@@ -234,11 +228,8 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
             self.admin_dash = AdminDashboard(db, user)
             self.admin_dash.show()
 
-
-
         # --- 9. Close authentication window ---
         self.close()
-
 
     # =========================================================
     #      ACCOUNT CREATION AND EMAIL VERIFICATION LOGIC
@@ -299,7 +290,6 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
         labelStatus.setText("All good! Please confirm your email...")
         self.set_label_color(labelStatus, "green")
 
-
         # --- 8. Initialize code generator (if not exists) ---
         if raw_email not in self.code_generators:
             self.code_generators[raw_email] = CodeGenerator(validity_minutes=5)
@@ -314,7 +304,6 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
 
         # --- 10. Go to confirmation page ---
         QTimer.singleShot(1500, self.go_to_confirm_email)
-
 
     def send_verification_code(self, to_email: str) -> bool:
         """
@@ -339,7 +328,7 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
             QMessageBox.critical(self, "Error", "Failed to send verification email.")
 
         return sent
-    
+
     # ----------------------------------------------------------
     #           EMAIL CONFIRMATION LOGIC
     # ----------------------------------------------------------
@@ -363,7 +352,6 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
 
         return True, ""
 
-
     def handle_email_confirmation(self):
         entered_code = self.confirm_email_page.lineEditVerificationCode.text().strip()
         email = self.new_user_data["email"]
@@ -377,13 +365,13 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
             if reason != "Code cannot be empty.":
                 QMessageBox.warning(self, "Invalid Code", reason)
             return
-        
+
         # ------------------------------
         # NEW LOGIC FOR PROFILE EDIT MODE
         # ------------------------------
         if self.mode == "profile_edit":
             QMessageBox.information(self, "Success", "Email verified!")
-            self.accept()   # ← This closes AuthenticationWindow and returns control to Profile Page
+            self.accept()  # ← This closes AuthenticationWindow and returns control to Profile Page
             return
         # ------------------------------
 
@@ -415,7 +403,6 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
         sent = self.send_verification_code(email)
         if sent:
             QMessageBox.information(self, "Code Sent", "Verification code resent successfully.")
-
 
     # =========================================================
     #               BACK NAVIGATION
@@ -478,8 +465,6 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
             self.ui.stackedWidgetAuth.setCurrentWidget(self.reset_password_page)
             self.reset_password_page.start_cooldown_timer()
 
-
-
     # ----------------------------------------------------------
     #           SEND VERIFICATION CODE FOR RESET
     # ----------------------------------------------------------
@@ -501,7 +486,7 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
             QMessageBox.critical(self, "Error", "Failed to send reset code.")
 
         return sent
-    
+
     def check_reset_code_valid(self, entered_code: str, email: str) -> tuple[bool, str]:
         if not entered_code:
             return False, "Code cannot be empty."
@@ -533,7 +518,7 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
 
         # Open the dialog
         dialog = PasswordChangeDialog()
-        
+
         # Connect the dialog button directly
         dialog.ui.buttonChangePassword.clicked.connect(
             lambda: self.update_password_from_dialog(dialog, email)
@@ -543,7 +528,7 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
 
     def update_password_from_dialog(self, dialog: PasswordChangeDialog, email: str):
         new_pw = dialog.ui.lineEditPassword.text()
-        
+
         # Fetch user and update
         user = self.db.get_user_by_login(email)
         if not user:
@@ -561,11 +546,9 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
         else:
             QMessageBox.critical(dialog, "Error", result)
 
-        
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = AuthenticationWindow() 
+    window = AuthenticationWindow()
     window.show()
     sys.exit(app.exec())

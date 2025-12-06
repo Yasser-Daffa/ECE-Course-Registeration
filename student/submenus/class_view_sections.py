@@ -411,18 +411,18 @@ class ViewSectionsWidget(QWidget):
 
         # ✅ الرسائل الآن مبنية على الحقيقة من الداتابيس
         if success and not fail:
-            QMessageBox.information(self, "Registration", "تم تسجيل جميع الشعب بنجاح.")
+            QMessageBox.information(self, "Registration", "All sections have been registered successfully.")
         elif success and fail:
             QMessageBox.warning(
                 self,
                 "Registration",
-                f"تم تسجيل {success} شعبة، وفشل تسجيل {fail} شعبة.",
+                f"Registered {success} sections successfully, and {fail} failed.",
             )
         else:
             QMessageBox.critical(
                 self,
                 "Registration",
-                "فشل تسجيل جميع الشعب. تأكد من عدم وجود تعارضات زمنية أو مشاكل في قاعدة البيانات.",
+                "Failed to register all sections. Make sure there are no time conflicts.",
             )
 
 
