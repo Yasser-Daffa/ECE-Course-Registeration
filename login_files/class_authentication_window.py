@@ -230,9 +230,8 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
 
         elif state == "admin":
             from admin.class_admin_dashboard import AdminDashboard
-
-        # نستخدم self.db اللي فوق ربطناه أصلاً بـ DatabaseUtilities
-            self.admin_dash = AdminDashboard(self.db)
+            from admin.class_admin_utilities import db
+            self.admin_dash = AdminDashboard(db, user)
             self.admin_dash.show()
 
 
