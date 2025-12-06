@@ -32,7 +32,7 @@ from admin.submenus.class_manage_faculty import ManageFacultyWidget
 from app_ui.admin_ui.submenus_ui.ui_manage_students import Ui_ManageStudents
 from admin.submenus.class_manage_students import ManageStudentsController
 
-
+from admin.submenus.class_program_plans import ProgramPlansWidget
 
 
 class AdminDashboard(QtWidgets.QMainWindow):
@@ -83,7 +83,8 @@ class AdminDashboard(QtWidgets.QMainWindow):
 
         self.ui.stackedWidget.addWidget(self.manage_courses_page)
         self.ui.stackedWidget.addWidget(self.manage_prereqs_page)
-        self.ui.stackedWidget.addWidget(self.manage_sections_controller)
+        self.ui.stackedWidget.addWidget(self.manage_sections_page)
+        self.ui.stackedWidget.addWidget(self.program_plans_page)
         # Add other pages similarly...
 
 
@@ -104,7 +105,8 @@ class AdminDashboard(QtWidgets.QMainWindow):
 
             self.ui.buttonManageCourses: ("Manage Courses", self.manage_courses_page),
             self.ui.buttonManagePrereqs: ("Manage Prereqs", self.manage_prereqs_page),
-            self.ui.buttonManageSections: ("Manage Prereqs", self.manage_sections_controller)
+            self.ui.buttonManageSections: ("Manage Sections", self.manage_sections_page),
+            self.ui.buttonProgramPlans: ("Program Plans", self.program_plans_page)
         }
 
         
@@ -192,9 +194,14 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # -------------------------------
         # Manage sections
         # -------------------------------
-
         # # no need for all the extra junk since this page sets up its own ui internally. thanks to salem :)
-        self.manage_sections_controller = ManageSectionsWidget(self.admin)
+        self.manage_sections_page = ManageSectionsWidget(admin)
+
+
+        # -------------------------------
+        # Program Plans
+        # -------------------------------
+        self.program_plans_page = ProgramPlansWidget(admin)
 
     # -------------------------------
     # Switch the stacked widget to the page associated with the clicked button
