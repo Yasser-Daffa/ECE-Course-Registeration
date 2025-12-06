@@ -41,7 +41,7 @@ class ManageSectionsWidget(QWidget):
         self.animate = BaseLoginForm.animate_label_with_dots
 
         self._all_rows_cache = []
-        self._filtered_rows = []  # NEW: الصفوف بعد الفلتر الحالي
+        self._filtered_rows = []  #  الصفوف بعد الفلتر الحالي
 
         # Connect buttons
         self.ui.buttonRefresh.clicked.connect(self.handle_refresh)

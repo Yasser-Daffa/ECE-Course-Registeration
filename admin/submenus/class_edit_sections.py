@@ -4,7 +4,7 @@ import sys
 from PyQt6.QtWidgets import QDialog, QMessageBox
 from PyQt6.QtCore import QTime
 
-# عشان نشوف المجلد الرئيسي
+# Add project root to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
 from app_ui.admin_ui.submenus_ui.edit_section_dialog import Ui_EditSectionDialog
@@ -13,10 +13,10 @@ from helper_files.shared_utilities import BaseLoginForm
 
 class EditSectionDialog(QDialog, BaseLoginForm):
     """
-    Dialog لتعديل سكشن موجود:
-    - يستقبل admin_utils + section_data (dict) من شاشة المانج.
-    - يعبّي الحقول بالبيانات الحالية.
-    - لما تضغط Save يستدعي admin.admin_update_section.
+    Dialog for editing an existing section:
+    - Receives admin_utils + section_data (dict) from the manage sections screen.
+    - Pre-fills the UI with the existing values.
+    - When Save is pressed → calls admin.admin_update_section.
     """
 
     def __init__(self, admin_utils, section_data: dict, parent=None):
@@ -30,27 +30,31 @@ class EditSectionDialog(QDialog, BaseLoginForm):
         self.section_data = section_data
         self.section_id = section_data["section_id"]
 
-        # نخزن days الأصلية عشان الآن ما نلعب فيها
+        # Store the original days text (we currently do not modify days in this dialog)
         self.original_days = section_data.get("days") or ""
 
-        # تجهيز الواجهة بالبيانات
+        # Prepare UI with existing data
         self.setup_initial_values()
 
-        # ربط الأزرار
+        # Connect buttons
         self.ui.buttonSave.clicked.connect(self.handle_save)
         self.ui.buttonCancel.clicked.connect(self.reject)
 
-    # ================= إعداد القيم الابتدائية =================
+    # ================= INITIAL VALUE SETUP =================
 
     def setup_initial_values(self):
+        """
+        Loads all section data into the UI fields.
+        Some fields (like course code) are locked for editing.
+        """
         d = self.section_data
 
-        # ----- الكورس (نعرضه بس، ما نغيّره من هنا) -----
+        # ----- Course (display only, not editable here) -----
         self.ui.comboBoxSelectCourse.clear()
         self.ui.comboBoxSelectCourse.addItem(str(d["course_code"]))
         self.ui.comboBoxSelectCourse.setEnabled(False)
 
-        # ----- الدكتور (نخليه Editable رقم/اسم بسيط) -----
+        # ----- Instructor (simple editable text or numeric id) -----
         self.ui.comboBoxSelectInstructor.clear()
         doctor_val = "" if d["doctor_id"] is None else str(d["doctor_id"])
         if doctor_val:
@@ -58,8 +62,12 @@ class EditSectionDialog(QDialog, BaseLoginForm):
             self.ui.comboBoxSelectInstructor.setCurrentIndex(0)
         self.ui.comboBoxSelectInstructor.setEditable(True)
 
-        # ----- الوقت -----
+        # ----- Time fields -----
         def parse_time(value, default_h=8, default_m=0):
+            """
+            Convert 'HH:MM' string to QTime.
+            If invalid or empty, return a default time.
+            """
             if not value:
                 return QTime(default_h, default_m)
             try:
@@ -71,12 +79,12 @@ class EditSectionDialog(QDialog, BaseLoginForm):
         self.ui.timeEditFrom.setTime(parse_time(d.get("time_start")))
         self.ui.timeEditTo.setTime(parse_time(d.get("time_end"), default_h=9))
 
-        # ----- المبنى + الغرفة من حقل room -----
+        # ----- Building + Room parsing from room field -----
         room_val = (d.get("room") or "").strip()
         building = ""
         room = ""
 
-        # نحاول نفصل بين المبنى/الغرفة إذا مكتوبة بصيغة B45-201
+        # Attempt to split building and room, e.g. "B45-201"
         if "-" in room_val:
             building, room = room_val.split("-", 1)
         elif " " in room_val:
@@ -87,7 +95,7 @@ class EditSectionDialog(QDialog, BaseLoginForm):
         self.ui.lineEditBuilding.setText(building)
         self.ui.lineEditRoom.setText(room)
 
-        # ----- السعة -----
+        # ----- Capacity -----
         cap = d.get("capacity") or 0
         try:
             cap = int(cap)
@@ -95,53 +103,55 @@ class EditSectionDialog(QDialog, BaseLoginForm):
             cap = 0
         self.ui.spinBoxCapacity.setValue(cap)
 
-        # ----- السمستر -----
+        # ----- Semester -----
         semester = (d.get("semester") or "").strip()
         if semester:
             idx = self.ui.comboBoxSelectTerm.findText(semester)
             if idx >= 0:
                 self.ui.comboBoxSelectTerm.setCurrentIndex(idx)
             else:
+                # If this semester is not in the list, append it
                 self.ui.comboBoxSelectTerm.addItem(semester)
                 self.ui.comboBoxSelectTerm.setCurrentIndex(
                     self.ui.comboBoxSelectTerm.count() - 1
                 )
 
-        # ----- الحالة (open / closed) -----
+        # ----- State (open / closed) -----
         state = (d.get("state") or "").capitalize()
         if state:
             idx = self.ui.comboBoxSelectStatus.findText(state)
             if idx >= 0:
                 self.ui.comboBoxSelectStatus.setCurrentIndex(idx)
 
-        # ====== ملاحظة عن الأيام ======
-        # عندنا days كنص (مثلاً: "UMW" أو "SU" حسب اللي استخدمتَه قبل).
-        # حالياً ما نعدل الأيام من الدايلوج الجديد عشان ما نخرب منطق الـ check_time_conflict.
-        # نخلي الأزرار شكلية الآن، لكن القيمة الفعلية من original_days.
-        # لو حاب بعدين نخليها تشتغل 100% نضبط فورمات موحّد للأيام في كل المشروع.
-        # (ما نغيّر على days في هذي النسخة)
+        # ===== NOTE ABOUT DAYS =====
+        # The `days` field is currently treated as a direct text copy (e.g. "UMW", "SU", etc.).
+        # In this editor version, we do NOT modify days, because changing the format might
+        # break schedule conflict logic elsewhere.
+        # UI day buttons are cosmetic for now; the actual stored days come from original_days.
+        # If future full day-edit support is needed, unify day formatting across the project.
 
-    # ================= تجميع + حفظ =================
+    # ================= SAVE HANDLER =================
 
     def handle_save(self):
         """
-        نجمع القيم من الواجهة ونسمي admin_update_section.
-        ما نغيّر course_code ولا section_id من هنا.
+        Collects new values from UI and calls admin_update_section.
+        Note: course_code and section_id are not changed here.
         """
-        # ---- السعة ----
+
+        # ---- Capacity ----
         capacity = self.ui.spinBoxCapacity.value()
         if capacity <= 0:
             QMessageBox.warning(self, "Invalid Capacity", "Capacity must be greater than 0.")
             return
 
-        # ---- الوقت ----
+        # ---- Time ----
         time_start = self.ui.timeEditFrom.time().toString("HH:mm")
         time_end = self.ui.timeEditTo.time().toString("HH:mm")
         if time_start >= time_end:
             QMessageBox.warning(self, "Invalid Time", "Start time must be before end time.")
             return
 
-        # ---- المبنى + الغرفة -> room ----
+        # ---- Building + Room -> single room field ----
         building = self.ui.lineEditBuilding.text().strip()
         room_num = self.ui.lineEditRoom.text().strip()
 
@@ -150,26 +160,26 @@ class EditSectionDialog(QDialog, BaseLoginForm):
         else:
             room = building or room_num or None
 
-        # ---- الدكتور ----
+        # ---- Instructor ----
         instr_text = self.ui.comboBoxSelectInstructor.currentText().strip()
         doctor_id = None
         if instr_text:
             if instr_text.isdigit():
                 doctor_id = int(instr_text)
             else:
-                # لو حاب تخليها نصية في الداتابيس عدل نوع العمود
-                doctor_id = instr_text  # حالياً ما نتشدد
+                # If the DB expects only numeric IDs, adjust column type accordingly.
+                doctor_id = instr_text
 
-        # ---- السمستر ----
+        # ---- Semester ----
         semester = self.ui.comboBoxSelectTerm.currentText().strip() or None
 
-        # ---- الحالة ----
+        # ---- State ----
         state_text = self.ui.comboBoxSelectStatus.currentText().strip().lower() or None
 
-        # ---- الأيام (نرجّع نفس النص القديم) ----
+        # ---- Days (keep original) ----
         days = self.original_days
 
-        # ================= CALL ADMIN =================
+        # ================= PERFORM UPDATE =================
         msg = self.admin_utils.admin_update_section(
             section_id=self.section_id,
             doctor_id=doctor_id,

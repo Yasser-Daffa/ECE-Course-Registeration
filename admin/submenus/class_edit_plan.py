@@ -6,7 +6,7 @@ from PyQt6.QtWidgets import (
     QDialog,
 )
 
-# نخلي المشروع الأساسي في الـ sys.path
+# Add main project folder to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
 from app_ui.admin_ui.submenus_ui.ui_edit_course_to_plan_dialog import Ui_AddCourseDialog
@@ -16,11 +16,11 @@ from helper_files.shared_utilities import warning, info, error
 
 class EditCourseToPlanDialog(QDialog):
     """
-    Dialog لتعديل كورس داخل خطة:
-    - يستقبل القيم القديمة (program, course_code, level) من الجدول
-    - يعرضها في الواجهة
-    - عند Save:
-        يستدعي admin_update_course_to_plan (اللي جوّاه SQL UPDATE)
+    Dialog for editing a course inside a study plan:
+    - Receives the old values (program, course_code, level) from the table.
+    - Displays them in the UI.
+    - On Save:
+        Calls admin_update_course_to_plan (which performs an SQL UPDATE).
     """
 
     def __init__(self, admin_utils, old_program, old_course_code, old_level, parent=None):
@@ -31,49 +31,47 @@ class EditCourseToPlanDialog(QDialog):
 
         self.admin_utils = admin_utils
 
-        # نخزن القيم القديمة (نشيّل أي مسافات ونثبت الكيس)
+        # Store old values (strip whitespace & normalize case)
         self.old_program = (old_program or "").strip().upper()
         self.old_course_code = (old_course_code or "").strip().upper()
         self.old_level = old_level
 
-        # نعبّي الكومبوهات
+        # Populate combo boxes
         self.populate_courses_combo()
         self.populate_programs_combo()
 
-        # نختار القيم القديمة في الواجهة
+        # Preselect the old values in the UI
         self.preselect_old_values()
 
-        # زر الحفظ مبدئياً مقفول
+        # Save button initially disabled
         self.ui.buttonSave.setEnabled(False)
 
-        # ربط الأزرار
+        # Connect buttons
         self.ui.buttonSave.clicked.connect(self.on_save_clicked)
         self.ui.buttonCancel.clicked.connect(self.reject)
 
-        # فحص الحقول
+        # Validation triggers
         self.ui.comboBoxSelectCourse.currentIndexChanged.connect(self.check_all_fields_filled)
         self.ui.comboBoxSelectProgram.currentIndexChanged.connect(self.check_all_fields_filled)
         self.ui.spinBoxLevel.valueChanged.connect(self.check_all_fields_filled)
 
         self.check_all_fields_filled()
 
-    # ------------------------ تعبئة الكومبوهات ------------------------
+    # ------------------------ Populate combos ------------------------
 
     def populate_courses_combo(self):
-        """يعبّي قائمة الكورسات من جدول courses"""
+        """Fill the course list from the courses table."""
         cb = self.ui.comboBoxSelectCourse
         cb.clear()
         cb.addItem("Select a course...", None)
 
         rows = self.admin_utils.db.ListCourses()  # (code, name, credits)
         for code, name, credits in rows:
-            # اللي يبان للمستخدم:
-            display = f"{code} - {name}"
-            # اللي نخزّنه كـ data (هذا اللي نرسله للداتابيس):
-            cb.addItem(display, code.upper())
+            display = f"{code} - {name}"     # what the user sees
+            cb.addItem(display, code.upper())  # stored data is the code
 
     def populate_programs_combo(self):
-        """يعبّي البرامج بقائمة ثابتة"""
+        """Fill the program list using a fixed list of programs."""
         cb = self.ui.comboBoxSelectProgram
         cb.clear()
         cb.addItem("Select program...", None)
@@ -90,10 +88,11 @@ class EditCourseToPlanDialog(QDialog):
 
     def preselect_old_values(self):
         """
-        يحدد الكورس والبرنامج والـ level القديمة في الواجهة.
-        يعتمد على الـ data (مو النص المعروض).
+        Selects the old program, old course, and old level in the UI.
+        Matching is based on comboBox itemData (not display text).
         """
-        # 1) الكورس
+
+        # 1) Course
         cb_course = self.ui.comboBoxSelectCourse
         for i in range(cb_course.count()):
             data = cb_course.itemData(i)
@@ -101,7 +100,7 @@ class EditCourseToPlanDialog(QDialog):
                 cb_course.setCurrentIndex(i)
                 break
 
-        # 2) البرنامج
+        # 2) Program
         cb_prog = self.ui.comboBoxSelectProgram
         for i in range(cb_prog.count()):
             data = cb_prog.itemData(i)
@@ -109,26 +108,37 @@ class EditCourseToPlanDialog(QDialog):
                 cb_prog.setCurrentIndex(i)
                 break
 
-        # 3) المستوى
+        # 3) Level
         try:
             lvl = int(self.old_level)
         except (TypeError, ValueError):
             lvl = 1
         self.ui.spinBoxLevel.setValue(lvl)
 
-    # ------------------------ تفعيل زر الحفظ ------------------------
+    # ------------------------ Enable save button ------------------------
 
     def check_all_fields_filled(self):
+        """
+        Enables Save only if:
+        - Course is selected
+        - Program is selected
+        - Level >= 1
+        """
         course_ok = self.ui.comboBoxSelectCourse.currentIndex() > 0
         program_ok = self.ui.comboBoxSelectProgram.currentIndex() > 0
         level_ok = self.ui.spinBoxLevel.value() >= 1
 
         self.ui.buttonSave.setEnabled(course_ok and program_ok and level_ok)
 
-    # ------------------------ حدث زر الحفظ ------------------------
+    # ------------------------ Save button event ------------------------
 
     def on_save_clicked(self):
-        # 🧠 القيم الجديدة من الـ data (مو النص المعروض)
+        """
+        Reads new inputs and sends them to admin_update_course_to_plan.
+        Old values are stored in self.old_program / self.old_course_code / self.old_level.
+        """
+
+        # New values from data (not display text)
         new_course_code = self.ui.comboBoxSelectCourse.currentData()
         new_program = self.ui.comboBoxSelectProgram.currentData()
         new_level = self.ui.spinBoxLevel.value()
@@ -137,7 +147,7 @@ class EditCourseToPlanDialog(QDialog):
             error(self, "Please fill all required fields.")
             return
 
-        # نطبّعهم مثل القديم:
+        # Normalize
         new_course_code = str(new_course_code).strip().upper()
         new_program = str(new_program).strip().upper()
 
@@ -146,7 +156,7 @@ class EditCourseToPlanDialog(QDialog):
         except (TypeError, ValueError):
             old_level_int = new_level
 
-        # ننادي ميثود الأدمن اللي يسوي UPDATE
+        # Perform UPDATE via admin method
         try:
             msg = self.admin_utils.admin_update_course_to_plan(
                 old_program=self.old_program,
@@ -160,31 +170,29 @@ class EditCourseToPlanDialog(QDialog):
             error(self, f"Error while updating course in plan:\n{e}")
             return
 
-        # لو الداتابيس رجعت فشل → نظهرها كخطأ
+        # If DB returned a failure message
         if msg.startswith("✗") or "already" in msg.lower():
             error(self, msg)
             return
 
-        # نجاح ✅
+        # Success
         info(self, msg)
 
-        # نحدّث القيم القديمة عشان لو عدّل مرة ثانية
+        # Update stored old values (for future edits without closing dialog)
         self.old_program = new_program
         self.old_course_code = new_course_code
         self.old_level = new_level
 
-        # نقفل بعد تعديل ناجح
+        # Close dialog after successful update
         self.accept()
 
 
-# =============== MAIN للتجربة اليدوية ===============
+# =============== Standalone Test ===============
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
-    # مثال بسيط لو حاب تختبره لحاله
+    # Simple test example
     dlg = EditCourseToPlanDialog(admin, "COMP", "CPE101", 1)
     dlg.show()
 
     sys.exit(app.exec())
-
-
