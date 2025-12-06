@@ -13,6 +13,7 @@ class Ui_AllStudents(object):
     def setupUi(self, AllStudents):
         AllStudents.setObjectName("AllStudents")
         AllStudents.resize(1200, 809)
+        AllStudents.setWindowTitle("")
         AllStudents.setStyleSheet("background-color: #f5f7fa;")
         self.mainLayout = QtWidgets.QVBoxLayout(AllStudents)
         self.mainLayout.setContentsMargins(40, 40, 40, 20)
@@ -45,6 +46,7 @@ class Ui_AllStudents(object):
         self.filterFrame.setObjectName("filterFrame")
         self.filterLayout = QtWidgets.QHBoxLayout(self.filterFrame)
         self.filterLayout.setContentsMargins(25, 15, 25, 15)
+        self.filterLayout.setSpacing(15)
         self.filterLayout.setObjectName("filterLayout")
         self.lineEditSearch = QtWidgets.QLineEdit(parent=self.filterFrame)
         self.lineEditSearch.setMinimumSize(QtCore.QSize(300, 40))
@@ -70,6 +72,95 @@ class Ui_AllStudents(object):
 "")
         self.lineEditSearch.setObjectName("lineEditSearch")
         self.filterLayout.addWidget(self.lineEditSearch)
+        self.comboBoxSelectProgram = QtWidgets.QComboBox(parent=self.filterFrame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.comboBoxSelectProgram.sizePolicy().hasHeightForWidth())
+        self.comboBoxSelectProgram.setSizePolicy(sizePolicy)
+        self.comboBoxSelectProgram.setMinimumSize(QtCore.QSize(150, 40))
+        self.comboBoxSelectProgram.setMaximumSize(QtCore.QSize(200, 65))
+        self.comboBoxSelectProgram.setStyleSheet("/* ----------------- QComboBox Base ----------------- */\n"
+"QComboBox {\n"
+"    border: 2px solid #E0E0E0;          /* main border */\n"
+"    border-radius: 10px;\n"
+"    padding: 8px 10px;                   /* Matches QLineEdit padding */\n"
+"    background: rgba(250, 250, 250, 200);\n"
+"    font-size: 11pt;\n"
+"    color: #111111;\n"
+"}\n"
+"\n"
+"/* Focused state */\n"
+"QComboBox:focus {\n"
+"    border: 2px solid #667EEA; \n"
+"    background: rgba(250, 250, 250, 220);\n"
+"}\n"
+"\n"
+"/* ----------------- Drop-down Arrow ----------------- */\n"
+"QComboBox::drop-down {\n"
+"    subcontrol-origin: padding;\n"
+"    subcontrol-position: top right;\n"
+"    width: 30px; \n"
+"    border-left-width: 1px;\n"
+"    border-left-color: #E0E0E0;\n"
+"    border-left-style: solid;\n"
+"    border-top-right-radius: 12px;       /* rounder corners */\n"
+"    border-bottom-right-radius: 12px;    /* rounder corners */\n"
+"    background: transparent;\n"
+"}\n"
+"\n"
+"/* Remove ugly black border on hover/focus */\n"
+"QComboBox::drop-down:hover,\n"
+"QComboBox::drop-down:focus {\n"
+"    border-left-color: #667EEA;\n"
+"    background: transparent;\n"
+"    border: none;\n"
+"}\n"
+"\n"
+"/* Modern, visible arrow using simple chevron */\n"
+"QComboBox::down-arrow {\n"
+"    width: 10px;\n"
+"    height: 10px;\n"
+"    border: solid #667EEA;\n"
+"    border-width: 0 2px 2px 0;\n"
+"    margin-right: 6px;\n"
+"}\n"
+"\n"
+"/* ----------------- Dropdown Popup ----------------- */\n"
+"/* Dropdown Popup */\n"
+"QComboBox QAbstractItemView {\n"
+"    background-color: #fdfdfd;          /* slightly off-white */\n"
+"    border: 2px solid #E0E0E0;          /* subtle grey border */\n"
+"    border-radius: 8px;                  /* may not be perfect on Windows */\n"
+"    color: #111111;\n"
+"    font-size: 11pt;\n"
+"    padding: 5px;\n"
+"    selection-background-color: #667EEA;\n"
+"    selection-color: white;\n"
+"    outline: none;\n"
+"}\n"
+"\n"
+"/* Items hover/selection */\n"
+"QComboBox QAbstractItemView::item:hover {\n"
+"    background-color: rgba(102, 126, 234, 0.1);\n"
+"    color: #111111;\n"
+"}\n"
+"\n"
+"QComboBox QAbstractItemView::item:selected {\n"
+"    background-color: #667EEA;\n"
+"    color: white;\n"
+"}\n"
+"\n"
+"/* Error highlight for combo box */\n"
+"QComboBox[error=\"true\"] {\n"
+"    border: 2px solid #FF4A4A;\n"
+"}")
+        self.comboBoxSelectProgram.setObjectName("comboBoxSelectProgram")
+        self.comboBoxSelectProgram.addItem("")
+        self.comboBoxSelectProgram.addItem("")
+        self.comboBoxSelectProgram.addItem("")
+        self.comboBoxSelectProgram.addItem("")
+        self.filterLayout.addWidget(self.comboBoxSelectProgram)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.filterLayout.addItem(spacerItem1)
         self.buttonRefresh = QtWidgets.QPushButton(parent=self.filterFrame)
@@ -121,6 +212,32 @@ class Ui_AllStudents(object):
         self.tableHeaderLayout.addWidget(self.tableTitle)
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.tableHeaderLayout.addItem(spacerItem2)
+        self.buttonAddStudent_2 = QtWidgets.QPushButton(parent=self.tableHeader)
+        self.buttonAddStudent_2.setEnabled(True)
+        self.buttonAddStudent_2.setMinimumSize(QtCore.QSize(120, 40))
+        self.buttonAddStudent_2.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonAddStudent_2.setStyleSheet("QPushButton {\n"
+"    background-color: #f5576c;\n"
+"    color: #ffffff;\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    font-size: 14px;\n"
+"    font-weight: bold;\n"
+"    padding: 10px 20px;\n"
+"    transition: background-color 150ms;\n"
+"}\n"
+"QPushButton:hover {\n"
+"    background-color: #e5475c;\n"
+"}\n"
+"QPushButton:pressed {\n"
+"    background-color: #d43f52;\n"
+"}\n"
+"QPushButton:disabled {\n"
+"    background-color: #cccccc;  /* gray background for disabled */\n"
+"    color: #666666;             /* darker gray text */\n"
+"}")
+        self.buttonAddStudent_2.setObjectName("buttonAddStudent_2")
+        self.tableHeaderLayout.addWidget(self.buttonAddStudent_2)
         self.buttonAddStudent = QtWidgets.QPushButton(parent=self.tableHeader)
         self.buttonAddStudent.setEnabled(False)
         self.buttonAddStudent.setMinimumSize(QtCore.QSize(120, 40))
@@ -293,7 +410,8 @@ class Ui_AllStudents(object):
 "")
         self.tableAllStudents.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
         self.tableAllStudents.setAlternatingRowColors(True)
-        self.tableAllStudents.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.ContiguousSelection)
+        self.tableAllStudents.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.SingleSelection)
+        self.tableAllStudents.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
         self.tableAllStudents.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel)
         self.tableAllStudents.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel)
         self.tableAllStudents.setCornerButtonEnabled(True)
@@ -327,14 +445,19 @@ class Ui_AllStudents(object):
 
     def retranslateUi(self, AllStudents):
         _translate = QtCore.QCoreApplication.translate
-        AllStudents.setWindowTitle(_translate("AllStudents", "Pending Requests"))
         self.labelTitle.setText(_translate("AllStudents", "All Students"))
         self.labelTotalStudentsCount.setText(_translate("AllStudents", "200 Total Students"))
         self.lineEditSearch.setPlaceholderText(_translate("AllStudents", "🔍  Search by student name or ID..."))
+        self.comboBoxSelectProgram.setPlaceholderText(_translate("AllStudents", "Filter Program..."))
+        self.comboBoxSelectProgram.setItemText(0, _translate("AllStudents", "Computer"))
+        self.comboBoxSelectProgram.setItemText(1, _translate("AllStudents", "Communication"))
+        self.comboBoxSelectProgram.setItemText(2, _translate("AllStudents", "Power"))
+        self.comboBoxSelectProgram.setItemText(3, _translate("AllStudents", "Biomedical"))
         self.buttonRefresh.setText(_translate("AllStudents", "🔄 Refresh"))
         self.tableTitle.setText(_translate("AllStudents", "Registered Students"))
+        self.buttonAddStudent_2.setText(_translate("AllStudents", "📝 Add Grades"))
         self.buttonAddStudent.setText(_translate("AllStudents", "➕ Add New Student (WIP)"))
-        self.buttonRemoveSelected.setText(_translate("AllStudents", "❌ Remove Selected"))
+        self.buttonRemoveSelected.setText(_translate("AllStudents", "❌ Remove Student"))
         item = self.tableAllStudents.horizontalHeaderItem(0)
         item.setText(_translate("AllStudents", "#"))
         item = self.tableAllStudents.horizontalHeaderItem(1)
