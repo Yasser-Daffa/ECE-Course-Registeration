@@ -11,13 +11,15 @@ from app_ui.admin_ui.submenus_ui.ui_all_students import Ui_AllStudents
 from helper_files.shared_utilities import BaseLoginForm
 from database_files.initialize_database import initialize_database
 from database_files.class_database_uitlities import DatabaseUtilities
+from admin.class_admin_utilities import AdminUtilities   # ← جديد
 
 
 class AllStudentsController:
 
-    def __init__(self, ui: Ui_AllStudents, db: DatabaseUtilities):
+    def __init__(self, ui: Ui_AllStudents, admin_utils: AdminUtilities):
         self.ui = ui
-        self.db = db
+        self.admin = admin_utils                 # ← نمسك الأدمن
+        self.db = admin_utils.db                # ← لو احتجنا دوال DB الجاهزة مثل list_users
         self.students_data = []
         self.blf = BaseLoginForm()
 
@@ -104,7 +106,9 @@ class AllStudentsController:
                 "QPushButton {background-color:#f8d7da; color:#721c24; border-radius:5px; padding:4px;} "
                 "QPushButton:hover {background-color:#c82333; color:white;}"
             )
-            btnRemove.clicked.connect(functools.partial(self.remove_student, student["user_id"]))
+            btnRemove.clicked.connect(
+                functools.partial(self.remove_student, student["user_id"])
+            )
 
             container = QWidget()
             layout = QHBoxLayout(container)
@@ -138,7 +142,9 @@ class AllStudentsController:
         text = self.ui.lineEditSearch.text().lower()
         filtered = [
             s for s in self.students_data
-            if text in s["name"].lower() or text in str(s["user_id"])
+            if text in s["name"].lower()
+            or text in str(s["user_id"])
+            or text in s["program"].lower()   # ← هنا أضفنا البحث بالـ Program
         ]
         self.fill_table(filtered)
 
@@ -149,8 +155,8 @@ class AllStudentsController:
             f"Are you sure you want to remove student ID {user_id}?"
         )
         if reply == QMessageBox.StandardButton.Yes:
-            self.db.cur.execute("DELETE FROM users WHERE user_id=?", (user_id,))
-            self.db.commit()
+            msg = self.admin.admin_delete_student(user_id)   # ← استعمال AdminUtilities
+            print(msg)
             self.load_students()
 
     # ----------------- REMOVE SELECTED STUDENTS -----------------
@@ -161,6 +167,8 @@ class AllStudentsController:
 
     def remove_selected_students(self):
         selected_ids = self.get_selected_user_ids()
+
+        # لو مافي صفوف محددة → اعتبرها "Remove All"
         if not selected_ids:
             reply = self.blf.show_confirmation(
                 "Remove All Students",
@@ -168,11 +176,13 @@ class AllStudentsController:
             )
             if reply != QMessageBox.StandardButton.Yes:
                 return
-            self.db.cur.execute("DELETE FROM users")
-            self.db.commit()
+
+            msg = self.admin.admin_delete_all_students()   # ← حذف الكل عن طريق الأدمن
+            print(msg)
             self.load_students()
             return
 
+        # لو فيه صفوف محددة
         reply = self.blf.show_confirmation(
             "Remove Selected Students",
             f"Are you sure you want to remove {len(selected_ids)} selected student(s)?"
@@ -181,12 +191,11 @@ class AllStudentsController:
             return
 
         for uid in selected_ids:
-            self.db.cur.execute("DELETE FROM users WHERE user_id=?", (uid,))
-        self.db.commit()
+            self.admin.admin_delete_student(uid)   # ← حذف فردي عن طريق الأدمن
+
         self.load_students()
 
-    
-# ----------------- UPDATE REMOVE BUTTON TEXT -----------------
+    # ----------------- UPDATE REMOVE BUTTON TEXT -----------------
     def update_remove_button_text(self):
         selected_count = len(self.ui.tableAllStudents.selectionModel().selectedRows())
         if selected_count == 0:
@@ -201,7 +210,7 @@ class AllStudentsController:
         self.ui.labelTotalStudentsCount.setText(f"Total Students: {len(self.students_data)}")
 
 
-# ---------------- MAIN APP ----------------
+# ---------------- MAIN APP (للاختبار فقط) ----------------
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
 
@@ -209,12 +218,13 @@ if __name__ == "__main__":
     DB_PATH = os.path.join(BASE_DIR, "../../university_database.db")
     con, cur = initialize_database(DB_PATH)
     db = DatabaseUtilities(con, cur)
+    admin_utils = AdminUtilities(db)   # ← نجهز كائن الأدمن
 
     window = QWidget()
     ui = Ui_AllStudents()
     ui.setupUi(window)
 
-    controller = AllStudentsController(ui, db)
+    controller = AllStudentsController(ui, admin_utils)
 
     window.show()
     sys.exit(app.exec())

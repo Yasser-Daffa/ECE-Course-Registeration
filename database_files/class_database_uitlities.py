@@ -753,6 +753,15 @@ class DatabaseUtilities:
         self.con.commit()
         return timestamp
 
+    def delete_all_users(self):
+        """
+        حذف جميع المستخدمين من جدول users.
+        (استعملها بحذر)
+        """
+        self.cur.execute("DELETE FROM users")
+        self.commit()
+
+
 
 
 

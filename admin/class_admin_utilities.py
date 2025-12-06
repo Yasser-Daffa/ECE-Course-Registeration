@@ -359,6 +359,20 @@ def admin_show_plans(self):
         # عرض المادة
         print(f"  Level {level}: {code} - {name} ")
 
+    def admin_delete_student(self, user_id: int) -> str:
+        """
+        حذف طالب (أو مستخدم) واحد نهائيًا من النظام.
+        """
+        self.db.delete_user(user_id)
+        return f"Student {user_id} removed."
+
+    def admin_delete_all_students(self) -> str:
+        """
+        حذف جميع الطلاب/المستخدمين من جدول users.
+        """
+        self.db.delete_all_users()
+        return "All students removed."
+
 
 
 if __name__ == "__main__":
