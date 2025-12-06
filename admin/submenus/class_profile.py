@@ -16,11 +16,11 @@ from admin.class_admin_utilities import db
 class ProfileWidget(QWidget):
     """
     Simple Profile Widget:
-    - يحمّل Ui_Profile
-    - يعرض بيانات الأدمن (name, email, department ثابت)
-    - يسمح بتعديل الإيميل فقط (الاسم قراءة فقط)
-    - يفعّل زر Save / Cancel فقط إذا تغيّر الإيميل
-    - يحدّث الإيميل في الداتابيس عن طريق update_user()
+    - Loads Ui_Profile
+    - Displays admin data (name, email, department is fixed)
+    - Allows editing email only (name is read-only)
+    - Enables Save only when email is changed
+    - Updates email in the database using update_user()
     """
 
     def __init__(self, admin_user_data, parent=None):
@@ -38,63 +38,62 @@ class ProfileWidget(QWidget):
         self.admin_id = admin_user_data[0]
         self.name = admin_user_data[1]
         self.email = admin_user_data[2]
-        self.program = admin_user_data[3]   # مو مستخدم حاليًا بس نخليه موجود
+        self.program = admin_user_data[3]   # Currently unused, but kept for future use
 
-        # هنحفظ القيم الأصلية عشان نقارن
+        # Store original values for change detection
         self._original_name = self.name
         self._original_email = self.email
 
         # ----------------- Load data into UI -----------------
         self.load_initial_data()
 
-        # نخلي الاسم قراءة فقط (ما يقدر يعدله)
+        # Name is read-only
         self.ui.lineEditName.setReadOnly(True)
-        # لو تبغاه يبان معطّل بالكامل:
+        # To disable it visually as well:
         # self.ui.lineEditName.setEnabled(False)
 
         # ----------------- Connect buttons -----------------
         self.ui.buttonEditEmail.clicked.connect(self.save_changes)
 
-        # زر Edit ما نستخدمه الآن
+        # Hide unused Edit button if present in UI file
         if hasattr(self.ui, "buttonEdit"):
             self.ui.buttonEdit.setEnabled(False)
             self.ui.buttonEdit.hide()
 
-        # ----------------- Track changes on fields -----------------
-        # نتابع الإيميل فقط، لأن الاسم ثابت
+        # ----------------- Track changes in fields -----------------
+        # Only email is editable, so only track email field
         self.ui.lineEditEmail.textChanged.connect(self.on_fields_changed)
 
-        # في البداية ما في تغييرات → نعطّل Save / Cancel
+        # At start, no changes → disable Save
         self.set_dirty(False)
 
     # ---------------------------------------------------------
     # INITIAL DATA
     # ---------------------------------------------------------
     def load_initial_data(self):
-        """يحط بيانات الأدمن في الحقول."""
+        """Places admin data in the UI fields."""
         self.ui.lineEditName.setText(self.name)
         self.ui.lineEditEmail.setText(self.email)
 
-        # Department ثابت
+        # Static/fixed department label
         self.ui.lineEditDepartment.setText("Electrical and Computer Engineering")
 
     # ---------------------------------------------------------
-    # DIRTY STATE (هل فيه تغييرات؟)
+    # DIRTY STATE (tracks whether there are unsaved changes)
     # ---------------------------------------------------------
     def set_dirty(self, dirty: bool):
         """
-        dirty = True  → فعّل Save + Cancel
-        dirty = False → عطّل Save + Cancel
+        dirty = True  → enable Save
+        dirty = False → disable Save
         """
         self.ui.buttonEditEmail.setEnabled(dirty)
 
     def on_fields_changed(self):
         """
-        ينادي تلقائيًا لما يتغيّر الإيميل.
-        إذا الإيميل الجديد يختلف عن الأصلي → نفعّل Save/Cancel.
+        Triggered automatically whenever the email field changes.
+        If new email ≠ old email → enable Save.
         """
         current_email = self.ui.lineEditEmail.text().strip()
-
         dirty = (current_email != self._original_email)
         self.set_dirty(dirty)
 
@@ -102,9 +101,10 @@ class ProfileWidget(QWidget):
     # SAVE CHANGES (email only)
     # ---------------------------------------------------------
     def save_changes(self):
+        """Validates and updates email."""
         new_email = self.ui.lineEditEmail.text().strip()
 
-        # التحقق من أن الإيميل مو فاضي
+        # Email cannot be empty
         if not new_email:
             warning(self, "Email cannot be empty.")
             return
@@ -115,14 +115,14 @@ class ProfileWidget(QWidget):
             warning(self, "Invalid Email")
             return
 
-        # نعدّل فقط لو الإيميل تغيّر فعلاً
+        # Only update if email has changed
         email_to_update = new_email if new_email != self._original_email else None
 
         if email_to_update is None:
             warning(self, "No Changes")
             return
 
-        # نحدّث الإيميل فقط، الاسم ما نلمسه
+        # Update email only; name remains unchanged
         result = self.db.update_user(
             self.admin_id,
             email=email_to_update
@@ -131,10 +131,11 @@ class ProfileWidget(QWidget):
         if "successfully" in result.lower():
             info(self, "Profile updated successfully.")
 
-            # تحديث القيم الداخلية
+            # Update stored internal values
             self.email = email_to_update
             self._original_email = email_to_update
 
+            # Disable Save again
             self.set_dirty(False)
         else:
             error(self, "Error")
@@ -144,8 +145,8 @@ class ProfileWidget(QWidget):
     # ---------------------------------------------------------
     def cancel_edit(self):
         """
-        يرجّع الإيميل للقيمة الأصلية ويطفي Save/Cancel.
-        الاسم أصلاً ثابت وما يتغيّر.
+        Restores the email field back to original value.
+        Name is fixed and does not change.
         """
         self.ui.lineEditEmail.setText(self._original_email)
         self.set_dirty(False)
