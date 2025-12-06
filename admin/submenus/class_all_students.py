@@ -11,36 +11,45 @@ from app_ui.admin_ui.submenus_ui.ui_all_students import Ui_AllStudents
 from helper_files.shared_utilities import BaseLoginForm
 from database_files.initialize_database import initialize_database
 from database_files.class_database_uitlities import DatabaseUtilities
-from admin.class_admin_utilities import AdminUtilities   # ← جديد
+from admin.class_admin_utilities import AdminUtilities
 
 
 class AllStudentsController:
 
     def __init__(self, ui: Ui_AllStudents, admin_utils: AdminUtilities):
         self.ui = ui
-        self.admin = admin_utils                 # ← نمسك الأدمن
-        self.db = admin_utils.db                # ← لو احتجنا دوال DB الجاهزة مثل list_users
-        self.students_data = []
+        self.admin = admin_utils          # كائن الأدمن
+        self.db = admin_utils.db          # نفس الـ DatabaseUtilities
+        self.students_data = []           # كل الطلاب (active فقط)
         self.blf = BaseLoginForm()
 
-        # --- Connect UI signals ---
+        # --- ربط إشارات الواجهة ---
         self.connect_ui_signals()
 
-        # --- Load initial table ---
+        # --- تحميل أولي ---
         self.load_students()
         self.format_table()
 
     # ----------------- UI SIGNAL CONNECTIONS -----------------
     def connect_ui_signals(self):
-        self.ui.lineEditSearch.textChanged.connect(self.search_students)
+        # البحث (name / id / email / program)
+        self.ui.lineEditSearch.textChanged.connect(self.search_and_filter)
+
+        # فلتر البرنامج من الكومبو بوكس
+        self.ui.comboBoxSelectProgram.currentIndexChanged.connect(self.search_and_filter)
+
+        # زر حذف المحددين
         self.ui.buttonRemoveSelected.clicked.connect(self.remove_selected_students)
+
+        # زر التحديث
         self.ui.buttonRefresh.clicked.connect(self.handle_refresh)
 
-        # Enable/disable Remove Selected based on row selection
+        # تفعيل/تعطيل زر Remove Selected حسب الاختيار
         self.ui.tableAllStudents.selectionModel().selectionChanged.connect(
             lambda: self.update_remove_button_text()
         )
 
+        # أول مرة نعمل Refresh أنيميشن + تحميل
         self.handle_refresh()
 
     # ----------------- LOAD / POPULATE TABLE -----------------
@@ -49,6 +58,7 @@ class AllStudentsController:
         self.ui.tableAllStudents.setRowCount(0)
 
         rows = self.db.list_users()
+        # row = (user_id, name, email, program, state, account_status, password_h)
         active_rows = [row for row in rows if row[5] == "active"]
 
         for i, row in enumerate(active_rows, start=1):
@@ -57,12 +67,13 @@ class AllStudentsController:
                 "user_id": row[0],
                 "name": row[1],
                 "email": row[2],
-                "program": row[3],
+                "program": row[3],         # ممكن تكون None
                 "state": row[4],
-                "account_status": row[5]
+                "account_status": row[5],
             }
             self.students_data.append(student)
 
+        # عرض كامل
         self.fill_table(self.students_data)
         self.update_total_counter()
         self.update_remove_button_text()
@@ -76,29 +87,51 @@ class AllStudentsController:
             on_finished=self.load_students
         )
 
+    def format_table(self):
+        table = self.ui.tableAllStudents
+        header = table.horizontalHeader()
+        header.setStretchLastSection(True)
+        table.verticalHeader().setDefaultSectionSize(80)
+        table.setColumnWidth(0, 60)
+        table.setColumnWidth(1, 120)
+        table.setColumnWidth(2, 220)
+        table.setColumnWidth(3, 260)
+        table.setColumnWidth(4, 100)
+        table.setColumnWidth(5, 120)
+        table.setColumnWidth(6, 120)
+        table.setColumnWidth(7, 80)
+
+
     # ----------------- POPULATE TABLE -----------------
     def fill_table(self, students):
         table = self.ui.tableAllStudents
         table.setRowCount(len(students))
 
         for row_idx, student in enumerate(students):
-            # Row number
+            # 0: Row number
             item_number = QTableWidgetItem(str(row_idx + 1))
             item_number.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
             table.setItem(row_idx, 0, item_number)
 
-            # Student ID
+            # 1: Student ID
             item_id = QTableWidgetItem(str(student["user_id"]))
             item_id.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
             table.setItem(row_idx, 1, item_id)
 
-            # Name, Email, Program, State
-            table.setItem(row_idx, 2, QTableWidgetItem(student["name"]))
-            table.setItem(row_idx, 3, QTableWidgetItem(student["email"]))
-            table.setItem(row_idx, 4, QTableWidgetItem(student["program"]))
-            table.setItem(row_idx, 5, QTableWidgetItem(student["state"]))
+            # 2: Name
+            table.setItem(row_idx, 2, QTableWidgetItem(student["name"] or ""))
 
-            # Remove Student button
+            # 3: Email
+            table.setItem(row_idx, 3, QTableWidgetItem(student["email"] or ""))
+
+            # 4: Program
+            prog_text = student["program"] or ""   # <-- مهم عشان ما يكرش لو None
+            table.setItem(row_idx, 4, QTableWidgetItem(prog_text))
+
+            # 5: State
+            table.setItem(row_idx, 5, QTableWidgetItem(student["state"] or ""))
+
+            # 6: Remove Student button
             btnRemove = QPushButton("Remove")
             btnRemove.setMinimumWidth(70)
             btnRemove.setMinimumHeight(30)
@@ -118,34 +151,57 @@ class AllStudentsController:
             table.setCellWidget(row_idx, 6, container)
 
     # ----------------- TABLE FORMATTING -----------------
-    def format_table(self):
-        table = self.ui.tableAllStudents
-        headers = ["#", "Student ID", "Name", "Email", "Program", "State", "Actions"]
-        table.setColumnCount(len(headers))
-        table.setHorizontalHeaderLabels(headers)
+    #
+    # ----------------- SEARCH + PROGRAM FILTER -----------------
+    def search_and_filter(self):
+        """
+        يطبق فلتر النص + فلتر البرنامج معاً.
+        - النص: name / id / email / program
+        - البرنامج: من الكومبوبوكس (All / Computer / Communication / Power / Biomedical)
+        """
+        text = self.ui.lineEditSearch.text().strip().lower()
 
-        header = table.horizontalHeader()
-        for col in range(len(headers)):
-            header.setSectionResizeMode(col, QHeaderView.ResizeMode.Interactive)
+        # قيمة الكومبو بوكس
+        program_filter = self.ui.comboBoxSelectProgram.currentText()
 
-        table.verticalHeader().setDefaultSectionSize(100)
-        table.setColumnWidth(0, 60)   # #
-        table.setColumnWidth(1, 120)  # Student ID
+        # نحدد كود البرنامج اللي نفلتر عليه
+        program_map = {
+            "Computer": "COMP",
+            "Communication": "COMM",
+            "Power": "PWM",
+            "Biomedical": "BIO",
+        }
 
-        # Row selection
-        table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
-        table.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.MultiSelection)
-        table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
+        # فلتر البرنامج (لو مو "All Programs")
+        def match_program(s):
+            if program_filter == "All Programs":
+                return True  # لا نفلتر بالبروجرام
+            code = program_map.get(program_filter)
+            # في الداتابيس نخزن الكود مثل COMP / COMM / ...
+            return (s["program"] or "") == code
 
-    # ----------------- SEARCH -----------------
-    def search_students(self):
-        text = self.ui.lineEditSearch.text().lower()
+        # فلتر النص
+        def match_text(s):
+            if not text:
+                return True
+
+            name = (s["name"] or "").lower()
+            email = (s["email"] or "").lower()
+            program_str = (s["program"] or "").lower()
+            user_id_str = str(s["user_id"])
+
+            return (
+                text in name
+                or text in user_id_str
+                or text in email
+                or text in program_str
+            )
+
         filtered = [
             s for s in self.students_data
-            if text in s["name"].lower()
-            or text in str(s["user_id"])
-            or text in s["program"].lower()   # ← هنا أضفنا البحث بالـ Program
+            if match_program(s) and match_text(s)
         ]
+
         self.fill_table(filtered)
 
     # ----------------- REMOVE INDIVIDUAL STUDENT -----------------
@@ -155,7 +211,7 @@ class AllStudentsController:
             f"Are you sure you want to remove student ID {user_id}?"
         )
         if reply == QMessageBox.StandardButton.Yes:
-            msg = self.admin.admin_delete_student(user_id)   # ← استعمال AdminUtilities
+            msg = self.admin.admin_delete_student(user_id)
             print(msg)
             self.load_students()
 
@@ -163,7 +219,16 @@ class AllStudentsController:
     def get_selected_user_ids(self):
         table = self.ui.tableAllStudents
         selected_rows = table.selectionModel().selectedRows()
-        return [int(table.item(idx.row(), 1).text()) for idx in selected_rows]  # column 1 = Student ID
+        ids = []
+        for idx in selected_rows:
+            item = table.item(idx.row(), 1)  # عمود الـ ID
+            if item:
+                try:
+                    ids.append(int(item.text()))
+                except ValueError:
+                    # لو فيه كلام مو رقم، نتجاهله بس ما نكرش
+                    continue
+        return ids
 
     def remove_selected_students(self):
         selected_ids = self.get_selected_user_ids()
@@ -177,7 +242,7 @@ class AllStudentsController:
             if reply != QMessageBox.StandardButton.Yes:
                 return
 
-            msg = self.admin.admin_delete_all_students()   # ← حذف الكل عن طريق الأدمن
+            msg = self.admin.admin_delete_all_students()
             print(msg)
             self.load_students()
             return
@@ -191,7 +256,7 @@ class AllStudentsController:
             return
 
         for uid in selected_ids:
-            self.admin.admin_delete_student(uid)   # ← حذف فردي عن طريق الأدمن
+            self.admin.admin_delete_student(uid)
 
         self.load_students()
 
@@ -218,7 +283,7 @@ if __name__ == "__main__":
     DB_PATH = os.path.join(BASE_DIR, "../../university_database.db")
     con, cur = initialize_database(DB_PATH)
     db = DatabaseUtilities(con, cur)
-    admin_utils = AdminUtilities(db)   # ← نجهز كائن الأدمن
+    admin_utils = AdminUtilities(db)
 
     window = QWidget()
     ui = Ui_AllStudents()
