@@ -9,7 +9,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 
 from app_ui.admin_ui.submenus_ui.ui_pending_requests import Ui_PendingRequestsWidget
-from helper_files.shared_utilities import BaseLoginForm
+from helper_files.shared_utilities import BaseLoginForm, EmailSender
 from admin.class_admin_utilities import admin  # نستخدم كائن الأدمن الجاهز
 
 
@@ -26,6 +26,7 @@ class PendingRequestsController:
         self.students_data = []
         self.animate = BaseLoginForm.animate_label_with_dots
         self.blf = BaseLoginForm()
+        self.es = EmailSender()
 
         # --- Connect UI signals ---
         self.connect_ui_signals()
@@ -241,6 +242,7 @@ class PendingRequestsController:
 
         for uid in selected_ids:
             self.admin.admin_reject_student(uid)
+            # self.es.send_email()
         self.load_pending_students()
 
     # ================== UPDATE BUTTON TEXT BASED ON CHECKBOXES ==================

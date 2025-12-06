@@ -195,9 +195,27 @@ class RegisterCoursesWidget(QWidget):
         Enable or disable the View Sections button based on:
         - whether rows are selected
         - ALL selected courses must be eligible (prereqs met)
+        - global registration lock (if closed, button is always disabled)
         """
         table = self.ui.tableAllCourses
         selected_rows = table.selectionModel().selectedRows()
+
+        # Global registration lock: if closed, keep button disabled regardless of selection
+        try:
+            if not self.student_utils.db.is_registration_open():
+                self.ui.buttonViewSections.setEnabled(False)
+                self.ui.buttonViewSections.setToolTip(
+                    "Course registration period is currently closed."
+                )
+                return
+            else:
+                # Clear tooltip when registration is open
+                self.ui.buttonViewSections.setToolTip(
+                    "View available sections for the selected courses."
+                )
+        except Exception as e:
+            # Do not crash the UI if any error happens; just log and continue
+            print(f"[WARN] is_registration_open() failed: {e}")
 
         if not selected_rows:
             # No selection -> button disabled
@@ -206,16 +224,25 @@ class RegisterCoursesWidget(QWidget):
 
         # Check prerequisite eligibility for EVERY selected course
         for row_index in selected_rows:
-            code = table.item(row_index.row(), 1).text()
-            course = next((c for c in self.all_courses if c["course_code"] == code), None)
+            code_item = table.item(row_index.row(), 1)
+            if not code_item:
+                self.ui.buttonViewSections.setEnabled(False)
+                return
 
-            # If any selected course CANNOT be registered → disable button
+            code = code_item.text()
+            course = next(
+                (c for c in self.all_courses if c["course_code"] == code),
+                None
+            )
+
+            # If any selected course CANNOT be registered -> disable button
             if not course or not course["can_register"]:
                 self.ui.buttonViewSections.setEnabled(False)
                 return
 
-        # All selected courses are allowed
+        # All selected courses are allowed and registration is open
         self.ui.buttonViewSections.setEnabled(True)
+
 
     # ============================
     # VIEW SECTIONS FOR SELECTED COURSES

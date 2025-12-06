@@ -59,10 +59,30 @@ class CurrentScheduleWidget(QWidget):
         self.ui.buttonRemoveSelected.setEnabled(False)
 
     def on_selection_changed(self):
-        """Enable/disable Remove button based on row selection."""
+        """Enable/disable Remove button based on row selection and global registration lock."""
         table = self.ui.tableCourses
         selected = table.selectionModel().selectedRows()
+
+        # If global registration is closed, always disable the button
+        try:
+            if not self.student_utils.db.is_registration_open():
+                self.ui.buttonRemoveSelected.setEnabled(False)
+                self.ui.buttonRemoveSelected.setToolTip(
+                    "Course add/drop period is currently closed."
+                )
+                return
+            else:
+                # Clear tooltip when registration is open
+                self.ui.buttonRemoveSelected.setToolTip(
+                    "Remove the selected registered sections from the student's schedule."
+                )
+        except Exception as e:
+            # Do not crash if anything goes wrong with the check
+            print(f"[WARN] is_registration_open() failed: {e}")
+
+        # Normal behavior: enabled only when at least one row is selected
         self.ui.buttonRemoveSelected.setEnabled(bool(selected))
+
 
     def remove_selected_courses(self):
         """Remove selected courses from database and table."""

@@ -359,8 +359,9 @@ class ManageSectionsWidget(QWidget):
         if dlg.exec():
             self.load_sections()
 
-    # ---------------- Open/Close all sections ----------------
+    # ---------------- Open/Close all sections AND COURSE REGISTRATIONS/DELETION ----------------
     def on_open_all_clicked(self):
+        """Set all loaded sections to OPEN and enable global registration."""
         if not self._all_rows_cache:
             QMessageBox.information(self, "Info", "No sections available.")
             return
@@ -372,15 +373,24 @@ class ManageSectionsWidget(QWidget):
         if reply != QMessageBox.StandardButton.Yes:
             return
 
+        # Update each section state
         for r in self._all_rows_cache:
             self.admin_utils.admin_update_section(
                 section_id=r["section_id"],
                 state="open"
             )
 
+        # Also set the global registration flag in the database
+        try:
+            self.admin_utils.db.set_registration_open(True)
+        except Exception as e:
+            # Do not crash the UI if anything goes wrong; just log to console
+            print(f"[WARN] set_registration_open(True) failed: {e}")
+
         self.load_sections()
 
     def on_close_all_clicked(self):
+        """Set all loaded sections to CLOSED and disable global registration."""
         if not self._all_rows_cache:
             QMessageBox.information(self, "Info", "No sections available.")
             return
@@ -392,11 +402,18 @@ class ManageSectionsWidget(QWidget):
         if reply != QMessageBox.StandardButton.Yes:
             return
 
+        # Update each section state
         for r in self._all_rows_cache:
             self.admin_utils.admin_update_section(
                 section_id=r["section_id"],
                 state="closed"
             )
+
+        # Also set the global registration flag in the database
+        try:
+            self.admin_utils.db.set_registration_open(False)
+        except Exception as e:
+            print(f"[WARN] set_registration_open(False) failed: {e}")
 
         self.load_sections()
 

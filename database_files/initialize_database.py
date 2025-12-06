@@ -8,6 +8,14 @@ def initialize_database(db_path="../university_database.db"):
 
     cur.execute("pragma foreign_keys = ON;")
 
+    # Global settings table (key/value store)
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS settings (
+        key   TEXT PRIMARY KEY,
+        value TEXT NOT NULL
+    )
+    """)
+
     # Courses table for all courses across all programs
     cur.execute("""
     create table if not exists courses(

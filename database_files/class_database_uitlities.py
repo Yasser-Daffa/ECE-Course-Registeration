@@ -666,6 +666,56 @@ class DatabaseUtilities:
             print(f"[ERROR] remove_student_registration failed: {e}")
             return False
 
+    # ---------------------------------------------------------
+    # Global settings / registration lock
+    # ---------------------------------------------------------
+    def get_setting(self, key: str, default: str | None = None) -> str | None:
+        """
+        Return the value for a setting key from the settings table.
+        If the key does not exist or an error occurs, return `default`.
+        """
+        try:
+            self.cur.execute("SELECT value FROM settings WHERE key = ?", (key,))
+            row = self.cur.fetchone()
+            if row:
+                return row[0]
+            return default
+        except Exception as e:
+            print(f"[ERROR] get_setting({key!r}) failed: {e}")
+            return default
+
+    def set_setting(self, key: str, value: str) -> None:
+        """
+        Insert or update a setting key/value.
+        """
+        try:
+            self.cur.execute(
+                """
+                INSERT INTO settings(key, value) VALUES(?, ?)
+                ON CONFLICT(key) DO UPDATE SET value = excluded.value
+                """,
+                (key, value),
+            )
+            self.con.commit()
+        except Exception as e:
+            print(f"[ERROR] set_setting({key!r}) failed: {e}")
+
+    def is_registration_open(self) -> bool:
+        """
+        Global registration flag.
+        Returns True if registration is open, False otherwise.
+        Default is True when the key is missing.
+        """
+        val = self.get_setting("registration_open", default="1")
+        return str(val) == "1"
+
+    def set_registration_open(self, is_open: bool) -> None:
+        """
+        Set the global registration flag.
+        is_open = True  -> students can register / drop.
+        is_open = False -> all registration / deletion must be blocked.
+        """
+        self.set_setting("registration_open", "1" if is_open else "0")
 
     # ================= PENDING USERS (INACTIVE ACCOUNTS) =================
     def list_inactive_users(self):
@@ -680,12 +730,6 @@ class DatabaseUtilities:
         """)
         return self.cur.fetchall()
 
-    def delete_user(self, user_id: int):
-        """
-        حذف مستخدم واحد.
-        """
-        self.cur.execute("DELETE FROM users WHERE user_id = ?", (user_id,))
-        self.commit()
 
     def approve_all_inactive_users(self):
         """
@@ -778,6 +822,8 @@ class DatabaseUtilities:
         self.con.commit()
         return timestamp
 
+
+    #---------------- USER DELETION ---------------
     def delete_all_users(self):
         """
         حذف جميع المستخدمين من جدول users.
@@ -786,6 +832,12 @@ class DatabaseUtilities:
         self.cur.execute("DELETE FROM users")
         self.commit()
 
+    def delete_user(self, user_id: int):
+        """
+        Deletes one user only
+        """
+        self.cur.execute("DELETE FROM users WHERE user_id = ?", (user_id,))
+        self.commit()
 
 
 
