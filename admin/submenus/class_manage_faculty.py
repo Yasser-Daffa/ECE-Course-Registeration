@@ -152,7 +152,7 @@ class ManageFacultyWidget(QWidget):
     def remove_selected_admins(self):
         ids = self.get_selected_admin_ids()
         if not ids:
-            warning("Nothing Selected", "No admins selected.")
+            warning(self, "No admins selected.")
             return
 
         reply = self.blf.show_confirmation(
@@ -165,7 +165,7 @@ class ManageFacultyWidget(QWidget):
         for uid in ids:
             self.db.delete_user(uid)
 
-        info("Success", f"Removed {len(ids)} admin accounts.")
+        info(self, f"Removed {len(ids)} admin accounts.")
         self.load_admins()
 
     # -------------------------------------------------------------
