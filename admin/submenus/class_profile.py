@@ -4,26 +4,23 @@ import os
 import sys
 
 from PyQt6.QtWidgets import QWidget
-from app_ui.admin_ui.submenus_ui.ui_profile import Ui_Profile
+from PyQt6.QtCore import Qt
 
+from app_ui.admin_ui.submenus_ui.ui_profile import Ui_Profile
 from helper_files.shared_utilities import info, warning, error
-from helper_files.validators import validate_email, hash_password
+from helper_files.validators import validate_email
 
 from admin.class_admin_utilities import db
 
 
 class ProfileWidget(QWidget):
     """
-    نسخة مبسّطة من صفحة البروفايل:
-
-    - تعرض بيانات الأدمن (الاسم + الإيميل).
-    - زر Edit:
-        يفتح حقل الإيميل للتعديل فقط.
-    - زر Save:
-        يتحقق من الإيميل ثم يحفظه في قاعدة البيانات.
-    - زر Cancel:
-        يرجّع القيم القديمة ويقفل التعديل.
-    - زر Change Password: (نخليه مثل ما هو مستقبلاً لو حبيت تربطه)
+    Simple Profile Widget:
+    - يحمّل Ui_Profile
+    - يعرض بيانات الأدمن (name, email, department ثابت)
+    - يسمح بتعديل الإيميل فقط (الاسم قراءة فقط)
+    - يفعّل زر Save / Cancel فقط إذا تغيّر الإيميل
+    - يحدّث الإيميل في الداتابيس عن طريق update_user()
     """
 
     def __init__(self, admin_user_data, parent=None):
@@ -32,133 +29,123 @@ class ProfileWidget(QWidget):
         """
         super().__init__(parent)
 
-        # ---------- UI ----------
+        # ----------------- Setup UI -----------------
         self.ui = Ui_Profile()
         self.ui.setupUi(self)
 
-        # ---------- بيانات المستخدم ----------
+        # ----------------- Store DB and user info -----------------
         self.db = db
         self.admin_id = admin_user_data[0]
         self.name = admin_user_data[1]
         self.email = admin_user_data[2]
-        self.program = admin_user_data[3]  # مو مهمة للأدمن حاليًا
+        self.program = admin_user_data[3]   # مو مستخدم حاليًا بس نخليه موجود
 
-        # نخزن نسخة أصلية عشان الـ Cancel
-        self.original_name = self.name
-        self.original_email = self.email
+        # هنحفظ القيم الأصلية عشان نقارن
+        self._original_name = self.name
+        self._original_email = self.email
 
-        # حمل البيانات في الحقول
+        # ----------------- Load data into UI -----------------
         self.load_initial_data()
 
-        # ربط الأزرار
-        self.ui.buttonSave.clicked.connect(self.save_changes)
-    
+        # نخلي الاسم قراءة فقط (ما يقدر يعدله)
+        self.ui.lineEditName.setReadOnly(True)
+        # لو تبغاه يبان معطّل بالكامل:
+        # self.ui.lineEditName.setEnabled(False)
 
-        # زر تغيير الباسورد نخليه مقفول مؤقتاً أو تبرمجه لاحقاً
-        
+        # ----------------- Connect buttons -----------------
+        self.ui.buttonEditEmail.clicked.connect(self.save_changes)
 
-        # في البداية: ممنوع التعديل
-        self.disable_edit_mode()
+        # زر Edit ما نستخدمه الآن
+        if hasattr(self.ui, "buttonEdit"):
+            self.ui.buttonEdit.setEnabled(False)
+            self.ui.buttonEdit.hide()
+
+        # ----------------- Track changes on fields -----------------
+        # نتابع الإيميل فقط، لأن الاسم ثابت
+        self.ui.lineEditEmail.textChanged.connect(self.on_fields_changed)
+
+        # في البداية ما في تغييرات → نعطّل Save / Cancel
+        self.set_dirty(False)
 
     # ---------------------------------------------------------
     # INITIAL DATA
     # ---------------------------------------------------------
     def load_initial_data(self):
+        """يحط بيانات الأدمن في الحقول."""
         self.ui.lineEditName.setText(self.name)
         self.ui.lineEditEmail.setText(self.email)
 
-        # قسم/كلية ثابتة
+        # Department ثابت
         self.ui.lineEditDepartment.setText("Electrical and Computer Engineering")
 
+    # ---------------------------------------------------------
+    # DIRTY STATE (هل فيه تغييرات؟)
+    # ---------------------------------------------------------
+    def set_dirty(self, dirty: bool):
+        """
+        dirty = True  → فعّل Save + Cancel
+        dirty = False → عطّل Save + Cancel
+        """
+        self.ui.buttonEditEmail.setEnabled(dirty)
 
+    def on_fields_changed(self):
+        """
+        ينادي تلقائيًا لما يتغيّر الإيميل.
+        إذا الإيميل الجديد يختلف عن الأصلي → نفعّل Save/Cancel.
+        """
+        current_email = self.ui.lineEditEmail.text().strip()
+
+        dirty = (current_email != self._original_email)
+        self.set_dirty(dirty)
 
     # ---------------------------------------------------------
-    # ENABLE/DISABLE EDIT MODE
-    # ---------------------------------------------------------
-    def start_edit_email_mode(self):
-        """
-        لما تضغط زر Edit:
-        - نخلي حقل الإيميل فقط قابل للتعديل.
-        - نفعل Save + Cancel.
-        - نعطل Edit.
-        """
-        # نخلي الإيميل بس هو اللي يقدر يكتب فيه
-        self.ui.lineEditEmail.setReadOnly(False)
-
-        # نخلي باقي الحقول مقفولة (الاسم، القسم، الباسورد)
-        self.ui.lineEditName.setReadOnly(True)
-        self.ui.lineEditDepartment.setReadOnly(True)
-        
-
-        # تفعيل الأزرار المناسبة
-        self.ui.buttonSave.setEnabled(True)
-    
-        
-
-    def disable_edit_mode(self):
-        """
-        نقفل كل الحقول ونرجّع حالة الأزرار:
-        - Edit مفعّل
-        - Save / Cancel مقفولين
-        """
-        self.ui.lineEditName.setReadOnly(True)
-        self.ui.lineEditEmail.setReadOnly(True)
-        self.ui.lineEditDepartment.setReadOnly(True)
-        
-
-        self.ui.buttonSave.setEnabled(False)
-
-        
-
-    # ---------------------------------------------------------
-    # SAVE CHANGES (EMAIL ONLY)
+    # SAVE CHANGES (email only)
     # ---------------------------------------------------------
     def save_changes(self):
-        """
-        يحفظ التغيير في الإيميل فقط.
-        """
         new_email = self.ui.lineEditEmail.text().strip()
 
+        # التحقق من أن الإيميل مو فاضي
         if not new_email:
-            warning("Missing Info", "Email cannot be empty.")
+            warning(self, "Email cannot be empty.")
             return
 
-        # التحقق من صيغة الإيميل
+        # Validate email format
         email_error = validate_email(new_email)
         if email_error:
-            warning("Invalid Email", email_error)
+            warning(self, "Invalid Email")
             return
 
-        # لو الإيميل ما تغيّر، ما في داعي نحدّث
-        if new_email == self.email:
-            info("No Changes", "No changes to save.")
-            self.disable_edit_mode()
+        # نعدّل فقط لو الإيميل تغيّر فعلاً
+        email_to_update = new_email if new_email != self._original_email else None
+
+        if email_to_update is None:
+            warning(self, "No Changes")
             return
 
-        # تحديث في الداتا بيس
+        # نحدّث الإيميل فقط، الاسم ما نلمسه
         result = self.db.update_user(
             self.admin_id,
-            email=new_email
+            email=email_to_update
         )
 
         if "successfully" in result.lower():
-            info("Success", "Email updated successfully.")
+            info(self, "Profile updated successfully.")
 
-            # نحدّث القيم المخزّنة
-            self.email = new_email
-            self.original_email = new_email
+            # تحديث القيم الداخلية
+            self.email = email_to_update
+            self._original_email = email_to_update
 
-            # نقفل التعديل مرة ثانية
-            self.disable_edit_mode()
+            self.set_dirty(False)
         else:
-            error("Error", result)
+            error(self, "Error")
 
     # ---------------------------------------------------------
     # CANCEL EDIT
     # ---------------------------------------------------------
     def cancel_edit(self):
         """
-        يرجع الإيميل للقيمة الأصلية ويقفل التعديل.
+        يرجّع الإيميل للقيمة الأصلية ويطفي Save/Cancel.
+        الاسم أصلاً ثابت وما يتغيّر.
         """
-        self.ui.lineEditEmail.setText(self.original_email)
-        self.disable_edit_mode()
+        self.ui.lineEditEmail.setText(self._original_email)
+        self.set_dirty(False)
