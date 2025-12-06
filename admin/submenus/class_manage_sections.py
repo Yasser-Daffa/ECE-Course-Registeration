@@ -15,6 +15,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"
 # UI & dialogs
 from app_ui.admin_ui.submenus_ui.ui_manage_sections import Ui_ManageSections
 from admin.submenus.class_add_sections import AddSectionDialog
+from admin.submenus.class_edit_sections import EditSectionDialog  # NEW
 
 # Admin object
 from admin.class_admin_utilities import admin
@@ -28,6 +29,7 @@ class ManageSectionsWidget(QWidget):
     - Filter & search
     - Delete selected rows
     - Add section dialog
+    - Edit selected section (يفتح دايلوج جديد)
     """
 
     def __init__(self, admin_utils, parent=None):
@@ -39,11 +41,16 @@ class ManageSectionsWidget(QWidget):
         self.animate = BaseLoginForm.animate_label_with_dots
 
         self._all_rows_cache = []
+        self._filtered_rows = []  # NEW: الصفوف بعد الفلتر الحالي
 
         # Connect buttons
         self.ui.buttonRefresh.clicked.connect(self.handle_refresh)
         self.ui.buttonRemoveSelected.clicked.connect(self.on_remove_selected_clicked)
         self.ui.buttonAddSection.clicked.connect(self.on_add_section_clicked)
+
+        # زر الإيديت (من الواجهة)
+        if hasattr(self.ui, "buttonEditSection"):
+            self.ui.buttonEditSection.clicked.connect(self.on_edit_section_clicked)
 
         self.ui.lineEditSearch.textChanged.connect(self.apply_filters)
         self.ui.comboBoxFilterCourses.currentIndexChanged.connect(self.apply_filters)
@@ -52,17 +59,22 @@ class ManageSectionsWidget(QWidget):
         self.ui.buttonOpenAll.clicked.connect(self.on_open_all_clicked)
         self.ui.buttonCloseAll.clicked.connect(self.on_close_all_clicked)
 
-
         # Table settings
         self.format_table()
         self.setup_courses_combo()
 
         # Row selection
-        self.ui.tableSections.setSelectionBehavior(self.ui.tableSections.SelectionBehavior.SelectRows)
-        self.ui.tableSections.setSelectionMode(self.ui.tableSections.SelectionMode.MultiSelection)
+        self.ui.tableSections.setSelectionBehavior(
+            self.ui.tableSections.SelectionBehavior.SelectRows
+        )
+        self.ui.tableSections.setSelectionMode(
+            self.ui.tableSections.SelectionMode.MultiSelection
+        )
 
         # Track selection changes
-        self.ui.tableSections.itemSelectionChanged.connect(self.update_remove_button_state)
+        self.ui.tableSections.itemSelectionChanged.connect(
+            self.update_remove_button_state
+        )
         # set the remove button status to be disabled initially
         self.ui.buttonRemoveSelected.setEnabled(False)
         self.ui.buttonRemoveSelected.setText("Remove")
@@ -106,17 +118,17 @@ class ManageSectionsWidget(QWidget):
 
         rows = []
         for (
-                section_id,
-                course_code,
-                doctor_id,
-                days,
-                time_start,
-                time_end,
-                room,
-                capacity,
-                enrolled,
-                semester,
-                state,
+            section_id,
+            course_code,
+            doctor_id,
+            days,
+            time_start,
+            time_end,
+            room,
+            capacity,
+            enrolled,
+            semester,
+            state,
         ) in result:
             rows.append({
                 "section_id": section_id,
@@ -144,7 +156,13 @@ class ManageSectionsWidget(QWidget):
             self.ui.labelFullSectionsCount,
         ]
         for lbl in labels:
-            self.animate(lbl, "refreshing", interval=400, duration=2000, on_finished=self.load_sections)
+            self.animate(
+                lbl,
+                "refreshing",
+                interval=400,
+                duration=2000,
+                on_finished=self.load_sections
+            )
 
     # ---------------- Stats ----------------
     def update_stats(self, rows):
@@ -199,6 +217,7 @@ class ManageSectionsWidget(QWidget):
     def fill_table(self, rows):
         table = self.ui.tableSections
         table.setRowCount(len(rows))
+        self._filtered_rows = list(rows)  # NEW: نخزن النسخة المعروضة حالياً
 
         for row_idx, r in enumerate(rows):
             section_id = r["section_id"]
@@ -264,6 +283,29 @@ class ManageSectionsWidget(QWidget):
             item_state.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             table.setItem(row_idx, 7, item_state)
 
+    # ---------------- EDIT SELECTED SECTION ----------------
+    def on_edit_section_clicked(self):
+        """
+        يفتح دايلوج EditSectionDialog للصف المحدد.
+        """
+        table = self.ui.tableSections
+        current_row = table.currentRow()
+        if current_row < 0:
+            QMessageBox.information(self, "Edit Section", "Please select a section first.")
+            return
+
+        # نتأكد إن الـ index داخل حدود الفلترة الحالية
+        if current_row >= len(self._filtered_rows):
+            QMessageBox.warning(self, "Error", "Invalid row selected.")
+            return
+
+        section_data = self._filtered_rows[current_row]
+
+        dlg = EditSectionDialog(self.admin_utils, section_data, self)
+        if dlg.exec():
+            # بعد الحفظ نعيد تحميل السكاشن
+            self.load_sections()
+
     # ---------------- Delete selected rows ----------------
     def on_remove_selected_clicked(self):
         table = self.ui.tableSections
@@ -317,9 +359,7 @@ class ManageSectionsWidget(QWidget):
         if dlg.exec():
             self.load_sections()
 
-
     # ---------------- Open/Close all sections ----------------
-    # changes the status for all sections to either open or closed
     def on_open_all_clicked(self):
         if not self._all_rows_cache:
             QMessageBox.information(self, "Info", "No sections available.")
@@ -339,7 +379,6 @@ class ManageSectionsWidget(QWidget):
             )
 
         self.load_sections()
-
 
     def on_close_all_clicked(self):
         if not self._all_rows_cache:
@@ -362,8 +401,7 @@ class ManageSectionsWidget(QWidget):
         self.load_sections()
 
 
-
-# =============================== MAIN ===============================
+# =============================== MAIN (اختياري للتجربة) ===============================
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     w = ManageSectionsWidget(admin)

@@ -282,6 +282,52 @@ class AdminUtilities:
             new_course_code=new_course_code,
             new_level=new_level,
         )
+    # ================ Pending Students Management ================
+    def admin_list_pending_students(self):
+        """
+        ترجع قائمة الطلاب اللي حسابهم inactive
+        على شكل list[dict] عشان الواجهة تستخدمها بسهولة.
+        """
+        rows = self.db.list_inactive_users()
+        students = []
+        for user_id, name, email, program, state in rows:
+            students.append({
+                "user_id": user_id,
+                "name": name,
+                "email": email,
+                "program": program,
+                "state": state,
+            })
+        return students
+
+    def admin_approve_student(self, user_id: int) -> str:
+        """
+        تفعيل حساب طالب واحد.
+        """
+        self.db.update_user(user_id, account_status="active")
+        return f"Student {user_id} approved."
+
+    def admin_reject_student(self, user_id: int) -> str:
+        """
+        رفض (وحذف) طالب واحد.
+        """
+        self.db.delete_user(user_id)
+        return f"Student {user_id} rejected and deleted."
+
+    def admin_approve_all_pending_students(self) -> str:
+        """
+        تفعيل كل الطلاب pending.
+        """
+        self.db.approve_all_inactive_users()
+        return "All pending students have been approved."
+
+    def admin_reject_all_pending_students(self) -> str:
+        """
+        حذف كل الطلاب pending.
+        """
+        self.db.delete_all_inactive_users()
+        return "All pending students have been rejected and deleted."
+
 
 
 admin = AdminUtilities(db)
@@ -312,6 +358,8 @@ def admin_show_plans(self):
 
         # عرض المادة
         print(f"  Level {level}: {code} - {name} ")
+
+
 
 if __name__ == "__main__":
     from database_files.class_database_uitlities import DatabaseUtilities, con, cur

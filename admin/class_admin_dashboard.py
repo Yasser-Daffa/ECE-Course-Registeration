@@ -6,6 +6,7 @@ from PyQt6 import QtWidgets
 from database_files.class_database_uitlities import DatabaseUtilities
 from database_files.initialize_database import initialize_database
 from admin.class_admin_utilities import AdminUtilities
+from admin.class_admin_utilities import admin
 
 # Subpage UI & Controller imports
 from app_ui.admin_ui.ui_admin_dashboard import Ui_AdminDashboard
@@ -120,7 +121,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.pending_requests_ui = Ui_PendingRequestsWidget()
         self.pending_requests_ui.setupUi(self.pending_requests_page)
         # Uses direct database_utilities access
-        self.pending_requests_controller = PendingRequestsController(self.pending_requests_ui, self.db)
+        self.pending_requests_controller = PendingRequestsController(self.pending_requests_ui, admin)
 
         # -------------------------------
         # Manage courses

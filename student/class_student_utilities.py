@@ -26,16 +26,38 @@ class StudentUtilities:
 
     def get_completed_courses(self):
         transcripts = self.db.list_transcript(self.student_id)
-        return [course for course, _, grade in transcripts if grade is not None]
+        passed_grades = {"A+", "A", "B+", "B", "C+", "C", "D+", "D"}  # اعتبرنا D ناجح
+
+        return [
+            course
+            for course, _, grade in transcripts
+            if grade is not None and str(grade).upper() in passed_grades]
 
     def get_registered_courses(self, semester=None):
+        """
+        ترجع قائمة بأكواد المواد اللي الطالب مسجلها (لسمستر معيّن لو انبعت).
+        نعتمد على جدول sections + جدول registrations.
+        """
         sections = self.db.list_sections()
         registered = []
+
         for sec in sections:
-            sec_id, course_code, *_ = sec
-            if self.db.is_student_registered(self.student_id, sec_id) and (semester is None or sec[9] == semester):
+            # sections: section_id, course_code, doctor_id, days, time_start, time_end,
+            #          room, capacity, enrolled, semester, state
+            sec_id = sec[0]
+            course_code = sec[1]
+            sec_semester = sec[9]
+
+            # لو حددنا سمستر نفلتر عليه
+            if semester is not None and sec_semester != semester:
+                continue
+
+            # هنا نرسل السمستر للدالة الجديدة
+            if self.db.is_student_registered(self.student_id, sec_id, semester):
                 registered.append(course_code)
+
         return registered
+
     
 
     def get_registered_courses_full(self, semester=None):
@@ -231,11 +253,19 @@ class StudentUtilities:
 
         return result
 
-    def register_section(self, section_id: int, course_code: str, semester: str) -> bool:
+    def register_section(self, section_id, course_code, semester):
         """
-        تسجيل سكشن للطالب الحالي في سمستر معيّن.
-        يستخدم دالة الداتا بيس اللي تكتب في جدول registrations.
+        يسجل الطالب في السكشن بعد التحقق من:
+        - التعارض
+        - السعة
+        - الحالة (open/closed)
         """
+
+        # 1) تحقق من التعارض
+        if self.db.has_time_conflict(self.student_id, section_id):
+            return "❌ Cannot register: Time conflict with another section."
+
+        # 2) حاول التسجيل من خلال الداتا بيس
         return self.db.register_student_to_section(
             self.student_id,
             section_id,

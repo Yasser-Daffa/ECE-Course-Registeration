@@ -483,23 +483,27 @@ class DatabaseUtilities:
             if self.cur.fetchone():
                 registrations.append(sec)
         return registrations
-    
-    def is_student_registered(self, student_id, section_id, semester):
+
+    def is_student_registered(self, student_id, section_id, semester=None):
         """
-        يتأكد هل الطالب مسجل في هذا السكشن في هذا السمستر.
-        نستخدم section_id + semester عشان لو نفس السكشن تكرر مستقبلاً بسمستر ثاني
-        يكون كل واحد له رقم مختلف أصلاً.
+        يرجع True إذا الطالب مسجل في هذا السكشن (واختياريًا لهذا السمستر).
         """
-        self.cur.execute(
-            """
+        sql = """
             SELECT 1 FROM registrations
-            WHERE student_id = ? AND section_id = ? AND semester = ?
-            """,
-            (student_id, section_id, semester)
-        )
+            WHERE student_id = ? AND section_id = ?
+        """
+        params = [student_id, section_id]
+
+        # لو عطينا سمستر نفلتر عليه
+        if semester is not None:
+            sql += " AND semester = ?"
+            params.append(semester)
+
+        self.cur.execute(sql, params)
         return self.cur.fetchone() is not None
 
-    
+
+
 
     def register_student_to_section(self, student_id: int, section_id: int,
                                     course_code: str, semester: str) -> bool:
@@ -539,7 +543,7 @@ class DatabaseUtilities:
             print(f"DB Error in register_student_to_section: {e}")
             return False
 
-        
+
     # ------------------- Remove student registration -------------------
     def remove_student_registration(self, student_id: int, course_code: str) -> bool:
         """
@@ -568,6 +572,80 @@ class DatabaseUtilities:
         except Exception as e:
             print(f"[ERROR] remove_student_registration failed: {e}")
             return False
+
+    # ================= PENDING USERS (INACTIVE ACCOUNTS) =================
+    def list_inactive_users(self):
+        """
+        ترجع كل المستخدمين اللي حسابهم inactive
+        (user_id, name, email, program, state)
+        """
+        self.cur.execute("""
+            SELECT user_id, name, email, program, state
+            FROM users
+            WHERE account_status = 'inactive'
+        """)
+        return self.cur.fetchall()
+
+    def delete_user(self, user_id: int):
+        """
+        حذف مستخدم واحد.
+        """
+        self.cur.execute("DELETE FROM users WHERE user_id = ?", (user_id,))
+        self.commit()
+
+    def approve_all_inactive_users(self):
+        """
+        تحويل كل الحسابات inactive إلى active.
+        """
+        self.cur.execute("""
+            UPDATE users
+            SET account_status = 'active'
+            WHERE account_status = 'inactive'
+        """)
+        self.commit()
+
+    def delete_all_inactive_users(self):
+        """
+        حذف كل المستخدمين اللي حسابهم inactive.
+        """
+        self.cur.execute("DELETE FROM users WHERE account_status = 'inactive'")
+        self.commit()
+
+    def has_time_conflict(self, student_id, new_section_id):
+        """
+        يتحقق إذا الطالب عنده تعارض وقتي مع السكشن الجديد.
+        يعتمد على جدول registrations فعليًا.
+        """
+        # نجيب بيانات السكشن الجديد
+        self.cur.execute("""
+            SELECT days, time_start, time_end
+            FROM sections
+            WHERE section_id = ?
+        """, (new_section_id,))
+        new_days, new_start, new_end = self.cur.fetchone()
+
+        # نجيب سكاشن الطالب المسجلة
+        self.cur.execute("""
+            SELECT s.section_id, s.days, s.time_start, s.time_end
+            FROM registrations r
+            JOIN sections s ON r.section_id = s.section_id
+            WHERE r.student_id = ?
+        """, (student_id,))
+        registered_sections = self.cur.fetchall()
+
+        # نقارن كل سكشن مسجل مع الجديد
+        for sid, days, start, end in registered_sections:
+
+            # لو مافي نفس اليوم → مو تعارض
+            if days != new_days:
+                continue
+
+            # مقارنة وقتية حقيقية
+            if not (new_end <= start or new_start >= end):
+                return True  # فيه تعارض
+
+        return False
+
 
 
 

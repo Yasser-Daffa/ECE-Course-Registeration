@@ -261,7 +261,7 @@ class RegisterCoursesWidget(QWidget):
 # ---------------- Run standalone ----------------
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    student_id = 7500003
+    student_id = 2500001
     semester = "First"
     window = RegisterCoursesWidget(student_id, semester)
     window.show()

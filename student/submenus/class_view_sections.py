@@ -367,7 +367,8 @@ class ViewSectionsWidget(QWidget):
         """
         يسجّل السكاشن في الداتا بيس باستخدام
         StudentUtilities.register_section(section_id, course_code, semester)
-        ثم يشيل هذه الكورسات من self.sections ويعيد تعبئة الجدول.
+        ثم يتأكد فعليًا من أن السكشن انضاف في الجدول عن طريق is_student_registered
+        وبعدها يحدّث الجدول والرسائل.
         """
         success = 0
         fail = 0
@@ -376,24 +377,35 @@ class ViewSectionsWidget(QWidget):
         for sec in sections:
             section_id = sec["section_id"]
             course_code = sec["course_code"]
-            ok = self.student_utils.register_section(
-                section_id,
-                course_code,
-                self.semester
-            )
-            if ok:
+
+            # نحاول التسجيل (الداخلي ممكن يرجع True/False لكن بنأكد من الداتابيس)
+            ok = self.student_utils.register_section(section_id, course_code, self.semester)
+
+            # ✅ تأكيد فعلي من جدول التسجيلات
+            try:
+                really_registered = self.student_utils.db.is_student_registered(
+                    self.student_utils.student_id,
+                    section_id
+                )
+            except Exception as e:
+                print(f"[WARN] is_student_registered failed: {e}")
+                really_registered = False
+
+            if ok and really_registered:
                 success += 1
                 registered_codes.add(course_code)
             else:
                 fail += 1
 
-        # نشيل الكورسات اللي تسجلت من القائمة الداخلية
+        # نشيل الكورسات اللي تسجلت فعليًا من القائمة الداخلية
         if registered_codes:
             self.sections = [
-                s for s in self.sections if s["course_code"] not in registered_codes
+                s for s in self.sections
+                if s["course_code"] not in registered_codes
             ]
             self.fill_table()
 
+        # ✅ الرسائل الآن مبنية على الحقيقة من الداتابيس
         if success and not fail:
             QMessageBox.information(self, "Registration", "تم تسجيل جميع الشعب بنجاح.")
         elif success and fail:
@@ -406,8 +418,9 @@ class ViewSectionsWidget(QWidget):
             QMessageBox.critical(
                 self,
                 "Registration",
-                "فشل تسجيل جميع الشعب. تأكد من إعدادات قاعدة البيانات.",
+                "فشل تسجيل جميع الشعب. تأكد من عدم وجود تعارضات زمنية أو مشاكل في قاعدة البيانات.",
             )
+
 
 
 # ===== تجربة سريعة من نفس الملف =====
