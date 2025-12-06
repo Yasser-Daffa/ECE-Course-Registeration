@@ -253,6 +253,11 @@ QComboBox[error=&quot;true&quot;] {
         </property>
         <item>
          <property name="text">
+          <string>All Programs</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>Computer</string>
          </property>
         </item>

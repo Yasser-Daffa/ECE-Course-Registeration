@@ -21,7 +21,7 @@ from app_ui.student_ui.submenus_ui.ui_view_sections import Ui_ViewSections
 from student.class_student_utilities import StudentUtilities, db
 
 
-class ViewSectionsWidget(QWidget):
+class ViewProgramPlans(QWidget):
     """
     واجهة عرض السكاشن للمواد اللي الطالب اختارها من صفحة RegisterCourses:
     - تستقبل student_id + semester + قائمة بأكواد المواد المختارة.
