@@ -5,18 +5,23 @@ from PyQt6.QtCore import QPropertyAnimation, QEasingCurve, QTimer
 
 from PyQt6 import QtWidgets
 from student.class_student_utilities import StudentUtilities, db
+from admin.class_admin_utilities import AdminUtilities
 
 # Subpage UI & Controller imports
 from app_ui.student_ui.ui_student_dashboard import Ui_StudentDashboard
 
 # # not finished yet
 # from app_ui.student_ui.submenus_ui.ui_profile import Ui_Profile
+from student.submenus.class_profile import ProfileWidget
 
-from app_ui.student_ui.submenus_ui.ui_current_schedule import Ui_CurrentSchedule
 from student.submenus.class_current_schedule import CurrentScheduleWidget
 
-from app_ui.student_ui.submenus_ui.ui_register_courses import Ui_RegisterCourses
 from student.submenus.class_register_courses import RegisterCoursesWidget
+
+# from student.submenus.class_view_prereqs import ViewSectionsWidget
+
+from student.submenus.class_view_program_plans import ViewProgramPlansWidget
+
 
 from app_ui.student_ui.submenus_ui.ui_transcript import Ui_Transcript
 from student.submenus.class_transcript import TranscriptWidget
@@ -29,7 +34,7 @@ class StudentDashboard(QtWidgets.QMainWindow):
     Handles page switching via a QStackedWidget and initializes all sub-pages.
     """
     
-    def __init__(self, db, user_info: tuple):
+    def __init__(self, db, user_info):
         super().__init__()
 
         # -------------------------------
@@ -38,10 +43,21 @@ class StudentDashboard(QtWidgets.QMainWindow):
         self.ui = Ui_StudentDashboard()
         self.ui.setupUi(self)
         self.db = db
+        self.user_info = user_info
         self.user_id, self.name, self.email, self.program, self.state, self.account_status, self.hashed_pw = user_info
         self.student = StudentUtilities(self.db, self.user_id)
 
+        # Displays the name at the top-left side near the pfp
         self.ui.labelStudentName.setText(self.name)
+
+        # Get last login (Last online) from stored in database from authentication window :]
+        last_login = self.db.get_last_login(self.user_id)
+
+        if last_login:
+            self.ui.labelLastLogin.setText(f"Last Login: {last_login}")
+        else:
+            self.ui.labelLastLogin.setText("Last Login: First Time")
+
         # ------------------------
         # 1. Initialize all pages
         # ------------------------
@@ -50,9 +66,10 @@ class StudentDashboard(QtWidgets.QMainWindow):
         # ------------------------
         # 2. Add pages to stacked widget
         # ------------------------
-        # self.ui.stackedWidget.addWidget(self.profile_page)
+        self.ui.stackedWidget.addWidget(self.profile_page)
         self.ui.stackedWidget.addWidget(self.current_schedule_page)
         self.ui.stackedWidget.addWidget(self.register_courses_page)
+        self.ui.stackedWidget.addWidget(self.view_program_plans_page)
         self.ui.stackedWidget.addWidget(self.transcript_page)
 
         # Add other pages similarly...
@@ -66,9 +83,11 @@ class StudentDashboard(QtWidgets.QMainWindow):
         # Value: Tuple of (page name string, QWidget page)
         # Using a string here avoids printing emojis/unicode directly from button.text()
         self.page_mapping = {
-            self.ui.buttonProfile: ("Profile", self.current_schedule_page),
+            self.ui.buttonProfile: ("Profile", self.profile_page),
             self.ui.buttonCurrentSchedule: ("Current Schedule", self.current_schedule_page),
             self.ui.buttonRegisterCourses: ("Manage Courses", self.register_courses_page),
+            # self.ui.buttonViewPrereqs: ("View Prereqs", self.view_prereqs_page),
+            self.ui.buttonViewProgramPlans: ("View Program Plans", self.view_program_plans_page),
             self.ui.buttonTranscript: ("Transcript", self.transcript_page),
         }
 
@@ -94,9 +113,7 @@ class StudentDashboard(QtWidgets.QMainWindow):
         # # -------------------------------
         # # Profile page
         # # -------------------------------
-        # self.profile_page = QtWidgets.QWidget()
-        # self.profile_page_ui = Ui_Profile()
-        # self.profile_page_ui.setupUi(self.profile_page)
+        self.profile_page = ProfileWidget(self.user_info)
 
         # -------------------------------
         # Current Sched page
@@ -105,22 +122,27 @@ class StudentDashboard(QtWidgets.QMainWindow):
         self.current_schedule_page = CurrentScheduleWidget(self.user_id)
 
         # # already added inside innit
-        # self.ui.stackedWidget.addWidget(self.current_schedule_page)
+        
 
         # -------------------------------
         # Register Courses page
         # -------------------------------
         # this page sets up its own ui internally.
-
         self.register_courses_page = RegisterCoursesWidget(self.user_id, semester=None)
-        # self.ui.stackedWidget.addWidget(self.register_courses_page)
+        
+
+        # -------------------------------
+        # View Program courses
+        # -------------------------------
+        # this page sets up its own ui internally.
+        self.view_program_plans_page = ViewProgramPlansWidget(db)
 
         # # -------------------------------
         # # Transcript courses
         # # -------------------------------
         # this page sets up its own ui internally.
         self.transcript_page = TranscriptWidget(self.user_id)
-        # self.ui.stackedWidget.addWidget(self.transcript_page)
+        
 
 
     # -------------------------------

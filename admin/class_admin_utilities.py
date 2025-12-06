@@ -327,7 +327,67 @@ class AdminUtilities:
         """
         self.db.delete_all_inactive_users()
         return "All pending students have been rejected and deleted."
+    
+    def admin_delete_student(self, user_id: int) -> str:
+        """
+        حذف طالب (أو مستخدم) واحد نهائيًا من النظام.
+        """
+        self.db.delete_user(user_id)
+        return f"Student {user_id} removed."
 
+    def admin_delete_all_students(self) -> str:
+        """
+        حذف جميع الطلاب/المستخدمين من جدول users.
+        """
+        self.db.delete_all_users()
+        return "All students removed."
+    
+    def admin_show_plans(self):
+        """
+        يعرض كل الخطط الدراسية لكل برنامج،
+        ويعرض المواد الموجودة داخل كل خطة مرتبة حسب المستوى.
+        """
+
+        rows = self.db.list_plan_courses()
+        # يرجّع صفوف بالشكل:
+        # (program, course_code, course_name, credits, level)
+
+        if not rows:
+            print("No plans found.")
+            return
+
+        current_program = None
+
+        print("\n====== Study Plans ======\n")
+
+        for program, code, name, level in rows:
+
+            # إذا دخلنا برنامج جديد نطبع عنوان جديد
+            if program != current_program:
+                current_program = program
+                print(f"\n====== Program: {program} ======")
+
+            # عرض المادة
+            print(f"  Level {level}: {code} - {name} ")    
+
+        # ---------------- ADMIN MANAGEMENT ----------------
+    def delete_admin(self, user_id: int):
+        """
+        Delete a single admin account.
+        """
+        self.db.delete_user(user_id)
+
+    def add_admin(self, name, email, password_h):
+        """
+        Add new admin account.
+        """
+        return self.db.add_users(
+            name=name,
+            email=email,
+            password=password_h,
+            program=None,
+            state="admin",
+        )
 
 
 admin = AdminUtilities(db)
@@ -358,20 +418,6 @@ def admin_show_plans(self):
 
         # عرض المادة
         print(f"  Level {level}: {code} - {name} ")
-
-    def admin_delete_student(self, user_id: int) -> str:
-        """
-        حذف طالب (أو مستخدم) واحد نهائيًا من النظام.
-        """
-        self.db.delete_user(user_id)
-        return f"Student {user_id} removed."
-
-    def admin_delete_all_students(self) -> str:
-        """
-        حذف جميع الطلاب/المستخدمين من جدول users.
-        """
-        self.db.delete_all_users()
-        return "All students removed."
 
 
 

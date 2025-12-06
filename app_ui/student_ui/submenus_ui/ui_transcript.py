@@ -140,7 +140,7 @@ class Ui_Transcript(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1106, 1031))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, -57, 1106, 611))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout.setContentsMargins(-1, -1, -1, 20)
@@ -151,6 +151,7 @@ class Ui_Transcript(object):
         self.statsLayout.setObjectName("statsLayout")
         self.totalUsersFrame_2 = QtWidgets.QFrame(parent=self.scrollAreaWidgetContents)
         self.totalUsersFrame_2.setMinimumSize(QtCore.QSize(0, 160))
+        self.totalUsersFrame_2.setMaximumSize(QtCore.QSize(180, 200))
         self.totalUsersFrame_2.setStyleSheet("background-color: white; border-radius: 12px; border-top: 4px solid #667eea;")
         self.totalUsersFrame_2.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.totalUsersFrame_2.setObjectName("totalUsersFrame_2")
@@ -176,6 +177,7 @@ class Ui_Transcript(object):
         self.statsLayout.addWidget(self.totalUsersFrame_2)
         self.pendingRequestsFrame_2 = QtWidgets.QFrame(parent=self.scrollAreaWidgetContents)
         self.pendingRequestsFrame_2.setMinimumSize(QtCore.QSize(0, 160))
+        self.pendingRequestsFrame_2.setMaximumSize(QtCore.QSize(180, 200))
         self.pendingRequestsFrame_2.setStyleSheet("background-color: white;\n"
 "border-radius: 12px;\n"
 "border-top: 4px solid #f5576c;  /* same color as Edit Profile button */\n"
@@ -204,6 +206,7 @@ class Ui_Transcript(object):
         self.statsLayout.addWidget(self.pendingRequestsFrame_2)
         self.totalStudentsFrame = QtWidgets.QFrame(parent=self.scrollAreaWidgetContents)
         self.totalStudentsFrame.setMinimumSize(QtCore.QSize(0, 160))
+        self.totalStudentsFrame.setMaximumSize(QtCore.QSize(180, 200))
         self.totalStudentsFrame.setStyleSheet("background-color: white; border-radius: 12px; border-top: 4px solid #f093fb;")
         self.totalStudentsFrame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.totalStudentsFrame.setObjectName("totalStudentsFrame")
@@ -229,6 +232,7 @@ class Ui_Transcript(object):
         self.statsLayout.addWidget(self.totalStudentsFrame)
         self.pendingRequestsFrame = QtWidgets.QFrame(parent=self.scrollAreaWidgetContents)
         self.pendingRequestsFrame.setMinimumSize(QtCore.QSize(0, 160))
+        self.pendingRequestsFrame.setMaximumSize(QtCore.QSize(180, 200))
         self.pendingRequestsFrame.setStyleSheet("background-color: white; border-radius: 12px; border-top: 4px solid #ffa647;")
         self.pendingRequestsFrame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.pendingRequestsFrame.setObjectName("pendingRequestsFrame")
@@ -427,171 +431,6 @@ class Ui_Transcript(object):
         self.tableCourses.verticalHeader().setVisible(False)
         self.tableCourses.verticalHeader().setCascadingSectionResizes(True)
         self.verticalLayout.addWidget(self.tableCourses)
-        self.tableHeader_2 = QtWidgets.QFrame(parent=self.scrollAreaWidgetContents)
-        self.tableHeader_2.setMinimumSize(QtCore.QSize(0, 60))
-        self.tableHeader_2.setMaximumSize(QtCore.QSize(16777215, 60))
-        self.tableHeader_2.setStyleSheet("QFrame { background-color: #f8fafc; border-radius: 14px 14px 0px 0px; border-bottom: 2px solid #e2e8f0; }")
-        self.tableHeader_2.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
-        self.tableHeader_2.setObjectName("tableHeader_2")
-        self.tableHeaderLayout_2 = QtWidgets.QHBoxLayout(self.tableHeader_2)
-        self.tableHeaderLayout_2.setContentsMargins(25, 15, 25, 15)
-        self.tableHeaderLayout_2.setObjectName("tableHeaderLayout_2")
-        self.labelTableTitle_2 = QtWidgets.QLabel(parent=self.tableHeader_2)
-        self.labelTableTitle_2.setStyleSheet("font-size: 18px; font-weight: bold; color: #2c3e50; background: transparent;")
-        self.labelTableTitle_2.setObjectName("labelTableTitle_2")
-        self.tableHeaderLayout_2.addWidget(self.labelTableTitle_2)
-        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
-        self.tableHeaderLayout_2.addItem(spacerItem3)
-        self.labelSemesterGPA_2 = QtWidgets.QLabel(parent=self.tableHeader_2)
-        self.labelSemesterGPA_2.setStyleSheet("font-size: 15px; font-weight: 600; color: #64748b; background: transparent;")
-        self.labelSemesterGPA_2.setObjectName("labelSemesterGPA_2")
-        self.tableHeaderLayout_2.addWidget(self.labelSemesterGPA_2)
-        self.labelSemesterCreditsCount_2 = QtWidgets.QLabel(parent=self.tableHeader_2)
-        self.labelSemesterCreditsCount_2.setStyleSheet("font-size: 15px; font-weight: 600; color: #64748b; background: transparent; padding-left: 20px;")
-        self.labelSemesterCreditsCount_2.setObjectName("labelSemesterCreditsCount_2")
-        self.tableHeaderLayout_2.addWidget(self.labelSemesterCreditsCount_2)
-        self.verticalLayout.addWidget(self.tableHeader_2)
-        self.tableCourses_2 = QtWidgets.QTableWidget(parent=self.scrollAreaWidgetContents)
-        self.tableCourses_2.setMinimumSize(QtCore.QSize(0, 300))
-        self.tableCourses_2.setStyleSheet("QTableWidget {\n"
-"    border: none;\n"
-"    background-color: white;\n"
-"    gridline-color: #e5e5e5;      /* slightly darker for visibility */\n"
-"    color: #222222;               /* matches QLineEdit text color */\n"
-"    font-size: 14px;\n"
-"}\n"
-"\n"
-"QTableWidget::item {\n"
-"    padding: 14px;\n"
-"    border: none;\n"
-"    color: #222222;               /* consistent text color */\n"
-"}\n"
-"\n"
-"QTableWidget::item:selected {\n"
-"    background-color: #fcebed;  /* soft pink selection */\n"
-"    color: #222222;             /* keep text readable */\n"
-"}\n"
-"\n"
-"QHeaderView::section {\n"
-"    background-color: #f8f9fa;\n"
-"    padding: 12px;\n"
-"    border: 1px solid #c1c1c1; \n"
-"    font-size: 13px;\n"
-"    color: #555555;               /* similar to readOnly QLineEdit text */\n"
-"    font-weight: bold;\n"
-"}\n"
-"QTableWidget::item:focus {\n"
-"    outline: none;\n"
-"    border: none;\n"
-"}\n"
-"/* Removes weird selection rectangle */\n"
-"QTableWidget::item:focus {\n"
-"    outline: none;\n"
-"    border: none;\n"
-"}\n"
-"QTableWidget::indicator {\n"
-"    width: 18px;\n"
-"    height: 18px;\n"
-"}\n"
-"\n"
-"QTableWidget::indicator:unchecked {\n"
-"    border: 1px solid #b8b8b8;      /* soft grey border */\n"
-"    background-color: #f8f8f8;      /* very light grey */\n"
-"    border-radius: 3px;             /* slightly rounded */\n"
-"}\n"
-"\n"
-"QTableWidget::indicator:checked {\n"
-"    border: 1px solid #5a5a5a;      /* darker grey when selected */\n"
-"    background-color: #6c6c6c;      /* washed-out grey instead of harsh green */\n"
-"    image: url(\"\");                 /* remove default checkmark */\n"
-"    border-radius: 3px;\n"
-"}\n"
-"\n"
-"QTableWidget::indicator:checked:hover,\n"
-"QTableWidget::indicator:unchecked:hover {\n"
-"    border-color: #3a3a3a;\n"
-"}\n"
-"\n"
-"QTableWidget::indicator:checked::after {\n"
-"    content: \"\";\n"
-"    image: url(\"\"); /* no default checkmark */\n"
-"}\n"
-"/* ===== SCROLLBARS (VERTICAL & HORIZONTAL) ===== */\n"
-"\n"
-"/* Track */\n"
-"QScrollBar:vertical, QScrollBar:horizontal {\n"
-"    background: rgba(255, 255, 255, 0.05);  /* subtle track */\n"
-"    border-radius: 6px;\n"
-"    margin: 0px;  /* remove extra space */\n"
-"}\n"
-"\n"
-"/* Handle / Thumb */\n"
-"QScrollBar::handle:vertical, QScrollBar::handle:horizontal {\n"
-"    background: rgba(120, 120, 120, 0.35);  /* glassy thumb */\n"
-"    border-radius: 6px;\n"
-"    border: 1px solid rgba(255, 255, 255, 0.2); /* subtle highlight */\n"
-"    min-height: 30px; /* vertical */\n"
-"    min-width: 30px;  /* horizontal */\n"
-"}\n"
-"\n"
-"QScrollBar::handle:vertical:hover,\n"
-"QScrollBar::handle:horizontal:hover {\n"
-"    background: rgba(120, 120, 120, 0.55);\n"
-"}\n"
-"\n"
-"/* Buttons (up/down or left/right) */\n"
-"QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical,\n"
-"QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {\n"
-"    width: 16px;  /* horizontal buttons width */\n"
-"    height: 16px; /* vertical buttons height */\n"
-"    background: rgba(180, 180, 180, 0.35);\n"
-"    border-radius: 4px;\n"
-"}\n"
-"\n"
-"/* Arrow icons */\n"
-"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical,\n"
-"QScrollBar::left-arrow:horizontal, QScrollBar::right-arrow:horizontal {\n"
-"    width: 6px;\n"
-"    height: 6px;\n"
-"    background: transparent;\n"
-"}\n"
-"\n"
-"/* Remove blank areas */\n"
-"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical,\n"
-"QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {\n"
-"    background: none;\n"
-"}\n"
-"\n"
-"/* Sizes */\n"
-"QScrollBar:vertical { width: 12px; }\n"
-"QScrollBar:horizontal { height: 12px; }\n"
-"")
-        self.tableCourses_2.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.tableCourses_2.setAlternatingRowColors(True)
-        self.tableCourses_2.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.ContiguousSelection)
-        self.tableCourses_2.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
-        self.tableCourses_2.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel)
-        self.tableCourses_2.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel)
-        self.tableCourses_2.setCornerButtonEnabled(True)
-        self.tableCourses_2.setObjectName("tableCourses_2")
-        self.tableCourses_2.setColumnCount(6)
-        self.tableCourses_2.setRowCount(0)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableCourses_2.setHorizontalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableCourses_2.setHorizontalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableCourses_2.setHorizontalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableCourses_2.setHorizontalHeaderItem(3, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableCourses_2.setHorizontalHeaderItem(4, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableCourses_2.setHorizontalHeaderItem(5, item)
-        self.tableCourses_2.horizontalHeader().setStretchLastSection(True)
-        self.tableCourses_2.verticalHeader().setVisible(False)
-        self.tableCourses_2.verticalHeader().setCascadingSectionResizes(True)
-        self.verticalLayout.addWidget(self.tableCourses_2)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.mainLayout.addWidget(self.scrollArea)
         self.tableFrame = QtWidgets.QFrame(parent=Transcript)
@@ -603,8 +442,8 @@ class Ui_Transcript(object):
         self.tableMainLayout.setSpacing(0)
         self.tableMainLayout.setObjectName("tableMainLayout")
         self.mainLayout.addWidget(self.tableFrame)
-        spacerItem4 = QtWidgets.QSpacerItem(20, 60, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Maximum)
-        self.mainLayout.addItem(spacerItem4)
+        spacerItem3 = QtWidgets.QSpacerItem(20, 60, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Maximum)
+        self.mainLayout.addItem(spacerItem3)
 
         self.retranslateUi(Transcript)
         QtCore.QMetaObject.connectSlotsByName(Transcript)
@@ -640,19 +479,4 @@ class Ui_Transcript(object):
         item = self.tableCourses.horizontalHeaderItem(4)
         item.setText(_translate("Transcript", "GRADE"))
         item = self.tableCourses.horizontalHeaderItem(5)
-        item.setText(_translate("Transcript", "SEMESTER"))
-        self.labelTableTitle_2.setText(_translate("Transcript", "Year [202X] Semster [2]"))
-        self.labelSemesterGPA_2.setText(_translate("Transcript", "Semester GPA: 3.80"))
-        self.labelSemesterCreditsCount_2.setText(_translate("Transcript", "Credits: 18"))
-        item = self.tableCourses_2.horizontalHeaderItem(0)
-        item.setText(_translate("Transcript", "#"))
-        item = self.tableCourses_2.horizontalHeaderItem(1)
-        item.setText(_translate("Transcript", "COURSE CODE"))
-        item = self.tableCourses_2.horizontalHeaderItem(2)
-        item.setText(_translate("Transcript", "COURSE NAME"))
-        item = self.tableCourses_2.horizontalHeaderItem(3)
-        item.setText(_translate("Transcript", "CREDIT"))
-        item = self.tableCourses_2.horizontalHeaderItem(4)
-        item.setText(_translate("Transcript", "GRADE"))
-        item = self.tableCourses_2.horizontalHeaderItem(5)
         item.setText(_translate("Transcript", "SEMESTER"))

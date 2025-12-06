@@ -3,64 +3,33 @@
 import os, sys, functools
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
+from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import (
-    QWidget, QTableWidgetItem, QPushButton, QHBoxLayout,
-    QMessageBox, QHeaderView, QDialog, QLineEdit, QVBoxLayout, QLabel
+    QWidget,
+    QTableWidgetItem,
+    QHeaderView,
+    QVBoxLayout,
+    QDialog
 )
 from PyQt6.QtCore import Qt
 
 from app_ui.admin_ui.submenus_ui.ui_manage_faculty import Ui_ManageFaculty
-from helper_files.shared_utilities import BaseLoginForm, info, warning, error
-from helper_files.validators import validate_email, validate_full_name, hash_password
-from login_files.class_authentication_window import AuthenticationWindow
-
-
-
-class AddFacultyDialog(QDialog):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Add New Faculty")
-        self.setFixedSize(350, 250)
-
-        layout = QVBoxLayout(self)
-
-        self.input_name = QLineEdit()
-        self.input_name.setPlaceholderText("Full Name")
-        layout.addWidget(QLabel("Full Name"))
-        layout.addWidget(self.input_name)
-
-        self.input_email = QLineEdit()
-        self.input_email.setPlaceholderText("Email")
-        layout.addWidget(QLabel("Email"))
-        layout.addWidget(self.input_email)
-
-        self.input_password = QLineEdit()
-        self.input_password.setPlaceholderText("Temporary Password")
-        self.input_password.setEchoMode(QLineEdit.EchoMode.Password)
-        layout.addWidget(QLabel("Password"))
-        layout.addWidget(self.input_password)
-
-        btn = QPushButton("Continue")
-        btn.clicked.connect(self.accept)
-        layout.addWidget(btn)
-
-    def get_data(self):
-        return (
-            self.input_name.text().strip(),
-            self.input_email.text().strip(),
-            self.input_password.text().strip()
-        )
-
+from helper_files.shared_utilities import BaseLoginForm, warning, info
+from database_files.class_database_uitlities import DatabaseUtilities
+from login_files.create_account_for_admin import SignupAndConfirmWindow
 
 
 class ManageFacultyWidget(QWidget):
     """
-    Clean QWidget-based faculty manager:
-    - UI loaded in __init__
-    - Ready to add directly to stackedWidget
+    Manage admins:
+    - Uses Ui_ManageFaculty
+    - No raw SQL here
+    - Uses list_users() and delete_user()
+    - Add Admin uses SignupAndConfirmWindow
+    - No actions column inside the table
     """
 
-    def __init__(self, db, parent=None):
+    def __init__(self, db: DatabaseUtilities, parent=None):
         super().__init__(parent)
 
         self.ui = Ui_ManageFaculty()
@@ -68,24 +37,31 @@ class ManageFacultyWidget(QWidget):
 
         self.db = db
         self.blf = BaseLoginForm()
-        self.faculty_data = []
-
-        # Connect signals
-        self.ui.lineEditSearch.textChanged.connect(self.search_faculty)
-        self.ui.buttonRefresh.clicked.connect(self.load_faculty)
-        self.ui.buttonRemoveSelected.clicked.connect(self.remove_selected_faculty)
+        self.admins_data = []
 
         self.ui.buttonAddFaculty.setEnabled(True)
-        self.ui.buttonAddFaculty.clicked.connect(self.add_new_faculty)
 
-        self.load_faculty()
+        # Connections
+        self.ui.lineEditSearch.textChanged.connect(self.search_admins)
+        self.ui.buttonRefresh.clicked.connect(self.load_admins)
+        self.ui.buttonRemoveSelected.clicked.connect(self.remove_selected_admins)
+        self.ui.buttonAddFaculty.clicked.connect(self.add_new_admin)
+
         self.format_table()
+        self.load_admins()
 
+        # Track selection changes
+        self.ui.tableFaculty.selectionModel().selectionChanged.connect(
+            lambda *_: self.update_remove_button_state()
+        )
+        self.update_remove_button_state()
 
+    # -------------------------------------------------------------
+    # TABLE SETUP (Actions column removed)
     # -------------------------------------------------------------
     def format_table(self):
         table = self.ui.tableFaculty
-        headers = ["#", "ID", "Name", "Email", "State", "Action"]
+        headers = ["#", "Admin ID", "Name", "Email", "State"]
         table.setColumnCount(len(headers))
         table.setHorizontalHeaderLabels(headers)
 
@@ -94,194 +70,139 @@ class ManageFacultyWidget(QWidget):
             header.setSectionResizeMode(col, QHeaderView.ResizeMode.Interactive)
 
         table.verticalHeader().setVisible(False)
-        table.setEditTriggers(table.EditTrigger.NoEditTriggers)
-
+        table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
+        table.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.MultiSelection)
+        table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
 
     # -------------------------------------------------------------
-    def load_faculty(self):
-        self.faculty_data.clear()
+    # LOAD ADMINS
+    # -------------------------------------------------------------
+    def load_admins(self):
+        self.admins_data.clear()
         self.ui.tableFaculty.setRowCount(0)
 
-        rows = self.db.fetchall("""
-            SELECT user_id, name, email, program, state, account_status
-            FROM users
-            WHERE state = 'instructor'
-            ORDER BY user_id ASC
-        """)
+        rows = self.db.list_users()  # (id, name, email, program, state, status)
 
-        for i, row in enumerate(rows, start=1):
-            self.faculty_data.append({
+        active_admin_rows = [
+            row for row in rows
+            if len(row) >= 6 and row[4] == "admin" and row[5] == "active"
+        ]
+
+        for i, row in enumerate(active_admin_rows, start=1):
+            admin = {
                 "row_number": i,
                 "user_id": row[0],
                 "name": row[1],
                 "email": row[2],
                 "program": row[3],
                 "state": row[4],
-                "account_status": row[5]
-            })
+                "account_status": row[5],
+            }
+            self.admins_data.append(admin)
 
-        self.fill_table(self.faculty_data)
+        self.fill_table(self.admins_data)
         self.update_total_count()
         self.update_remove_button_state()
 
-
     # -------------------------------------------------------------
-    def fill_table(self, faculty):
+    # FILL TABLE (NO REMOVE BUTTONS)
+    # -------------------------------------------------------------
+    def fill_table(self, admins):
         table = self.ui.tableFaculty
-        table.setRowCount(len(faculty))
+        table.setRowCount(len(admins))
 
-        for row_idx, f in enumerate(faculty):
+        for row_idx, admin in enumerate(admins):
             table.setItem(row_idx, 0, QTableWidgetItem(str(row_idx + 1)))
-            table.setItem(row_idx, 1, QTableWidgetItem(str(f["user_id"])))
-            table.setItem(row_idx, 2, QTableWidgetItem(f["name"]))
-            table.setItem(row_idx, 3, QTableWidgetItem(f["email"]))
-            table.setItem(row_idx, 4, QTableWidgetItem(f["state"]))
-
-            btn = QPushButton("Remove")
-            btn.clicked.connect(functools.partial(self.remove_faculty, f["user_id"]))
-
-            container = QWidget()
-            lay = QHBoxLayout(container)
-            lay.setContentsMargins(0, 0, 0, 0)
-            lay.addWidget(btn)
-
-            table.setCellWidget(row_idx, 5, container)
-
-        self.update_remove_button_state()
-
+            table.setItem(row_idx, 1, QTableWidgetItem(str(admin["user_id"])))
+            table.setItem(row_idx, 2, QTableWidgetItem(admin["name"]))
+            table.setItem(row_idx, 3, QTableWidgetItem(admin["email"]))
+            table.setItem(row_idx, 4, QTableWidgetItem(admin["state"]))
 
     # -------------------------------------------------------------
-    def search_faculty(self):
+    # SEARCH
+    # -------------------------------------------------------------
+    def search_admins(self):
         text = self.ui.lineEditSearch.text().lower().strip()
-
         if not text:
-            self.fill_table(self.faculty_data)
+            self.fill_table(self.admins_data)
             return
 
-        filtered = [f for f in self.faculty_data
-                    if text in f["name"].lower() or text in str(f["user_id"])]
-
+        filtered = [
+            a for a in self.admins_data
+            if text in a["name"].lower() or text in str(a["user_id"])
+        ]
         self.fill_table(filtered)
 
-
     # -------------------------------------------------------------
-    def remove_faculty(self, user_id):
-        reply = self.blf.show_confirmation(
-            "Remove Faculty",
-            f"Are you sure you want to remove instructor ID {user_id}?"
-        )
-        if reply == QMessageBox.StandardButton.Yes:
-            self.db.execute("DELETE FROM users WHERE user_id=?", (user_id,))
-            self.load_faculty()
-
-
+    # REMOVE ADMINS
     # -------------------------------------------------------------
-    def remove_selected_faculty(self):
+    def get_selected_admin_ids(self):
         table = self.ui.tableFaculty
         selected_rows = table.selectionModel().selectedRows()
-        ids = [int(table.item(r.row(), 1).text()) for r in selected_rows]
+        ids = []
+        for idx in selected_rows:
+            item = table.item(idx.row(), 1)
+            if item:
+                try:
+                    ids.append(int(item.text()))
+                except ValueError:
+                    pass
+        return ids
 
+    def remove_selected_admins(self):
+        ids = self.get_selected_admin_ids()
         if not ids:
-            warning("Nothing Selected", "No faculty selected.")
+            warning("Nothing Selected", "No admins selected.")
             return
 
         reply = self.blf.show_confirmation(
-            "Remove Faculty",
-            f"Are you sure you want to remove {len(ids)} instructor(s)?"
+            "Remove Admins",
+            f"Remove {len(ids)} selected admin accounts?"
         )
-        if reply != QMessageBox.StandardButton.Yes:
+        if reply != QtWidgets.QMessageBox.StandardButton.Yes:
             return
 
         for uid in ids:
-            self.db.execute("DELETE FROM users WHERE user_id=?", (uid,))
+            self.db.delete_user(uid)
 
-        info("Success", f"Removed {len(ids)} instructor(s).")
-        self.load_faculty()
-
+        info("Success", f"Removed {len(ids)} admin accounts.")
+        self.load_admins()
 
     # -------------------------------------------------------------
-    def add_new_faculty(self):
-        dialog = AddFacultyDialog()
+    # ADD ADMIN
+    # -------------------------------------------------------------
+    def add_new_admin(self):
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Add New Admin")
+        dialog.setModal(True)
+        dialog.resize(600, 900)
 
-        if dialog.exec() != QDialog.Accepted:
-            return
+        # Prevent dialog from overriding child stylesheets
+        dialog.setStyleSheet("background: qlineargradient(x1:0, y1:0,x2:1, y2:1,stop:0 #f093fb,stop:1 #f5576c);")
 
-        name, email, password = dialog.get_data()
+        layout = QVBoxLayout(dialog)
+        signup_widget = SignupAndConfirmWindow(dialog)
+        layout.addWidget(signup_widget)
 
-        # validate
-        parts, name_err = validate_full_name(name)
-        if name_err:
-            warning("Invalid", name_err)
-            return
+        signup_widget.destroyed.connect(lambda *_: self.load_admins())
+        dialog.exec()
 
-        email_err = validate_email(email)
-        if email_err:
-            warning("Invalid Email", email_err)
-            return
-
-        # check duplicate
-        exists = self.db.fetchone("SELECT user_id FROM users WHERE email=?", (email,))
-        if exists:
-            warning("Duplicate", "A user with this email already exists.")
-            return
-
-        # Start authentication window
-        auth = AuthenticationWindow()
-        auth.mode = "add_faculty"
-        auth.new_user_data = {
-            "name": name,
-            "email": email,
-            "password": password,
-            "program": None,
-            "state": "instructor"
-        }
-
-        auth.code_generators[email] = auth.code_generators.get(email) or auth.code_generators.setdefault(email, None)
-        auth.send_verification_code(email)
-        auth.ui.stackedWidgetAuth.setCurrentWidget(auth.confirm_email_page)
-
-        result = auth.exec()
-
-        if result == QDialog.Accepted:
-            hashed = hash_password(password)
-
-            self.db.execute("""
-                INSERT INTO users (name, email, program, password_h, state, account_status)
-                VALUES (?, ?, NULL, ?, 'instructor', 'active')
-            """, (name, email, hashed))
-
-            info("Success", "Faculty member added.")
-            self.load_faculty()
-
-
+    # -------------------------------------------------------------
+    # UI HELPERS
     # -------------------------------------------------------------
     def update_remove_button_state(self):
-        selected_rows = self.ui.tableFaculty.selectionModel().selectedRows()
-        self.ui.buttonRemoveSelected.setEnabled(len(selected_rows) > 0)
-
+        model = self.ui.tableFaculty.selectionModel()
+        has_selection = model is not None and model.hasSelection()
+        self.ui.buttonRemoveSelected.setEnabled(has_selection)
 
     def update_total_count(self):
-        self.ui.labelTotalCount.setText(f"{len(self.faculty_data)} Total Faculty")
+        self.ui.labelTotalCount.setText(f"{len(self.admins_data)} Total Admins")
 
 
+# Standalone test
 if __name__ == "__main__":
-    import sys, os
-
-    # Add project root so imports work
-    ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
-    sys.path.append(ROOT_DIR)
-
-    from PyQt6.QtWidgets import QApplication
-    from admin.class_admin_utilities import AdminUtilities, db
-
-    app = QApplication(sys.argv)
-
-    admin_utils = AdminUtilities(db)
-
-    from admin.submenus.class_manage_faculty import ManageFacultyWidget
-    window = ManageFacultyWidget(admin_utils)
+    app = QtWidgets.QApplication(sys.argv)
+    from admin.class_admin_utilities import db as admin_db
+    window = ManageFacultyWidget(admin_db)
     window.show()
-
     sys.exit(app.exec())
-
-
