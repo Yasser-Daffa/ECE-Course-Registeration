@@ -10,6 +10,7 @@ from admin.class_admin_utilities import admin, db
 from app_ui.admin_ui.ui_admin_dashboard import Ui_AdminDashboard
 
 from app_ui.admin_ui.submenus_ui.ui_profile import Ui_Profile
+from admin.submenus.class_profile import ProfileWidget
 
 from app_ui.admin_ui.submenus_ui.ui_all_students import Ui_AllStudents
 from admin.submenus.class_all_students import AllStudentsController
@@ -28,6 +29,7 @@ from admin.submenus.class_manage_sections import ManageSectionsWidget
 
 from admin.submenus.class_manage_faculty import ManageFacultyWidget
 
+from admin.submenus.class_manage_students import ManageStudentsController
 
 class AdminDashboard(QtWidgets.QMainWindow):
     """
@@ -74,6 +76,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.ui.stackedWidget.addWidget(self.all_students_page)
         self.ui.stackedWidget.addWidget(self.pending_requests_page)
 
+        # self.ui.stackedWidget.addWidget(self.manage_students_controller)
         self.ui.stackedWidget.addWidget(self.manage_faculty_controller)
 
         self.ui.stackedWidget.addWidget(self.manage_courses_page)
@@ -94,7 +97,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
             self.ui.buttonAllStudents: ("All Students", self.all_students_page),
             self.ui.buttonPendingRequests: ("Pending Requests", self.pending_requests_page),
 
-            # self.ui.buttonStudentsFaculty: ("Manage Students", self.manage_Students_controller),
+            # self.ui.buttonManageStudents: ("Manage Students", self.manage_Students_controller),
             self.ui.buttonManageFaculty: ("Manage Faculty", self.manage_faculty_controller),
 
             self.ui.buttonManageCourses: ("Manage Courses", self.manage_courses_page),
@@ -126,18 +129,14 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # -------------------------------
         # Profile page
         # -------------------------------
-    
-        self.profile_page = QtWidgets.QWidget()
-        self.profile_page_ui = Ui_Profile()
-        self.profile_page_ui.setupUi(self.profile_page)
+
+        self.profile_page = ProfileWidget(self.user_info)
+
 
         # -------------------------------
         # All Students page
         # -------------------------------
         # Uses direct database_utilities access
-        # -------------------------------
-        # All Students page
-        # -------------------------------
         self.all_students_page = QtWidgets.QWidget()
         self.all_students_ui = Ui_AllStudents()
         self.all_students_ui.setupUi(self.all_students_page)
@@ -158,7 +157,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # Manage students page
         # -------------------------------
         # uses database utils
-        # self.manage_students_controller = ManageStudentsWidget(db)
+        # self.manage_students_controller = ManageStudentsController(db)
 
 
         # -------------------------------

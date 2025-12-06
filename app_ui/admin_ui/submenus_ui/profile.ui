@@ -120,7 +120,7 @@
            <string notr="true">font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;</string>
           </property>
           <property name="text">
-           <string>1,245</string>
+           <string>-</string>
           </property>
          </widget>
         </item>
@@ -207,7 +207,7 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
            <string notr="true">font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;</string>
           </property>
           <property name="text">
-           <string>15</string>
+           <string>-</string>
           </property>
          </widget>
         </item>
@@ -291,7 +291,7 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
            <string notr="true">font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;</string>
           </property>
           <property name="text">
-           <string>184</string>
+           <string>-</string>
           </property>
          </widget>
         </item>
@@ -375,7 +375,7 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
            <string notr="true">font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;</string>
           </property>
           <property name="text">
-           <string>12</string>
+           <string>-</string>
           </property>
          </widget>
         </item>
@@ -474,76 +474,6 @@ border-top: 4px solid #f5576c;  /* same color as Edit Profile button */
            </property>
           </spacer>
          </item>
-         <item>
-          <widget class="QPushButton" name="buttonEditName">
-           <property name="minimumSize">
-            <size>
-             <width>120</width>
-             <height>40</height>
-            </size>
-           </property>
-           <property name="cursor">
-            <cursorShape>PointingHandCursor</cursorShape>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
-    background-color: #f5576c;
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: bold;
-    padding: 10px 20px;
-    transition: background-color 150ms;
-}
-QPushButton:hover {
-    background-color: #e5475c;
-}
-QPushButton:pressed {
-    background-color: #d43f52;
-}
-</string>
-           </property>
-           <property name="text">
-            <string>Edit Profile</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="buttonEditEmail">
-           <property name="minimumSize">
-            <size>
-             <width>120</width>
-             <height>40</height>
-            </size>
-           </property>
-           <property name="cursor">
-            <cursorShape>PointingHandCursor</cursorShape>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
-    background-color: #f5576c;
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: bold;
-    padding: 10px 20px;
-    transition: background-color 150ms;
-}
-QPushButton:hover {
-    background-color: #e5475c;
-}
-QPushButton:pressed {
-    background-color: #d43f52;
-}
-</string>
-           </property>
-           <property name="text">
-            <string>Edit Email</string>
-           </property>
-          </widget>
-         </item>
         </layout>
        </widget>
       </item>
@@ -605,7 +535,7 @@ QLineEdit[readOnly=&quot;true&quot;] {
               <string>admin@university.edu</string>
              </property>
              <property name="readOnly">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -727,6 +657,50 @@ QLineEdit[readOnly=&quot;true&quot;] {
               </size>
              </property>
             </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="buttonSave">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>40</height>
+              </size>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton {
+    background-color: #f5576c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 20px;
+}
+
+QPushButton:hover {
+    background-color: #e5475c;
+}
+
+QPushButton:pressed {
+    background-color: #d93f53; /* slightly darker for click feedback */
+}
+
+QPushButton:disabled {
+    background-color: #e0e0e0;
+    color: #999999;
+}
+</string>
+             </property>
+             <property name="text">
+              <string>Save Changes</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>

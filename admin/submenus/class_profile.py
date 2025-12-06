@@ -51,12 +51,11 @@ class ProfileWidget(QWidget):
         self.load_initial_data()
 
         # ربط الأزرار
-        self.ui.buttonEdit.clicked.connect(self.start_edit_email_mode)
         self.ui.buttonSave.clicked.connect(self.save_changes)
-        self.ui.buttonCancel.clicked.connect(self.cancel_edit)
+    
 
         # زر تغيير الباسورد نخليه مقفول مؤقتاً أو تبرمجه لاحقاً
-        self.ui.buttonChangePassword.setEnabled(False)
+        
 
         # في البداية: ممنوع التعديل
         self.disable_edit_mode()
@@ -71,8 +70,7 @@ class ProfileWidget(QWidget):
         # قسم/كلية ثابتة
         self.ui.lineEditDepartment.setText("Electrical and Computer Engineering")
 
-        # كلمة المرور مجرد شكل
-        self.ui.lineEditPassword.setText("••••••••")
+
 
     # ---------------------------------------------------------
     # ENABLE/DISABLE EDIT MODE
@@ -90,12 +88,12 @@ class ProfileWidget(QWidget):
         # نخلي باقي الحقول مقفولة (الاسم، القسم، الباسورد)
         self.ui.lineEditName.setReadOnly(True)
         self.ui.lineEditDepartment.setReadOnly(True)
-        self.ui.lineEditPassword.setReadOnly(True)
+        
 
         # تفعيل الأزرار المناسبة
         self.ui.buttonSave.setEnabled(True)
-        self.ui.buttonCancel.setEnabled(True)
-        self.ui.buttonEdit.setEnabled(False)
+    
+        
 
     def disable_edit_mode(self):
         """
@@ -106,11 +104,11 @@ class ProfileWidget(QWidget):
         self.ui.lineEditName.setReadOnly(True)
         self.ui.lineEditEmail.setReadOnly(True)
         self.ui.lineEditDepartment.setReadOnly(True)
-        self.ui.lineEditPassword.setReadOnly(True)
+        
 
         self.ui.buttonSave.setEnabled(False)
-        self.ui.buttonCancel.setEnabled(False)
-        self.ui.buttonEdit.setEnabled(True)
+
+        
 
     # ---------------------------------------------------------
     # SAVE CHANGES (EMAIL ONLY)
