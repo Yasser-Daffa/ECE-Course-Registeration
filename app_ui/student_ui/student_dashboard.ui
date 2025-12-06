@@ -154,7 +154,7 @@ QWidget {
                <number>4</number>
               </property>
               <item>
-               <widget class="QLabel" name="logoTitleLabel">
+               <widget class="QLabel" name="labelLogoTitle">
                 <property name="styleSheet">
                  <string notr="true">color: white; font-size: 23px; font-weight: 800; background: transparent;</string>
                 </property>
@@ -164,7 +164,7 @@ QWidget {
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="logoSubtitleLabel">
+               <widget class="QLabel" name="labelLogoSubtitle">
                 <property name="styleSheet">
                  <string notr="true">color: rgba(255,255,255,0.95); font-size: 13px; background: transparent;</string>
                 </property>
@@ -419,9 +419,9 @@ QScrollBar::sub-page:vertical {
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>-131</y>
+            <y>-220</y>
             <width>284</width>
-            <height>567</height>
+            <height>719</height>
            </rect>
           </property>
           <property name="styleSheet">
@@ -633,6 +633,112 @@ QPushButton:pressed {
             </widget>
            </item>
            <item>
+            <widget class="QPushButton" name="buttonViewPrereqs">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>48</height>
+              </size>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton {
+    background-color: transparent;
+    border: none;
+    border-radius: 10px;
+    color: #5a6c7d;
+    font-size: 14px;
+    text-align: left;
+    padding-left: 15px;
+}
+
+QPushButton:hover {
+    background-color: #f8f9fa;
+    color: #8c6fff;  /* slightly purple-ish on hover */
+}
+
+/* CHECKED / TOGGLED STATE */
+QPushButton:checked {
+    background-color: rgba(140, 111, 255, 0.10);  /* faint purple */
+    color: #8c6fff; 
+    font-weight: bold;
+    border-left: 4px solid #8c6fff;
+    padding-left: 11px; /* adjust so bar doesn’t push content too far */
+}
+
+/* PRESSED STATE (optional but clean) */
+QPushButton:pressed {
+    background-color: rgba(140, 111, 255, 0.18);  /* slightly darker purple on press */
+}
+</string>
+             </property>
+             <property name="text">
+              <string>🔗  View Prerequisetes</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <attribute name="buttonGroup">
+              <string notr="true">buttonGroupSubmenus</string>
+             </attribute>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="buttonViewProgramPlans">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>48</height>
+              </size>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton {
+    background-color: transparent;
+    border: none;
+    border-radius: 10px;
+    color: #5a6c7d;
+    font-size: 14px;
+    text-align: left;
+    padding-left: 15px;
+}
+
+QPushButton:hover {
+    background-color: #f8f9fa;
+    color: #8c6fff;  /* slightly purple-ish on hover */
+}
+
+/* CHECKED / TOGGLED STATE */
+QPushButton:checked {
+    background-color: rgba(140, 111, 255, 0.10);  /* faint purple */
+    color: #8c6fff; 
+    font-weight: bold;
+    border-left: 4px solid #8c6fff;
+    padding-left: 11px; /* adjust so bar doesn’t push content too far */
+}
+
+/* PRESSED STATE (optional but clean) */
+QPushButton:pressed {
+    background-color: rgba(140, 111, 255, 0.18);  /* slightly darker purple on press */
+}
+</string>
+             </property>
+             <property name="text">
+              <string>📋  View Program Plans</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <attribute name="buttonGroup">
+              <string notr="true">buttonGroupSubmenus</string>
+             </attribute>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="buttonTranscript">
              <property name="minimumSize">
               <size>
@@ -794,7 +900,7 @@ QPushButton:pressed {
           <item row="0" column="1">
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
-             <widget class="QLabel" name="pageTitleLabel">
+             <widget class="QLabel" name="labelPageTitle">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -816,12 +922,12 @@ QPushButton:pressed {
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="breadcrumbLabel">
+             <widget class="QLabel" name="labelLastLogin">
               <property name="styleSheet">
                <string notr="true">font-size: 14px; color: #718096; background: transparent;</string>
               </property>
               <property name="text">
-               <string>🏠 Home • Dashboard</string>
+               <string>🏠 Last Login:</string>
               </property>
              </widget>
             </item>
