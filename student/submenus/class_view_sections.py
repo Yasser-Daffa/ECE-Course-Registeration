@@ -7,7 +7,6 @@ from PyQt6.QtWidgets import (
     QTableWidgetItem,
     QCheckBox,
     QHBoxLayout,
-    QMessageBox,
 )
 from PyQt6.QtCore import Qt
 
@@ -19,6 +18,9 @@ from app_ui.student_ui.submenus_ui.ui_view_sections import Ui_ViewSections
 
 # منطق الطالب + الداتا بيس
 from student.class_student_utilities import StudentUtilities, db
+
+# استبدال QMessageBox بـ info, warning, error
+from helper_files.shared_utilities import info, warning, error
 
 
 class ViewSectionsWidget(QWidget):
@@ -56,7 +58,7 @@ class ViewSectionsWidget(QWidget):
 
         table = self.ui.tableSections
         table.setSelectionBehavior(table.SelectionBehavior.SelectRows)
-        table.setSelectionMode(table.SelectionMode.SingleSelection)
+        table.setSelectionMode(table.SelectionMode.ExtendedSelection)
         table.setEditTriggers(table.EditTrigger.NoEditTriggers)
 
         # نخلي عمود REGISTERATION واضح
@@ -82,12 +84,8 @@ class ViewSectionsWidget(QWidget):
         self.sections = []
 
         for code in self.course_codes:
-            # حسب implementation عندك، ممكن تستخدم self.semester هنا كفلتر
             rows = self.student_utils.get_sections_for_course(code, self.semester)
 
-            # rows: list of tuples من list_sections:
-            # section_id, course_code, doctor_id, days, time_start, time_end,
-            # room, capacity, enrolled, semester, state
             for sec in rows:
                 section_id = sec[0]
                 course_code = sec[1]
@@ -98,19 +96,18 @@ class ViewSectionsWidget(QWidget):
                 room = sec[6] or ""
                 capacity = sec[7]
                 enrolled = sec[8]
-                semester = sec[9]      # <-- سمستر الشعبة نفسها
+                semester = sec[9]      # سمستر الشعبة نفسها
                 state = sec[10] or ""
 
-                # نستثني السكاشن المسجّلة مسبقاً في "نفس سمستر الشعبة"
+                # نستثني السكاشن المسجّلة مسبقاً في نفس سمستر الشعبة
                 try:
                     if self.student_utils.db.is_student_registered(
                         self.student_id,
                         section_id,
-                        semester          # <-- بدل self.semester
+                        semester
                     ):
                         continue
                 except AttributeError:
-                    # لو لسبب ما ما فيه الدالة، نكمّل بدون الفلترة
                     pass
 
                 self.sections.append({
@@ -123,7 +120,7 @@ class ViewSectionsWidget(QWidget):
                     "room": room,
                     "capacity": capacity,
                     "enrolled": enrolled,
-                    "semester": semester,   # <-- مهم نحتفظ فيه هنا
+                    "semester": semester,
                     "state": state,
                 })
 
@@ -132,19 +129,12 @@ class ViewSectionsWidget(QWidget):
     # ==================== تعبئة الجدول + صفوف فاصل ====================
 
     def fill_table(self):
-        """
-        يعرض السكاشن في tableSections:
-        - يجمع السكاشن حسب course_code.
-        - يحط صف رمادي فاصل بين كل مادة والثانية.
-        - يربط الـ CheckBox مع تلوين الصف.
-        """
         table = self.ui.tableSections
         table.clearContents()
 
         self.display_rows = []
         self.row_to_section = {}
 
-        # ترتيب: أولاً حسب كود المادة، ثم رقم السكشن
         sorted_secs = sorted(
             self.sections,
             key=lambda s: (s["course_code"], s["section_id"])
@@ -154,7 +144,6 @@ class ViewSectionsWidget(QWidget):
         for sec in sorted_secs:
             code = sec["course_code"]
             if last_code is not None and code != last_code:
-                # صف فاصل (رمادي)
                 self.display_rows.append(None)
             self.display_rows.append(sec)
             last_code = code
@@ -163,7 +152,6 @@ class ViewSectionsWidget(QWidget):
 
         for row, sec in enumerate(self.display_rows):
             if sec is None:
-                # صف فاصل
                 for col in range(table.columnCount()):
                     item = QTableWidgetItem("")
                     item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
@@ -183,27 +171,22 @@ class ViewSectionsWidget(QWidget):
             capacity = sec["capacity"]
             state = (sec["state"] or "").capitalize()
 
-            # 0: #
             item_index = QTableWidgetItem(str(row + 1))
             item_index.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             table.setItem(row, 0, item_index)
 
-            # 1: ID (رقم السكشن)
             item_id = QTableWidgetItem(str(section_id))
             item_id.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             table.setItem(row, 1, item_id)
 
-            # 2: COURSE
             item_course = QTableWidgetItem(course_code)
             item_course.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             table.setItem(row, 2, item_course)
 
-            # 3: INSTRUCTOR (فاضي حالياً)
             item_instr = QTableWidgetItem("")
             item_instr.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             table.setItem(row, 3, item_instr)
 
-            # 4: SCHEDULE (days + time + room)
             schedule_str = days
             if time_start and time_end:
                 schedule_str += f"  {time_start}-{time_end}"
@@ -213,35 +196,21 @@ class ViewSectionsWidget(QWidget):
             item_sched.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             table.setItem(row, 4, item_sched)
 
-            # 5: ENROLLED
-            item_enrolled = QTableWidgetItem(
-                "" if enrolled is None else str(enrolled)
-            )
+            item_enrolled = QTableWidgetItem("" if enrolled is None else str(enrolled))
             item_enrolled.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             table.setItem(row, 5, item_enrolled)
 
-            # 6: CAPACITY
-            item_cap = QTableWidgetItem(
-                "" if capacity is None else str(capacity)
-            )
+            item_cap = QTableWidgetItem("" if capacity is None else str(capacity))
             item_cap.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             table.setItem(row, 6, item_cap)
 
-            # 7: STATUS
             item_status = QTableWidgetItem(state)
             item_status.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
             table.setItem(row, 7, item_status)
 
-            # 8: REGISTERATION (CheckBox)
             checkbox = QCheckBox()
-            checkbox.setStyleSheet(
-                "QCheckBox::indicator { width: 20px; height: 20px; }"
-            )
-
-            # لما يتغير الـ CheckBox => نحدّث لون الصف
-            checkbox.stateChanged.connect(
-                lambda _state, r=row: self.update_row_highlight(r)
-            )
+            checkbox.setStyleSheet("QCheckBox::indicator { width: 20px; height: 20px; }")
+            checkbox.stateChanged.connect(lambda _state, r=row: self.update_row_highlight(r))
 
             layout = QHBoxLayout()
             layout.addWidget(checkbox)
@@ -250,20 +219,15 @@ class ViewSectionsWidget(QWidget):
             cell.setLayout(layout)
             table.setCellWidget(row, 8, cell)
 
-            # لون افتراضي
             self.update_row_highlight(row)
 
         table.setColumnWidth(8, 130)
 
-    # ==================== تلوين الصف حسب التحديد ====================
+    # ==================== تلوين الصف ====================
 
     def update_row_highlight(self, row: int):
-        """
-        يلوّن الصف بالأصفر إذا الـ CheckBox في هذا الصف محدد،
-        ويرجع للون الأبيض إذا ملغي.
-        """
         if row not in self.row_to_section:
-            return  # صف فاصل
+            return
 
         table = self.ui.tableSections
         cell = table.cellWidget(row, 8)
@@ -280,15 +244,11 @@ class ViewSectionsWidget(QWidget):
             if item:
                 item.setBackground(bg_color)
 
-    # ==================== الضغط على الصف يقلب الـ CheckBox ====================
+    # ==================== الضغط على صف ====================
 
     def handle_cell_clicked(self, row: int, column: int):
-        """
-        لما تضغط أي خلية في صف حقيقي:
-        - نقلب حالة الـ CheckBox في عمود REGISTERATION (8).
-        """
         if row not in self.row_to_section:
-            return  # صف فاصل
+            return
 
         table = self.ui.tableSections
         cell = table.cellWidget(row, 8)
@@ -301,9 +261,6 @@ class ViewSectionsWidget(QWidget):
     # ==================== السكاشن المختارة ====================
 
     def get_selected_sections(self):
-        """
-        ترجع list بالسكاشن اللي عليها صح (CheckBox).
-        """
         table = self.ui.tableSections
         selected = []
 
@@ -317,23 +274,15 @@ class ViewSectionsWidget(QWidget):
 
         return selected
 
-    # ==================== التعارض + منع نفس الكورس + التسجيل ====================
+    # ==================== التعارض + التسجيل ====================
 
     def handle_confirm_registration(self):
-        """
-        1) تجمع السكاشن المختارة.
-        2) تمنع تسجيل أكثر من شعبة لنفس الكورس.
-        3) تفحص التعارض الزمني.
-        4) تسجّل في جدول registrations.
-        5) تشيل الكورسات اللي تسجلت من الجدول.
-        """
         selected = self.get_selected_sections()
 
         if not selected:
-            QMessageBox.warning(self, "No Sections", "Please select at least one section.")
+            warning(self, "Please select at least one section.")
             return
 
-        # منع تسجيل أكثر من شعبة لنفس الكورس
         code_counts = {}
         for sec in selected:
             code = sec["course_code"]
@@ -343,10 +292,9 @@ class ViewSectionsWidget(QWidget):
         if duplicates:
             msg = "لا يمكنك تسجيل أكثر من شعبة لنفس المادة:\n\n"
             msg += "\n".join(f"- {c}" for c in duplicates)
-            QMessageBox.warning(self, "Invalid Selection", msg)
+            warning(self, msg)
             return
 
-        # فحص التعارض الزمني بين السكاشن المختارة
         if len(selected) > 1:
             for i in range(len(selected)):
                 for j in range(i + 1, len(selected)):
@@ -359,19 +307,12 @@ class ViewSectionsWidget(QWidget):
                             f"- {s2['course_code']} (section {s2['section_id']})\n\n"
                             "الرجاء تغيير الشعبة لأحد المادتين ثم المحاولة مرة أخرى."
                         )
-                        QMessageBox.warning(self, "Time Conflict", msg)
+                        warning(self, msg)
                         return
 
-        # التسجيل الفعلي + تحديث الجدول
         self.register_selected_sections(selected)
 
     def register_selected_sections(self, sections):
-        """
-        يسجّل السكاشن في الداتا بيس باستخدام
-        StudentUtilities.register_section(section_id, course_code, semester)
-        ثم يتأكد فعليًا من أن السكشن انضاف في الجدول عن طريق is_student_registered
-        وبعدها يحدّث الجدول والرسائل.
-        """
         success = 0
         fail = 0
         registered_codes = set()
@@ -379,20 +320,17 @@ class ViewSectionsWidget(QWidget):
         for sec in sections:
             section_id = sec["section_id"]
             course_code = sec["course_code"]
-            semester = sec["semester"]   # <-- ناخذ سمستر الشعبة نفسها
+            semester = sec["semester"]
 
-            # نحاول التسجيل بسـمـسـتـر الشعبة نفسها
             ok = self.student_utils.register_section(section_id, course_code, semester)
 
-            # ✅ تأكيد فعلي من جدول التسجيلات لنفس سمستر الشعبة
             try:
                 really_registered = self.student_utils.db.is_student_registered(
                     self.student_utils.student_id,
                     section_id,
                     semester
                 )
-            except Exception as e:
-                print(f"[WARN] is_student_registered failed: {e}")
+            except Exception:
                 really_registered = False
 
             if ok and really_registered:
@@ -401,7 +339,6 @@ class ViewSectionsWidget(QWidget):
             else:
                 fail += 1
 
-        # نشيل الكورسات اللي تسجلت فعليًا من القائمة الداخلية
         if registered_codes:
             self.sections = [
                 s for s in self.sections
@@ -409,30 +346,20 @@ class ViewSectionsWidget(QWidget):
             ]
             self.fill_table()
 
-        # ✅ الرسائل الآن مبنية على الحقيقة من الداتابيس
         if success and not fail:
-            QMessageBox.information(self, "Registration", "All sections have been registered successfully.")
+            info(self, "All sections have been registered successfully.")
         elif success and fail:
-            QMessageBox.warning(
-                self,
-                "Registration",
-                f"Registered {success} sections successfully, and {fail} failed.",
-            )
+            warning(self, f"Registered {success} sections successfully, and {fail} failed.")
         else:
-            QMessageBox.critical(
-                self,
-                "Registration",
-                "Failed to register all sections. Make sure there are no time conflicts.",
-            )
+            error(self, "Failed to register all sections. Make sure there are no time conflicts.")
 
 
-# ===== تجربة سريعة من نفس الملف =====
+# ===== تجربة سريعة =====
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
-    # عدّل القيم حسب الداتا بيس عندك
     test_student_id = 2500001
-    test_semester = "First"   # هنا بس فلتر أولي لو دالتك تحتاجه
+    test_semester = "First"
     selected_course_codes = ["MATH204", "CIPT", "IE204", "A", "W"]
 
     w = ViewSectionsWidget(test_student_id, test_semester, selected_course_codes)

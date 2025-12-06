@@ -118,8 +118,8 @@ def validate_student_id(student_id: str):
         return "Student ID cannot contain spaces."
     if not student_id.isdigit():
         return "Student ID must contain numbers only."
-    if len(student_id) != 7:
-        return "Student ID must be 7 digits."
+    if len(student_id) <= 5:
+        return "Student ID must be more than 5 digits."
     return None
 
 # ----------------------------------------
