@@ -365,7 +365,7 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
 
 
     def handle_email_confirmation(self):
-        entered_code = self.confirm_email_page.lineEditVerificationCode.text().strip().lower()
+        entered_code = self.confirm_email_page.lineEditVerificationCode.text().strip()
         email = self.new_user_data["email"]
 
         is_valid, reason = self.check_is_code_valid(entered_code, email)
