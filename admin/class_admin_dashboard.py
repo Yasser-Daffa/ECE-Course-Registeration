@@ -3,8 +3,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 
 
 from PyQt6 import QtWidgets
-from database_files.class_database_uitlities import DatabaseUtilities
-from database_files.initialize_database import initialize_database
 from admin.class_admin_utilities import AdminUtilities
 from admin.class_admin_utilities import admin, db
 
@@ -27,6 +25,9 @@ from admin.submenus.class_manage_prereqs import ManagePrerequisitesController
 
 from app_ui.admin_ui.submenus_ui.ui_manage_sections import Ui_ManageSections
 from admin.submenus.class_manage_sections import ManageSectionsWidget
+
+from admin.submenus.class_manage_faculty import ManageFacultyWidget
+
 
 class AdminDashboard(QtWidgets.QMainWindow):
     """
@@ -68,6 +69,9 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.ui.stackedWidget.addWidget(self.profile_page)
         self.ui.stackedWidget.addWidget(self.all_students_page)
         self.ui.stackedWidget.addWidget(self.pending_requests_page)
+
+        self.ui.stackedWidget.addWidget(self.manage_faculty_controller)
+
         self.ui.stackedWidget.addWidget(self.manage_courses_page)
         self.ui.stackedWidget.addWidget(self.manage_prereqs_page)
         self.ui.stackedWidget.addWidget(self.manage_sections_controller)
@@ -85,12 +89,18 @@ class AdminDashboard(QtWidgets.QMainWindow):
             self.ui.buttonProfile: ("Profile", self.profile_page),
             self.ui.buttonAllStudents: ("All Students", self.all_students_page),
             self.ui.buttonPendingRequests: ("Pending Requests", self.pending_requests_page),
+
+            # self.ui.buttonStudentsFaculty: ("Manage Students", self.manage_Students_controller),
+            self.ui.buttonManageFaculty: ("Manage Faculty", self.manage_faculty_controller),
+
             self.ui.buttonManageCourses: ("Manage Courses", self.manage_courses_page),
             self.ui.buttonManagePrereqs: ("Manage Prereqs", self.manage_prereqs_page),
             self.ui.buttonManageSections: ("Manage Prereqs", self.manage_sections_controller)
         }
 
-        # Connect buttons to page-switching logic
+        
+        
+        # Connect buttons to page-switching logic... using dicts for faster linkage :)
         for button in self.page_mapping.keys():
             button.clicked.connect(lambda checked, b=button: self.switch_to_page(b))
 
@@ -99,8 +109,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
 
         # Show default page (should be profile first)
         self.switch_to_page(self.ui.buttonProfile)
-        # Disable manage faculty button do to it not being implemented yet
-        self.ui.buttonManageFaculty.setEnabled(False)
+        
 
     # -------------------------------
     # Initialize all sub-pages
@@ -113,9 +122,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # -------------------------------
         # Profile page
         # -------------------------------
-        # نجيب آخر تسجيل دخول من قاعدة البيانات
-
-
+    
         self.profile_page = QtWidgets.QWidget()
         self.profile_page_ui = Ui_Profile()
         self.profile_page_ui.setupUi(self.profile_page)
@@ -137,6 +144,19 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.pending_requests_ui.setupUi(self.pending_requests_page)
         # Uses direct database_utilities access
         self.pending_requests_controller = PendingRequestsController(self.pending_requests_ui, admin)
+
+        # -------------------------------
+        # Manage students page
+        # -------------------------------
+        # uses database utils
+        # self.manage_students_controller = ManageStudentsWidget(db)
+
+
+        # -------------------------------
+        # Manage facutly page
+        # -------------------------------
+        # uses database utils
+        self.manage_faculty_controller = ManageFacultyWidget(db)
 
         # -------------------------------
         # Manage courses

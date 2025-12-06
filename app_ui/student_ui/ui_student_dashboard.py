@@ -63,14 +63,14 @@ class Ui_StudentDashboard(object):
         self.logoTextLayout = QtWidgets.QVBoxLayout()
         self.logoTextLayout.setSpacing(4)
         self.logoTextLayout.setObjectName("logoTextLayout")
-        self.logoTitleLabel = QtWidgets.QLabel(parent=self.headerWidget)
-        self.logoTitleLabel.setStyleSheet("color: white; font-size: 23px; font-weight: 800; background: transparent;")
-        self.logoTitleLabel.setObjectName("logoTitleLabel")
-        self.logoTextLayout.addWidget(self.logoTitleLabel)
-        self.logoSubtitleLabel = QtWidgets.QLabel(parent=self.headerWidget)
-        self.logoSubtitleLabel.setStyleSheet("color: rgba(255,255,255,0.95); font-size: 13px; background: transparent;")
-        self.logoSubtitleLabel.setObjectName("logoSubtitleLabel")
-        self.logoTextLayout.addWidget(self.logoSubtitleLabel)
+        self.labelLogoTitle = QtWidgets.QLabel(parent=self.headerWidget)
+        self.labelLogoTitle.setStyleSheet("color: white; font-size: 23px; font-weight: 800; background: transparent;")
+        self.labelLogoTitle.setObjectName("labelLogoTitle")
+        self.logoTextLayout.addWidget(self.labelLogoTitle)
+        self.labelLogoSubtitle = QtWidgets.QLabel(parent=self.headerWidget)
+        self.labelLogoSubtitle.setStyleSheet("color: rgba(255,255,255,0.95); font-size: 13px; background: transparent;")
+        self.labelLogoSubtitle.setObjectName("labelLogoSubtitle")
+        self.logoTextLayout.addWidget(self.labelLogoSubtitle)
         self.logoHLayout.addLayout(self.logoTextLayout)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.logoHLayout.addItem(spacerItem)
@@ -187,7 +187,7 @@ class Ui_StudentDashboard(object):
         self.navScrollArea.setWidgetResizable(True)
         self.navScrollArea.setObjectName("navScrollArea")
         self.navScrollContent = QtWidgets.QWidget()
-        self.navScrollContent.setGeometry(QtCore.QRect(0, -131, 284, 567))
+        self.navScrollContent.setGeometry(QtCore.QRect(0, -220, 284, 719))
         self.navScrollContent.setStyleSheet("background-color: white;")
         self.navScrollContent.setObjectName("navScrollContent")
         self.navMainLayout = QtWidgets.QVBoxLayout(self.navScrollContent)
@@ -316,6 +316,78 @@ class Ui_StudentDashboard(object):
         self.buttonRegisterCourses.setObjectName("buttonRegisterCourses")
         self.buttonGroupSubmenus.addButton(self.buttonRegisterCourses)
         self.navMainLayout.addWidget(self.buttonRegisterCourses)
+        self.buttonViewPrereqs = QtWidgets.QPushButton(parent=self.navScrollContent)
+        self.buttonViewPrereqs.setMinimumSize(QtCore.QSize(0, 48))
+        self.buttonViewPrereqs.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonViewPrereqs.setStyleSheet("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: none;\n"
+"    border-radius: 10px;\n"
+"    color: #5a6c7d;\n"
+"    font-size: 14px;\n"
+"    text-align: left;\n"
+"    padding-left: 15px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #f8f9fa;\n"
+"    color: #8c6fff;  /* slightly purple-ish on hover */\n"
+"}\n"
+"\n"
+"/* CHECKED / TOGGLED STATE */\n"
+"QPushButton:checked {\n"
+"    background-color: rgba(140, 111, 255, 0.10);  /* faint purple */\n"
+"    color: #8c6fff; \n"
+"    font-weight: bold;\n"
+"    border-left: 4px solid #8c6fff;\n"
+"    padding-left: 11px; /* adjust so bar doesn’t push content too far */\n"
+"}\n"
+"\n"
+"/* PRESSED STATE (optional but clean) */\n"
+"QPushButton:pressed {\n"
+"    background-color: rgba(140, 111, 255, 0.18);  /* slightly darker purple on press */\n"
+"}\n"
+"")
+        self.buttonViewPrereqs.setCheckable(True)
+        self.buttonViewPrereqs.setObjectName("buttonViewPrereqs")
+        self.buttonGroupSubmenus.addButton(self.buttonViewPrereqs)
+        self.navMainLayout.addWidget(self.buttonViewPrereqs)
+        self.buttonViewProgramPlans = QtWidgets.QPushButton(parent=self.navScrollContent)
+        self.buttonViewProgramPlans.setMinimumSize(QtCore.QSize(0, 48))
+        self.buttonViewProgramPlans.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonViewProgramPlans.setStyleSheet("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: none;\n"
+"    border-radius: 10px;\n"
+"    color: #5a6c7d;\n"
+"    font-size: 14px;\n"
+"    text-align: left;\n"
+"    padding-left: 15px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #f8f9fa;\n"
+"    color: #8c6fff;  /* slightly purple-ish on hover */\n"
+"}\n"
+"\n"
+"/* CHECKED / TOGGLED STATE */\n"
+"QPushButton:checked {\n"
+"    background-color: rgba(140, 111, 255, 0.10);  /* faint purple */\n"
+"    color: #8c6fff; \n"
+"    font-weight: bold;\n"
+"    border-left: 4px solid #8c6fff;\n"
+"    padding-left: 11px; /* adjust so bar doesn’t push content too far */\n"
+"}\n"
+"\n"
+"/* PRESSED STATE (optional but clean) */\n"
+"QPushButton:pressed {\n"
+"    background-color: rgba(140, 111, 255, 0.18);  /* slightly darker purple on press */\n"
+"}\n"
+"")
+        self.buttonViewProgramPlans.setCheckable(True)
+        self.buttonViewProgramPlans.setObjectName("buttonViewProgramPlans")
+        self.buttonGroupSubmenus.addButton(self.buttonViewProgramPlans)
+        self.navMainLayout.addWidget(self.buttonViewProgramPlans)
         self.buttonTranscript = QtWidgets.QPushButton(parent=self.navScrollContent)
         self.buttonTranscript.setMinimumSize(QtCore.QSize(0, 48))
         self.buttonTranscript.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
@@ -405,20 +477,20 @@ class Ui_StudentDashboard(object):
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.pageTitleLabel = QtWidgets.QLabel(parent=self.topBarFrame)
+        self.labelPageTitle = QtWidgets.QLabel(parent=self.topBarFrame)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Maximum, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pageTitleLabel.sizePolicy().hasHeightForWidth())
-        self.pageTitleLabel.setSizePolicy(sizePolicy)
-        self.pageTitleLabel.setMinimumSize(QtCore.QSize(300, 30))
-        self.pageTitleLabel.setStyleSheet("font-size: 30px; font-weight: 900; color: #1a202c; background: transparent;")
-        self.pageTitleLabel.setObjectName("pageTitleLabel")
-        self.verticalLayout_2.addWidget(self.pageTitleLabel)
-        self.breadcrumbLabel = QtWidgets.QLabel(parent=self.topBarFrame)
-        self.breadcrumbLabel.setStyleSheet("font-size: 14px; color: #718096; background: transparent;")
-        self.breadcrumbLabel.setObjectName("breadcrumbLabel")
-        self.verticalLayout_2.addWidget(self.breadcrumbLabel)
+        sizePolicy.setHeightForWidth(self.labelPageTitle.sizePolicy().hasHeightForWidth())
+        self.labelPageTitle.setSizePolicy(sizePolicy)
+        self.labelPageTitle.setMinimumSize(QtCore.QSize(300, 30))
+        self.labelPageTitle.setStyleSheet("font-size: 30px; font-weight: 900; color: #1a202c; background: transparent;")
+        self.labelPageTitle.setObjectName("labelPageTitle")
+        self.verticalLayout_2.addWidget(self.labelPageTitle)
+        self.labelLastLogin = QtWidgets.QLabel(parent=self.topBarFrame)
+        self.labelLastLogin.setStyleSheet("font-size: 14px; color: #718096; background: transparent;")
+        self.labelLastLogin.setObjectName("labelLastLogin")
+        self.verticalLayout_2.addWidget(self.labelLastLogin)
         self.gridLayout_2.addLayout(self.verticalLayout_2, 0, 1, 1, 1)
         spacerItem4 = QtWidgets.QSpacerItem(10, 20, QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Minimum)
         self.gridLayout_2.addItem(spacerItem4, 0, 0, 1, 1)
@@ -558,8 +630,8 @@ class Ui_StudentDashboard(object):
         _translate = QtCore.QCoreApplication.translate
         StudentDashboard.setWindowTitle(_translate("StudentDashboard", "Student Dashboard - ECE Registration System"))
         self.logoIconLabel.setText(_translate("StudentDashboard", "🎓"))
-        self.logoTitleLabel.setText(_translate("StudentDashboard", "Student Panel"))
-        self.logoSubtitleLabel.setText(_translate("StudentDashboard", "ECE Registration System"))
+        self.labelLogoTitle.setText(_translate("StudentDashboard", "Student Panel"))
+        self.labelLogoSubtitle.setText(_translate("StudentDashboard", "ECE Registration System"))
         self.labelStudentName.setText(_translate("StudentDashboard", "Student User"))
         self.labelStudentRole.setText(_translate("StudentDashboard", "Student"))
         self.labelStudentStatus.setText(_translate("StudentDashboard", "🟢 Online"))
@@ -570,7 +642,9 @@ class Ui_StudentDashboard(object):
         self.buttonCurrentSchedule.setText(_translate("StudentDashboard", "📅 Current Schedule"))
         self.courseMgmtLabel.setText(_translate("StudentDashboard", "COURSE MANAGEMENT"))
         self.buttonRegisterCourses.setText(_translate("StudentDashboard", " 📝 Register Courses "))
+        self.buttonViewPrereqs.setText(_translate("StudentDashboard", "🔗  View Prerequisetes"))
+        self.buttonViewProgramPlans.setText(_translate("StudentDashboard", "📋  View Program Plans"))
         self.buttonTranscript.setText(_translate("StudentDashboard", " 📊 Transcript "))
         self.buttonLogout.setText(_translate("StudentDashboard", "🚪  Logout"))
-        self.pageTitleLabel.setText(_translate("StudentDashboard", "Dashboard Overview"))
-        self.breadcrumbLabel.setText(_translate("StudentDashboard", "🏠 Home • Dashboard"))
+        self.labelPageTitle.setText(_translate("StudentDashboard", "Dashboard Overview"))
+        self.labelLastLogin.setText(_translate("StudentDashboard", "🏠 Last Login:"))

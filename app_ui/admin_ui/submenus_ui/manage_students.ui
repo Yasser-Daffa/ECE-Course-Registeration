@@ -40,7 +40,7 @@
         <string notr="true">font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;</string>
        </property>
        <property name="text">
-        <string>All Students</string>
+        <string>Students Management</string>
        </property>
       </widget>
      </item>
@@ -253,11 +253,6 @@ QComboBox[error=&quot;true&quot;] {
         </property>
         <item>
          <property name="text">
-          <string>All Programs</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
           <string>Computer</string>
          </property>
         </item>
@@ -413,6 +408,47 @@ QPushButton:pressed {
           </spacer>
          </item>
          <item>
+          <widget class="QPushButton" name="buttonAddStudent_2">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>120</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+    background-color: #f5576c;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 20px;
+    transition: background-color 150ms;
+}
+QPushButton:hover {
+    background-color: #e5475c;
+}
+QPushButton:pressed {
+    background-color: #d43f52;
+}
+QPushButton:disabled {
+    background-color: #cccccc;  /* gray background for disabled */
+    color: #666666;             /* darker gray text */
+}</string>
+           </property>
+           <property name="text">
+            <string>📝 Add Grades</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="buttonAddStudent">
            <property name="enabled">
             <bool>false</bool>
@@ -450,7 +486,7 @@ QPushButton:disabled {
 }</string>
            </property>
            <property name="text">
-            <string>➕ Add New Student (WIP)</string>
+            <string>➕ Register Course for student</string>
            </property>
           </widget>
          </item>
@@ -492,7 +528,7 @@ QPushButton:disabled {
 }</string>
            </property>
            <property name="text">
-            <string>❌ Remove Student</string>
+            <string>❌ Remove Course for student</string>
            </property>
           </widget>
          </item>
@@ -680,11 +716,6 @@ QScrollBar:horizontal { height: 12px; }
         <column>
          <property name="text">
           <string>STATE</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>ACTION</string>
          </property>
         </column>
        </widget>

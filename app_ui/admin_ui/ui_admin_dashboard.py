@@ -176,7 +176,7 @@ class Ui_AdminDashboard(object):
         self.navScrollArea.setWidgetResizable(True)
         self.navScrollArea.setObjectName("navScrollArea")
         self.navScrollContent = QtWidgets.QWidget()
-        self.navScrollContent.setGeometry(QtCore.QRect(0, -355, 284, 947))
+        self.navScrollContent.setGeometry(QtCore.QRect(0, -101, 284, 1023))
         self.navScrollContent.setStyleSheet("background-color: white;")
         self.navScrollContent.setObjectName("navScrollContent")
         self.navMainLayout = QtWidgets.QVBoxLayout(self.navScrollContent)
@@ -301,6 +301,51 @@ class Ui_AdminDashboard(object):
         self.buttonPendingRequests.setObjectName("buttonPendingRequests")
         self.buttonGroupSubmenus.addButton(self.buttonPendingRequests)
         self.navMainLayout.addWidget(self.buttonPendingRequests)
+        self.buttonManageStudents = QtWidgets.QPushButton(parent=self.navScrollContent)
+        self.buttonManageStudents.setEnabled(True)
+        self.buttonManageStudents.setMinimumSize(QtCore.QSize(0, 48))
+        self.buttonManageStudents.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonManageStudents.setStyleSheet("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: none;\n"
+"    border-radius: 10px;\n"
+"    color: #5a6c7d;\n"
+"    font-size: 14px;\n"
+"    text-align: left;\n"
+"    padding-left: 15px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #f8f9fa;\n"
+"    color: #f5576c;\n"
+"}\n"
+"\n"
+"/* CHECKED / TOGGLED STATE */\n"
+"QPushButton:checked {\n"
+"    background-color: rgba(245, 87, 108, 0.10);  /* faint pink */\n"
+"    color: #f5576c; \n"
+"    font-weight: bold;\n"
+"    border-left: 4px solid #f5576c;\n"
+"    padding-left: 11px; /* adjust so bar doesn’t push content too far */\n"
+"}\n"
+"\n"
+"/* PRESSED STATE */\n"
+"QPushButton:pressed {\n"
+"    background-color: rgba(245, 87, 108, 0.18);\n"
+"}\n"
+"\n"
+"/* DISABLED STATE */\n"
+"QPushButton:disabled {\n"
+"    background-color: transparent;\n"
+"    color: #a0a0a0;        /* muted grey for disabled */\n"
+"    border-left: none;      /* remove left bar if present */\n"
+"    font-weight: normal;    /* remove bold */\n"
+"}\n"
+"")
+        self.buttonManageStudents.setCheckable(True)
+        self.buttonManageStudents.setObjectName("buttonManageStudents")
+        self.buttonGroupSubmenus.addButton(self.buttonManageStudents)
+        self.navMainLayout.addWidget(self.buttonManageStudents)
         self.buttonManageFaculty = QtWidgets.QPushButton(parent=self.navScrollContent)
         self.buttonManageFaculty.setEnabled(True)
         self.buttonManageFaculty.setMinimumSize(QtCore.QSize(0, 48))
@@ -755,6 +800,7 @@ class Ui_AdminDashboard(object):
         self.userMgmtLabel.setText(_translate("AdminDashboard", "USER MANAGEMENT"))
         self.buttonAllStudents.setText(_translate("AdminDashboard", "👥  All Students (205)"))
         self.buttonPendingRequests.setText(_translate("AdminDashboard", "⏳  Pending Requests (12)"))
+        self.buttonManageStudents.setText(_translate("AdminDashboard", "👨🏼‍🎓  Manage Students"))
         self.buttonManageFaculty.setText(_translate("AdminDashboard", "👨‍🏫  Manage Faculty"))
         self.courseMgmtLabel.setText(_translate("AdminDashboard", "COURSE MANAGEMENT"))
         self.buttonManageCourses.setText(_translate("AdminDashboard", "📚  Manage Courses (32)"))
