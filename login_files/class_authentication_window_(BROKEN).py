@@ -248,7 +248,7 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
         """Handles the 'Create Account' button click."""
         # --- 1. Gather user input ---
         raw_full_name = self.create_account_page.fullName.text().strip()
-        raw_email = self.create_account_page.email.text().strip()
+        raw_email = self.create_account_page.email.text().strip().lower()
         raw_password = self.create_account_page.password.text()
         selected_program_text = self.create_account_page.comboBoxProgram.currentText()
 
@@ -365,7 +365,7 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
 
 
     def handle_email_confirmation(self):
-        entered_code = self.confirm_email_page.lineEditVerificationCode.text().strip()
+        entered_code = self.confirm_email_page.lineEditVerificationCode.text().strip().lower()
         email = self.new_user_data["email"]
 
         is_valid, reason = self.check_is_code_valid(entered_code, email)
@@ -383,7 +383,7 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
         # ------------------------------
         if self.mode == "profile_edit":
             QMessageBox.information(self, "Success", "Email verified!")
-            self.accept()   # ← This closes AuthenticationWindow and returns control to Profile Page
+            self.accept()   # <- This closes AuthenticationWindow and returns control to Profile Page
             return
         # ------------------------------
 

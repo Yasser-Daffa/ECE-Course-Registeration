@@ -245,15 +245,17 @@ class DatabaseUtilities:
         return "Section deleted successfully" if self.cur.rowcount else "Section not found"
 
     # ===================== USER DEALINGS  =====================
-    def add_users(self, name, email, password, program, state):
+    def add_users(self, name, email, password, program, state, account_status="inactive"):
         try:
             self.cur.execute("""
                 INSERT INTO users(name, email, password_h, program, state, account_status)
-                VALUES(?,?,?,?,?, 'inactive')""", (name, email, password, program, state))
+                VALUES(?,?,?,?,?, ?)""",
+                (name, email, password, program, state, account_status))
             self.commit()
             return "User added successfully, please wait for final acceptance"
         except sqlite3.IntegrityError:
             return "email already exists"
+
 
     def list_users(self):
         self.cur.execute("""SELECT user_id, name, email, program, state, account_status FROM users""")
