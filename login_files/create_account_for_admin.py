@@ -257,8 +257,9 @@ class SignupAndConfirmWindow(BaseLoginForm):
             self.new_user_data["name"],
             self.new_user_data["email"],
             hashed_pw,
-            self.new_user_data["program"],
-            self.new_user_data["state"],
+            self.new_user_data["program"], # always none for admin
+            self.new_user_data["state"],   # "admin"
+            account_status="active"        # Always active for admins
         )
 
         if "successfully" in result:
