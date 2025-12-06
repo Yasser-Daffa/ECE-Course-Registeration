@@ -15,52 +15,64 @@ from admin.class_admin_utilities import AdminUtilities
 
 
 class AllStudentsController:
+    """
+    Controller for the All Students page.
+    Handles:
+    - Loading active students
+    - Filtering by search or program
+    - Removing students individually or in bulk
+    - Updating table formatting
+    """
 
     def __init__(self, ui: Ui_AllStudents, admin_utils: AdminUtilities):
         self.ui = ui
-        self.admin = admin_utils          # كائن الأدمن
-        self.db = admin_utils.db          # نفس الـ DatabaseUtilities
-        self.students_data = []           # كل الطلاب (active فقط)
-        self.blf = BaseLoginForm()
+        self.admin = admin_utils               # admin object (business logic)
+        self.db = admin_utils.db               # DatabaseUtilities instance
+        self.students_data = []                # Holds all active students
+        self.blf = BaseLoginForm()             # For confirmations and animations
 
-        # --- ربط إشارات الواجهة ---
+        # Connect UI signals
         self.connect_ui_signals()
 
-        # --- تحميل أولي ---
+        # Initial load
         self.load_students()
         self.format_table()
 
     # ----------------- UI SIGNAL CONNECTIONS -----------------
     def connect_ui_signals(self):
-        # البحث (name / id / email / program)
+        # Search filter (name / id / email / program)
         self.ui.lineEditSearch.textChanged.connect(self.search_and_filter)
 
-        # فلتر البرنامج من الكومبو بوكس
+        # Program filter from combo box
         self.ui.comboBoxSelectProgram.currentIndexChanged.connect(self.search_and_filter)
 
-        # زر حذف المحددين
+        # Remove selected button
         self.ui.buttonRemoveSelected.clicked.connect(self.remove_selected_students)
 
-        # زر التحديث
+        # Refresh button
         self.ui.buttonRefresh.clicked.connect(self.handle_refresh)
 
-        # تفعيل/تعطيل زر Remove Selected حسب الاختيار
+        # Enable/disable "Remove Selected" button depending on table selection
         self.ui.tableAllStudents.selectionModel().selectionChanged.connect(
             lambda: self.update_remove_button_text()
         )
 
-        # أول مرة نعمل Refresh أنيميشن + تحميل
+        # Trigger refresh animation + student loading on first run
         self.handle_refresh()
 
     # ----------------- LOAD / POPULATE TABLE -----------------
     def load_students(self):
+        """
+        Load all active students from the database into self.students_data
+        and then populate the table.
+        """
         self.students_data.clear()
         self.ui.tableAllStudents.setRowCount(0)
 
         rows = self.db.list_users()
-        # row = (user_id, name, email, program, state, account_status, password_h)
+        # row format: (user_id, name, email, program, state, account_status, password_h)
 
-        # نجيب فقط الطلاب اللي حالتهم active
+        # Filter only ACTIVE students with state = "student"
         active_rows = [
             row for row in rows
             if row[5] == "active" and row[4] == "student"
@@ -72,18 +84,21 @@ class AllStudentsController:
                 "user_id": row[0],
                 "name": row[1],
                 "email": row[2],
-                "program": row[3],  # ممكن تكون None
+                "program": row[3],       # may be None
                 "state": row[4],
                 "account_status": row[5],
             }
             self.students_data.append(student)
 
-        # عرض كامل
+        # Display full table with all active students
         self.fill_table(self.students_data)
         self.update_total_counter()
         self.update_remove_button_text()
 
     def handle_refresh(self):
+        """
+        Shows a loading animation on the label and refreshes students afterward.
+        """
         BaseLoginForm.animate_label_with_dots(
             self.ui.labelTotalStudentsCount,
             base_text="Refreshing",
@@ -93,10 +108,15 @@ class AllStudentsController:
         )
 
     def format_table(self):
+        """
+        Sets column widths and table formatting for a clean layout.
+        """
         table = self.ui.tableAllStudents
         header = table.horizontalHeader()
         header.setStretchLastSection(True)
         table.verticalHeader().setDefaultSectionSize(80)
+
+        # Column widths
         table.setColumnWidth(0, 60)
         table.setColumnWidth(1, 120)
         table.setColumnWidth(2, 220)
@@ -106,9 +126,11 @@ class AllStudentsController:
         table.setColumnWidth(6, 120)
         table.setColumnWidth(7, 80)
 
-
     # ----------------- POPULATE TABLE -----------------
     def fill_table(self, students):
+        """
+        Populate the table widget with a list of student dictionaries.
+        """
         table = self.ui.tableAllStudents
         table.setRowCount(len(students))
 
@@ -129,8 +151,8 @@ class AllStudentsController:
             # 3: Email
             table.setItem(row_idx, 3, QTableWidgetItem(student["email"] or ""))
 
-            # 4: Program
-            prog_text = student["program"] or ""   # <-- مهم عشان ما يكرش لو None
+            # 4: Program (handles None)
+            prog_text = student["program"] or ""
             table.setItem(row_idx, 4, QTableWidgetItem(prog_text))
 
             # 5: State
@@ -155,21 +177,23 @@ class AllStudentsController:
             layout.addWidget(btnRemove)
             table.setCellWidget(row_idx, 6, container)
 
-    # ----------------- TABLE FORMATTING -----------------
-    #
     # ----------------- SEARCH + PROGRAM FILTER -----------------
     def search_and_filter(self):
         """
-        يطبق فلتر النص + فلتر البرنامج معاً.
-        - النص: name / id / email / program
-        - البرنامج: من الكومبوبوكس (All / Computer / Communication / Power / Biomedical)
+        Applies both text filter and program filter simultaneously.
+
+        Text filter checks:
+            - name
+            - user id
+            - email
+            - program
+
+        Program filter checks selected program from combo box.
         """
         text = self.ui.lineEditSearch.text().strip().lower()
-
-        # قيمة الكومبو بوكس
         program_filter = self.ui.comboBoxSelectProgram.currentText()
 
-        # نحدد كود البرنامج اللي نفلتر عليه
+        # Mapping user-friendly names to program codes used in DB
         program_map = {
             "Computer": "COMP",
             "Communication": "COMM",
@@ -177,15 +201,14 @@ class AllStudentsController:
             "Biomedical": "BIO",
         }
 
-        # فلتر البرنامج (لو مو "All Programs")
+        # Program filter logic
         def match_program(s):
             if program_filter == "All Programs":
-                return True  # لا نفلتر بالبروجرام
+                return True
             code = program_map.get(program_filter)
-            # في الداتابيس نخزن الكود مثل COMP / COMM / ...
             return (s["program"] or "") == code
 
-        # فلتر النص
+        # Text filter logic
         def match_text(s):
             if not text:
                 return True
@@ -222,23 +245,32 @@ class AllStudentsController:
 
     # ----------------- REMOVE SELECTED STUDENTS -----------------
     def get_selected_user_ids(self):
+        """
+        Returns a list of selected student IDs from the table.
+        """
         table = self.ui.tableAllStudents
         selected_rows = table.selectionModel().selectedRows()
+
         ids = []
         for idx in selected_rows:
-            item = table.item(idx.row(), 1)  # عمود الـ ID
+            item = table.item(idx.row(), 1)  # Column 1 is the student ID
             if item:
                 try:
                     ids.append(int(item.text()))
                 except ValueError:
-                    # لو فيه كلام مو رقم، نتجاهله بس ما نكرش
+                    # Ignore unexpected non-numeric values
                     continue
         return ids
 
     def remove_selected_students(self):
+        """
+        Removes:
+        - All students if none are selected
+        - Selected students if at least one row is selected
+        """
         selected_ids = self.get_selected_user_ids()
 
-        # لو مافي صفوف محددة → اعتبرها "Remove All"
+        # No selected rows → ask to remove all
         if not selected_ids:
             reply = self.blf.show_confirmation(
                 "Remove All Students",
@@ -252,7 +284,7 @@ class AllStudentsController:
             self.load_students()
             return
 
-        # لو فيه صفوف محددة
+        # Removing selected rows
         reply = self.blf.show_confirmation(
             "Remove Selected Students",
             f"Are you sure you want to remove {len(selected_ids)} selected student(s)?"
@@ -267,7 +299,13 @@ class AllStudentsController:
 
     # ----------------- UPDATE REMOVE BUTTON TEXT -----------------
     def update_remove_button_text(self):
+        """
+        Updates the Remove Selected button:
+        - Disabled when no rows selected
+        - Shows count when rows selected
+        """
         selected_count = len(self.ui.tableAllStudents.selectionModel().selectedRows())
+
         if selected_count == 0:
             self.ui.buttonRemoveSelected.setText("Remove Selected")
             self.ui.buttonRemoveSelected.setEnabled(False)
@@ -275,12 +313,15 @@ class AllStudentsController:
             self.ui.buttonRemoveSelected.setText(f"Remove Selected ({selected_count})")
             self.ui.buttonRemoveSelected.setEnabled(True)
 
-    # ----------------- UPDATE TOTAL COUNTER -----------------
+    # ----------------- UPDATE TOTAL STUDENT COUNTER -----------------
     def update_total_counter(self):
+        """
+        Updates the label that shows how many students are loaded.
+        """
         self.ui.labelTotalStudentsCount.setText(f"Total Students: {len(self.students_data)}")
 
 
-# ---------------- MAIN APP (للاختبار فقط) ----------------
+# ---------------- MAIN APP (for standalone testing only) ----------------
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
 

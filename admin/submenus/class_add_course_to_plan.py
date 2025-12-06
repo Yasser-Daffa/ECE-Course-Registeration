@@ -7,20 +7,21 @@ from PyQt6.QtWidgets import (
     QMessageBox,
 )
 
-# نخلي المشروع الأساسي في الـ sys.path
+# Add the main project directory to sys.path so imports work correctly
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
 from app_ui.admin_ui.submenus_ui.ui_add_course_to_plan_dialog import Ui_AddCourseDialog
 from admin.class_admin_utilities import admin
-from helper_files.shared_utilities import warning,info,error
+from helper_files.shared_utilities import warning, info, error
+
 
 class AddCourseToPlanDialog(QDialog):
     """
-    Dialog لإضافة كورس إلى خطة:
-    - اختيار كورس
-    - اختيار برنامج (PWM/BIO/COMM/COMP)
-    - اختيار Level
-    - استدعاء admin_add_course_to_plan
+    Dialog for adding a course to a study plan:
+    - Select a course
+    - Select a program (PWM/BIO/COMM/COMP)
+    - Select a Level
+    - Calls admin_add_course_to_plan
     """
 
     def __init__(self, admin_utils, parent=None):
@@ -31,41 +32,49 @@ class AddCourseToPlanDialog(QDialog):
 
         self.admin_utils = admin_utils
 
+        # Fill combo boxes on startup
         self.populate_courses_combo()
         self.populate_programs_combo()
 
-        # زر الحفظ مبدئياً مقفول
+        # Save button initially disabled until all fields are valid
         self.ui.buttonSave.setEnabled(False)
 
-        # ربط الأزرار
+        # Connect buttons
         self.ui.buttonSave.clicked.connect(self.on_save_clicked)
         self.ui.buttonCancel.clicked.connect(self.reject)
 
-        # فحص الحقول
+        # Connect validation triggers
         self.ui.comboBoxSelectCourse.currentIndexChanged.connect(self.check_all_fields_filled)
         self.ui.comboBoxSelectProgram.currentIndexChanged.connect(self.check_all_fields_filled)
         self.ui.spinBoxLevel.valueChanged.connect(self.check_all_fields_filled)
 
+        # Initial validation call
         self.check_all_fields_filled()
 
-    # ------------------------ تعبئة الكومبوهات ------------------------
+    # ------------------------ COMBO BOX POPULATION ------------------------
 
     def populate_courses_combo(self):
-        """يعبّي قائمة الكورسات من جدول courses"""
+        """Fill the course list from the courses table."""
         cb = self.ui.comboBoxSelectCourse
         cb.clear()
         cb.addItem("Select a course...", None)
 
-        rows = self.admin_utils.db.ListCourses()  # (code, name, credits)
+        # ListCourses returns (code, name, credits)
+        rows = self.admin_utils.db.ListCourses()
+
+        # Add courses in readable format
         for code, name, credits in rows:
             cb.addItem(f"{code} - {name}", code)
 
+        # Added comment: Now the combo box has each course's display name and code stored as its data.
+
     def populate_programs_combo(self):
-        """يعبّي البرامج بقائمة ثابتة"""
+        """Fill available programs using a static list."""
         cb = self.ui.comboBoxSelectProgram
         cb.clear()
         cb.addItem("Select program...", None)
 
+        # List of supported programs and labels
         programs = [
             ("PWM",  "Power & Machines Engineering"),
             ("BIO",  "Biomedical Engineering"),
@@ -76,19 +85,26 @@ class AddCourseToPlanDialog(QDialog):
         for code, label in programs:
             cb.addItem(f"{code} - {label}", code)
 
-    # ------------------------ تفعيل زر الحفظ ------------------------
+        # Added comment: User sees label, program code is stored internally.
+
+    # ------------------------ SAVE BUTTON ACTIVATION ------------------------
 
     def check_all_fields_filled(self):
+        """Enable the Save button only when all required fields have valid selections."""
         course_ok = self.ui.comboBoxSelectCourse.currentIndex() > 0
         program_ok = self.ui.comboBoxSelectProgram.currentIndex() > 0
         level_ok = self.ui.spinBoxLevel.value() >= 1
 
+        # Button becomes enabled only when all conditions are satisfied
         self.ui.buttonSave.setEnabled(course_ok and program_ok and level_ok)
 
     def on_save_clicked(self):
+        """Called when Save is pressed. Validates and sends data to admin utilities."""
         course_code = self.ui.comboBoxSelectCourse.currentData()
         program = self.ui.comboBoxSelectProgram.currentData()
         level = self.ui.spinBoxLevel.value()
+
+        # Added info: The admin layer handles duplicate checking and plan validation.
 
         try:
             msg = self.admin_utils.admin_add_course_to_plan(
@@ -100,20 +116,21 @@ class AddCourseToPlanDialog(QDialog):
             error(self, f"Error while adding course to plan:\n{e}")
             return
 
+        # Show success message returned from DB layer
         info(self, msg)
 
-        # 🔥 تنظيف الحقول بعد النجاح
+        # Reset UI state after successful insert
         self.ui.comboBoxSelectCourse.setCurrentIndex(0)
         self.ui.spinBoxLevel.setValue(1)
 
-        # 🔥 إبعاد أي اختيار سابق حتى لا تبقى الرسالة السابقة
+        # Refresh button state
         self.check_all_fields_filled()
 
-        # 🔥 لا تقفل النافذة
+        # Do not close the window after saving
         return
 
 
-# =============== MAIN للتجربة ===============
+# =============== MAIN FOR TESTING ===============
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

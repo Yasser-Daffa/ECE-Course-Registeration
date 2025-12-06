@@ -7,25 +7,25 @@ from PyQt6.QtWidgets import (
     QMessageBox,
 )
 
-# نحط مسار المشروع الكامل
+# Add the full project path so imports work correctly
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
-# واجهة إضافة السكشن (من Qt Designer)
+# Add Section dialog UI (from Qt Designer)
 from app_ui.admin_ui.submenus_ui.ui_add_sections_dialog import Ui_AddSectionDialog
 
-# كلاس الأدوات المشتركة (الهز + تلوين الحقول + الفاليديشن)
+# Shared tools class (shake effect, field highlighting, validation)
 from helper_files.shared_utilities import BaseLoginForm
 
-# كائن الأدمن الجاهز
+# Pre-built admin instance
 from admin.class_admin_utilities import admin
 
 
 class AddSectionDialog(QDialog, BaseLoginForm):
     """
-    Dialog مسؤول عن:
-    - قراءة الحقول من واجهة Add Section
-    - التحقق من المدخلات الأساسية
-    - استدعاء دالة add_section في الداتا بيس
+    Dialog responsible for:
+    - Reading fields from the Add Section UI
+    - Validating required inputs
+    - Calling add_section in the database through admin_utils
     """
 
     def __init__(self, admin_utils, parent=None):
@@ -35,23 +35,23 @@ class AddSectionDialog(QDialog, BaseLoginForm):
         self.ui = Ui_AddSectionDialog()
         self.ui.setupUi(self)
 
-        self.admin_utils = admin_utils     # هذا هو كائن admin الجاهز
+        self.admin_utils = admin_utils     # this is the ready-made admin instance
 
-        # نجهز الكومبو بوكس حق المواد من جدول courses
+        # Prepare course combo box using data from the courses table
         self.populate_courses_combo()
 
-        # مبدئياً: زر الإضافة يكون مقفول
+        # Initially disable the Add button
         self.ui.buttonAdd.setEnabled(False)
 
-        # ربط الأزرار
+        # Connect buttons
         self.ui.buttonAdd.clicked.connect(self.on_add_clicked)
         self.ui.buttonCancel.clicked.connect(self.reject)
 
-        # فاليديشن للحقول النصية المهمة (الهز + تغيير البوردر لو حبيت تستخدمها)
+        # Validation for important text fields (shake + border highlight if needed)
         self.attach_non_empty_validator(self.ui.lineEditBuilding, "Building")
         self.attach_non_empty_validator(self.ui.lineEditRoom, "Room")
 
-        # كل ما تغيّر شيء من دول نعيد فحص تفعيل الزر
+        # Check button state whenever any field changes
         self.ui.comboBoxSelectCourse.currentIndexChanged.connect(self.check_all_fields_filled)
         self.ui.comboBoxSelectTerm.currentIndexChanged.connect(self.check_all_fields_filled)
         self.ui.comboBoxSelectStatus.currentIndexChanged.connect(self.check_all_fields_filled)
@@ -59,45 +59,45 @@ class AddSectionDialog(QDialog, BaseLoginForm):
         self.ui.lineEditRoom.textChanged.connect(self.check_all_fields_filled)
         self.ui.spinBoxCapacity.valueChanged.connect(self.check_all_fields_filled)
 
-        # أزرار الأيام برضه تؤثر على تفعيل الزر
+        # Day buttons also affect validation state
         self.ui.pushButtonDaySun.toggled.connect(self.check_all_fields_filled)
         self.ui.pushButtonDayMon.toggled.connect(self.check_all_fields_filled)
         self.ui.pushButtonDayTue.toggled.connect(self.check_all_fields_filled)
         self.ui.pushButtonDayWed.toggled.connect(self.check_all_fields_filled)
         self.ui.pushButtonDayThu.toggled.connect(self.check_all_fields_filled)
 
-        # تشيك أولي
+        # Initial validation
         self.check_all_fields_filled()
 
-    # ------------------------ تعبئة كومبو المواد ------------------------
+    # ------------------------ Populate course combo ------------------------
 
     def populate_courses_combo(self):
         """
-        يجيب المواد من جدول courses (ListCourses)
-        ويحطها في comboBoxSelectCourse
+        Retrieves courses using ListCourses and fills comboBoxSelectCourse.
         """
         self.ui.comboBoxSelectCourse.clear()
         self.ui.comboBoxSelectCourse.addItem("Select a course.", None)
 
-        # نستخدم الداتا بيس من داخل الأدمن
+        # Using database instance inside admin utils
         rows = self.admin_utils.db.ListCourses()  # [(code, name, credits), ...]
 
         for code, name, credits in rows:
             display = f"{code} - {name}"
             self.ui.comboBoxSelectCourse.addItem(display, code)
 
-    # ------------------------ تفعيل/تعطيل زر الإضافة ------------------------
+    # ------------------------ Enable/Disable Add button ------------------------
 
     def check_all_fields_filled(self):
         """
-        يفعّل/يعطّل زر Add بناء على الحقول الأساسية:
-        - Course مختار
-        - Term مختار
-        - Status مختار
-        - Building / Room
+        Determines whether the Add button should be enabled based on:
+        - Course selected
+        - Term selected
+        - Status selected
+        - Building and Room text inputs
         - Capacity > 0
-        - على الأقل يوم واحد مختار
+        - At least one day selected
         """
+
         course_ok = self.ui.comboBoxSelectCourse.currentIndex() > 0
         term_ok = self.ui.comboBoxSelectTerm.currentIndex() > 0
         status_ok = self.ui.comboBoxSelectStatus.currentIndex() > 0
@@ -119,9 +119,10 @@ class AddSectionDialog(QDialog, BaseLoginForm):
         else:
             self.ui.buttonAdd.setEnabled(False)
 
-    # ------------------------ رسائل منبثقة بخط أسود ------------------------
+    # ------------------------ Message boxes with black text ------------------------
 
     def show_error(self, message: str):
+        """Display a styled error message box."""
         box = QMessageBox(self)
         box.setIcon(QMessageBox.Icon.Critical)
         box.setWindowTitle("Error")
@@ -146,6 +147,7 @@ class AddSectionDialog(QDialog, BaseLoginForm):
         box.exec()
 
     def show_info(self, message: str):
+        """Display a styled success/info message box."""
         box = QMessageBox(self)
         box.setIcon(QMessageBox.Icon.Information)
         box.setWindowTitle("Success")
@@ -169,11 +171,12 @@ class AddSectionDialog(QDialog, BaseLoginForm):
         )
         box.exec()
 
-    # ------------------------ أداة مساعدة: أيام الاسبوع ------------------------
+    # ------------------------ Helper: Get selected days ------------------------
 
     def get_selected_days(self) -> str:
         """
-        يرجّع الأيام المختارة كـ string مثل: 'SUN,MON,WED'
+        Returns selected days as a string such as: 'SUN,MON,WED'
+        Useful for storing in database and for schedule conflict checks.
         """
         days = []
         buttons = [
@@ -189,47 +192,48 @@ class AddSectionDialog(QDialog, BaseLoginForm):
 
         return ",".join(days)
 
-    # ------------------------ حدث زر الإضافة ------------------------
+    # ------------------------ Add button event handler ------------------------
 
     def on_add_clicked(self):
         """
-        يقرأ كل الحقول ويستدعي db.add_section عن طريق admin_utils.db
-        ملاحظة: نفترض أن check_all_fields_filled ضمنّت أن الحقول الأساسية صحيحة.
+        Reads all fields and calls db.add_section through admin_utils.db.
+
+        Note: check_all_fields_filled ensures all required fields are valid.
         """
 
-        # ---- الكورس ----
+        # ---- Course ----
         course_code = self.ui.comboBoxSelectCourse.currentData()
 
-        # ---- الترم (السمستر) ----
+        # ---- Term (semester) ----
         semester = self.ui.comboBoxSelectTerm.currentText().strip()
 
-        # ---- الحالة (state) ----
+        # ---- State/status ----
         state = self.ui.comboBoxSelectStatus.currentText().strip().lower()
 
-        # ---- المبنى والغرفة ----
+        # ---- Building and Room ----
         building = self.ui.lineEditBuilding.text().strip().upper()
         room = self.ui.lineEditRoom.text().strip().upper()
         full_room = f"{building}{room}"
 
-        # ---- السعة ----
+        # ---- Capacity ----
         capacity = self.ui.spinBoxCapacity.value()
 
-        # ---- الأيام ----
+        # ---- Days ----
         days = self.get_selected_days()
 
-        # ---- الوقت ----
+        # ---- Time ----
         start_qtime = self.ui.timeEditFrom.time()
         end_qtime = self.ui.timeEditTo.time()
 
         time_start = start_qtime.toString("HH:mm")
         time_end = end_qtime.toString("HH:mm")
 
-        # الشرط المنطقي المهم: وقت النهاية بعد وقت البداية
+        # Important validation: end time must be after start time
         if end_qtime <= start_qtime:
             self.show_error("End time must be after start time.")
             return
 
-        # ---- الدكتور (اختياري) ----
+        # ---- Instructor (optional) ----
         doctor_id = None
         if self.ui.comboBoxSelectInstructor.currentIndex() > 0:
             data = self.ui.comboBoxSelectInstructor.currentData()
@@ -238,7 +242,7 @@ class AddSectionDialog(QDialog, BaseLoginForm):
             except (TypeError, ValueError):
                 doctor_id = None
 
-        # ===== استدعاء دالة إضافة السكشن في الداتا بيس =====
+        # ===== Call database add_section =====
         try:
             msg = self.admin_utils.db.add_section(
                 course_code=course_code,
@@ -258,7 +262,7 @@ class AddSectionDialog(QDialog, BaseLoginForm):
         self.show_info(msg)
 
 
-# =============================== MAIN (تشغيل مباشر) ===============================
+# =============================== MAIN (Direct Run) ===============================
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
