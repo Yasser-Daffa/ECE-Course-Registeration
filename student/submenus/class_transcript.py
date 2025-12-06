@@ -9,64 +9,70 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt
 
-# عشان نضمن الوصول للمجلد الرئيسي للمشروع
+# Ensure access to the project root directory
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
-# واجهة الـ Transcript من Qt Designer
+# Transcript UI (Qt Designer)
 from app_ui.student_ui.submenus_ui.ui_transcript import Ui_Transcript
 
-# كلاس الطالب + الداتابيس
+# Student utilities + database reference
 from student.class_student_utilities import StudentUtilities, db
 
 
 class TranscriptWidget(QWidget):
     """
-    واجهة تعرض هيستوري الطالب (Transcript) فقط:
-    - تجيب كل مواد الطالب من جدول transcripts.
-    - تعبي جدول tableCourses بالمعلومات:
+    Transcript Display Widget:
+    - Retrieves all student transcript entries from the transcripts table.
+    - Fills tableCourses with:
         #, COURSE CODE, COURSE NAME, CREDIT, GRADE, SEMESTER
-    - تحدث الـ GPA و الـ Completed Credits و Current Credits بشكل بسيط.
+    - Updates:
+        - GPA
+        - Completed Credits
+        - Current Credits
+      using simple logic.
     """
 
     def __init__(self, student_id: int, parent=None):
         super().__init__(parent)
 
-        # تجهيز الواجهة
+        # Load UI
         self.ui = Ui_Transcript()
         self.ui.setupUi(self)
 
         self.student_id = student_id
         self.student_utils = StudentUtilities(db, student_id)
 
-        # نبي بس جدول واحد للعرض، فنخفي الجدول الثاني وعنوانه
-        # (عشان "بس يستعرض الهيستوري حق الطالب")
+        # This widget only displays transcript history.
+        # If the UI has a secondary table, hide it.
         if hasattr(self.ui, "tableHeader_2"):
             self.ui.tableHeader_2.hide()
         if hasattr(self.ui, "tableCourses_2"):
             self.ui.tableCourses_2.hide()
 
-        # إعداد الجدول الأساسي
+        # Prepare the main transcript table
         self.setup_table()
 
-        # ربط زر التحديث
+        # Refresh button
         self.ui.buttonRefresh.clicked.connect(self.load_transcript)
 
-        # تحميل بيانات الطالب + الهيستوري
+        # Load student info + transcript
         self.load_student_info()
         self.load_transcript()
 
-    # ==================== إعداد الجدول ====================
+    # ==================== Table Setup ====================
 
     def setup_table(self):
+        """Configure the transcript table appearance and columns."""
         table = self.ui.tableCourses
         table.setSelectionBehavior(table.SelectionBehavior.SelectRows)
         table.setSelectionMode(table.SelectionMode.SingleSelection)
         table.setEditTriggers(table.EditTrigger.NoEditTriggers)
+
         table.setColumnCount(6)
         headers = ["#", "COURSE CODE", "COURSE NAME", "CREDIT", "GRADE", "SEMESTER"]
         table.setHorizontalHeaderLabels(headers)
 
-        # عرض بسيط للأعمدة
+        # Basic column sizing
         table.setColumnWidth(0, 60)
         table.setColumnWidth(1, 140)
         table.setColumnWidth(2, 320)
@@ -74,62 +80,60 @@ class TranscriptWidget(QWidget):
         table.setColumnWidth(4, 80)
         table.setColumnWidth(5, 140)
 
-    # ==================== معلومات الطالب (اللي فوق) ====================
+    # ==================== Student Header Info ====================
 
     def load_student_info(self):
         """
-        يعرض فقط خطة الطالب (program) في labelMajor.
-        بدون اسم – بدون ID – بدون قسم.
+        Displays the student's program in labelMajor only.
+        No name, no ID, no department details.
         """
         try:
             user = self.student_utils.db.get_user_by_id(self.student_id)
-            # شكلها: (user_id, name, email, program, state, account_status)
+            # (user_id, name, email, program, state, account_status)
         except Exception as e:
             print(f"[ERROR] load_student_info: {e}")
             user = None
 
-        if user:
-            program = user[3]  # <-- الخطة الدراسية فقط
-        else:
-            program = "N/A"
+        program = user[3] if user else "N/A"
 
-        # نعرض الخطة فقط
+        # Display program only
         if hasattr(self.ui, "labelMajor"):
             self.ui.labelMajor.setText(f"{program}")
 
-        # نخلي القسم فاضي
+        # Department label intentionally left blank
         if hasattr(self.ui, "labelDepartment"):
             self.ui.labelDepartment.setText("")
 
-    # ==================== تحميل الـ Transcript ====================
+    # ==================== Transcript Loading ====================
 
     def load_transcript(self):
         """
-        يقرأ جدول transcripts لهذا الطالب ويعبي الجدول.
-        ويحسب:
+        Loads student transcript entries from DB, fills the table,
+        and calculates:
         - Completed Credits
-        - Current Credits (مسجّلة الآن)
-        - GPA بسيطة (اختيارية)
+        - Current Registered Credits
+        - GPA (basic version)
         """
         table = self.ui.tableCourses
         table.setRowCount(0)
 
+        # Fetch all transcript entries (course_code, semester, grade)
         try:
-            # (course_code, semester, grade)
             rows = self.student_utils.db.list_transcript(self.student_id)
         except Exception as e:
-            QMessageBox.critical(self, "DB Error", f"Failed to load transcript:\n{e}")
+            QMessageBox.critical(self, "Database Error", f"Failed to load transcript:\n{e}")
             return
 
-        # نجيب معلومات المواد عشان الاسم + الساعات
-        courses_info = self.student_utils.db.ListCourses()  # (code, name, credits)
+        # Load all courses once to get names + credits
+        # (code, name, credits)
+        courses_info = self.student_utils.db.ListCourses()
         course_map = {c[0]: (c[1], c[2]) for c in courses_info}
 
         total_completed_credits = 0
         total_points = 0.0
         total_credits_for_gpa = 0
 
-        # خريطة بسيطة من حرف الدرجة إلى نقاط (تقديرية، عدلها لو عندكم نظام معين)
+        # Basic grade → point mapping (modify if needed)
         grade_points = {
             "A+": 5.0,
             "A": 4.75,
@@ -148,7 +152,7 @@ class TranscriptWidget(QWidget):
             name, credits = course_map.get(course_code, (course_code, 0))
             credits = credits or 0
 
-            # # (index)
+            # ----- Column # -----
             item_idx = QTableWidgetItem(str(i + 1))
             item_idx.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
             table.setItem(i, 0, item_idx)
@@ -179,23 +183,23 @@ class TranscriptWidget(QWidget):
             item_semester.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
             table.setItem(i, 5, item_semester)
 
-            # نحسب الـ credits المكتملة (نفترض أي درجة غير None تعتبر مادة منتهية)
+            # Completed credits count (if a grade exists)
             if grade is not None and grade != "":
                 total_completed_credits += credits
 
-                # حساب بسيط لـ GPA إذا الدرجة موجودة في القيم
+                # GPA contribution (if grade is valid)
                 gp = grade_points.get(str(grade).upper())
                 if gp is not None and credits > 0:
                     total_points += gp * credits
                     total_credits_for_gpa += credits
 
-        # ==== نحدّث البوكسات اللي فوق ====
+        # ================= Statistics Update =================
 
         # Completed Credits
         if hasattr(self.ui, "labelCompletedCreditsCount"):
             self.ui.labelCompletedCreditsCount.setText(str(total_completed_credits))
 
-        # Current Credits = مجموع الكردتس للمواد المسجّلة حالياً (من جدول registrations)
+        # Current Credits → total credits for currently registered courses
         current_credits = 0
         try:
             current_regs = self.student_utils.get_registered_courses_full()
@@ -207,7 +211,7 @@ class TranscriptWidget(QWidget):
         if hasattr(self.ui, "labelCurrentCreditsCount"):
             self.ui.labelCurrentCreditsCount.setText(str(current_credits))
 
-        # Overall GPA
+        # GPA
         if total_credits_for_gpa > 0:
             gpa = total_points / total_credits_for_gpa
             gpa_text = f"{gpa:.2f}"
@@ -217,19 +221,19 @@ class TranscriptWidget(QWidget):
         if hasattr(self.ui, "labelGPACount"):
             self.ui.labelGPACount.setText(gpa_text)
 
-        # نقدر نخلي Semester GPA والـ Credits في الهيدر تمثّل مثلاً آخر سمستر
-        # أو نخليها N/A حالياً
+        # Semester GPA & credits (optional, simplified as N/A)
         if hasattr(self.ui, "labelSemesterGPA"):
             self.ui.labelSemesterGPA.setText("Semester GPA: N/A")
+
         if hasattr(self.ui, "labelSemesterCreditsCount"):
             self.ui.labelSemesterCreditsCount.setText("Credits: N/A")
 
 
-# ===== تجربة سريعة من نفس الملف =====
+# ===== Stand-alone test runner =====
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
-    # غيّر الـ ID حسب طالب حقيقي موجود عندك في جدول users / transcripts
+    # Change this ID to a real student existing in your database
     test_student_id = 2500001
 
     w = TranscriptWidget(test_student_id)
