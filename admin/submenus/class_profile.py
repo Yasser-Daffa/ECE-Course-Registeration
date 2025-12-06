@@ -122,13 +122,20 @@ class ProfileWidget(QWidget):
             warning(self, "No Changes")
             return
 
-        # Update email only; name remains unchanged
-        result = self.db.update_user(
-            self.admin_id,
-            email=email_to_update
-        )
+        # ---------- هنا حطينا try / except على دالة الداتابيس ----------
+        try:
+            result = self.db.update_user(
+                self.admin_id,
+                email=email_to_update
+            )
+        except Exception as e:
+            # لو صار أي خطأ غير متوقع من الداتابيس
+            error(self, f"Error updating profile: {e}")
+            return
+        # -----------------------------------------------------------
 
-        if "successfully" in result.lower():
+        # نتحقق من نتيجة الدالة (لو رجعت نص فيه successfully)
+        if isinstance(result, str) and "successfully" in result.lower():
             info(self, "Profile updated successfully.")
 
             # Update stored internal values
@@ -138,7 +145,11 @@ class ProfileWidget(QWidget):
             # Disable Save again
             self.set_dirty(False)
         else:
-            error(self, "Error")
+            # لو رجعت رسالة خطأ من الدالة نفسها
+            if isinstance(result, str):
+                error(self, result)
+            else:
+                error(self, "Error")
 
     # ---------------------------------------------------------
     # CANCEL EDIT

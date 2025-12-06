@@ -261,6 +261,7 @@ class DatabaseUtilities:
         self.cur.execute("""SELECT user_id, name, email, program, state, account_status FROM users""")
         return self.cur.fetchall()
 
+
     def update_user(self, user_id, name=None, email=None,
                     program=None, password=None, account_status=None):
 
