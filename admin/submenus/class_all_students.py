@@ -59,7 +59,12 @@ class AllStudentsController:
 
         rows = self.db.list_users()
         # row = (user_id, name, email, program, state, account_status, password_h)
-        active_rows = [row for row in rows if row[5] == "active"]
+
+        # نجيب فقط الطلاب اللي حالتهم active
+        active_rows = [
+            row for row in rows
+            if row[5] == "active" and row[4] == "student"
+        ]
 
         for i, row in enumerate(active_rows, start=1):
             student = {
@@ -67,7 +72,7 @@ class AllStudentsController:
                 "user_id": row[0],
                 "name": row[1],
                 "email": row[2],
-                "program": row[3],         # ممكن تكون None
+                "program": row[3],  # ممكن تكون None
                 "state": row[4],
                 "account_status": row[5],
             }
