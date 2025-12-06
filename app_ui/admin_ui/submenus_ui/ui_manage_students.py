@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'all_students.ui'
+# Form implementation generated from reading ui file 'manage_students.ui'
 #
 # Created by: PyQt6 UI code generator 6.10.0
 #
@@ -212,6 +212,32 @@ class Ui_AllStudents(object):
         self.tableHeaderLayout.addWidget(self.tableTitle)
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.tableHeaderLayout.addItem(spacerItem2)
+        self.buttonAddStudent_2 = QtWidgets.QPushButton(parent=self.tableHeader)
+        self.buttonAddStudent_2.setEnabled(True)
+        self.buttonAddStudent_2.setMinimumSize(QtCore.QSize(120, 40))
+        self.buttonAddStudent_2.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonAddStudent_2.setStyleSheet("QPushButton {\n"
+"    background-color: #f5576c;\n"
+"    color: #ffffff;\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    font-size: 14px;\n"
+"    font-weight: bold;\n"
+"    padding: 10px 20px;\n"
+"    transition: background-color 150ms;\n"
+"}\n"
+"QPushButton:hover {\n"
+"    background-color: #e5475c;\n"
+"}\n"
+"QPushButton:pressed {\n"
+"    background-color: #d43f52;\n"
+"}\n"
+"QPushButton:disabled {\n"
+"    background-color: #cccccc;  /* gray background for disabled */\n"
+"    color: #666666;             /* darker gray text */\n"
+"}")
+        self.buttonAddStudent_2.setObjectName("buttonAddStudent_2")
+        self.tableHeaderLayout.addWidget(self.buttonAddStudent_2)
         self.buttonAddStudent = QtWidgets.QPushButton(parent=self.tableHeader)
         self.buttonAddStudent.setEnabled(False)
         self.buttonAddStudent.setMinimumSize(QtCore.QSize(120, 40))
@@ -390,7 +416,7 @@ class Ui_AllStudents(object):
         self.tableAllStudents.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel)
         self.tableAllStudents.setCornerButtonEnabled(True)
         self.tableAllStudents.setObjectName("tableAllStudents")
-        self.tableAllStudents.setColumnCount(7)
+        self.tableAllStudents.setColumnCount(6)
         self.tableAllStudents.setRowCount(0)
         item = QtWidgets.QTableWidgetItem()
         self.tableAllStudents.setHorizontalHeaderItem(0, item)
@@ -404,8 +430,6 @@ class Ui_AllStudents(object):
         self.tableAllStudents.setHorizontalHeaderItem(4, item)
         item = QtWidgets.QTableWidgetItem()
         self.tableAllStudents.setHorizontalHeaderItem(5, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableAllStudents.setHorizontalHeaderItem(6, item)
         self.tableAllStudents.horizontalHeader().setStretchLastSection(True)
         self.tableAllStudents.verticalHeader().setVisible(False)
         self.tableAllStudents.verticalHeader().setCascadingSectionResizes(True)
@@ -419,7 +443,7 @@ class Ui_AllStudents(object):
 
     def retranslateUi(self, AllStudents):
         _translate = QtCore.QCoreApplication.translate
-        self.labelTitle.setText(_translate("AllStudents", "All Students"))
+        self.labelTitle.setText(_translate("AllStudents", "Students Management"))
         self.labelTotalStudentsCount.setText(_translate("AllStudents", "200 Total Students"))
         self.lineEditSearch.setPlaceholderText(_translate("AllStudents", "🔍  Search by student name or ID..."))
         self.comboBoxSelectProgram.setPlaceholderText(_translate("AllStudents", "Filter Program..."))
@@ -429,8 +453,9 @@ class Ui_AllStudents(object):
         self.comboBoxSelectProgram.setItemText(3, _translate("AllStudents", "Biomedical"))
         self.buttonRefresh.setText(_translate("AllStudents", "🔄 Refresh"))
         self.tableTitle.setText(_translate("AllStudents", "Registered Students"))
-        self.buttonAddStudent.setText(_translate("AllStudents", "➕ Add New Student (WIP)"))
-        self.buttonRemoveSelected.setText(_translate("AllStudents", "❌ Remove Student"))
+        self.buttonAddStudent_2.setText(_translate("AllStudents", "📝 Add Grades"))
+        self.buttonAddStudent.setText(_translate("AllStudents", "➕ Register Course for student"))
+        self.buttonRemoveSelected.setText(_translate("AllStudents", "❌ Remove Course for student"))
         item = self.tableAllStudents.horizontalHeaderItem(0)
         item.setText(_translate("AllStudents", "#"))
         item = self.tableAllStudents.horizontalHeaderItem(1)
@@ -443,5 +468,3 @@ class Ui_AllStudents(object):
         item.setText(_translate("AllStudents", "PROGRAM"))
         item = self.tableAllStudents.horizontalHeaderItem(5)
         item.setText(_translate("AllStudents", "STATE"))
-        item = self.tableAllStudents.horizontalHeaderItem(6)
-        item.setText(_translate("AllStudents", "ACTION"))
