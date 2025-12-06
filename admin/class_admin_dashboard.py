@@ -70,7 +70,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.ui.stackedWidget.addWidget(self.all_students_page)
         self.ui.stackedWidget.addWidget(self.pending_requests_page)
 
-        self.ui.stackedWidget.addWidget(self.manage_faculty_controller)
+        # self.ui.stackedWidget.addWidget(self.manage_faculty_controller)
 
         self.ui.stackedWidget.addWidget(self.manage_courses_page)
         self.ui.stackedWidget.addWidget(self.manage_prereqs_page)
@@ -91,7 +91,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
             self.ui.buttonPendingRequests: ("Pending Requests", self.pending_requests_page),
 
             # self.ui.buttonStudentsFaculty: ("Manage Students", self.manage_Students_controller),
-            self.ui.buttonManageFaculty: ("Manage Faculty", self.manage_faculty_controller),
+            # self.ui.buttonManageFaculty: ("Manage Faculty", self.manage_faculty_controller),
 
             self.ui.buttonManageCourses: ("Manage Courses", self.manage_courses_page),
             self.ui.buttonManagePrereqs: ("Manage Prereqs", self.manage_prereqs_page),
@@ -130,11 +130,16 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # -------------------------------
         # All Students page
         # -------------------------------
+        # Uses direct database_utilities access
+        # -------------------------------
+        # All Students page
+        # -------------------------------
         self.all_students_page = QtWidgets.QWidget()
         self.all_students_ui = Ui_AllStudents()
         self.all_students_ui.setupUi(self.all_students_page)
-        # Uses direct database_utilities access
-        self.all_students_controller = AllStudentsController(self.all_students_ui, self.db)
+
+        # نمرر كائن الأدمن (self.admin) للكنترولر
+        self.all_students_controller = AllStudentsController(self.all_students_ui, self.admin)
 
         # -------------------------------
         # Pending Requests page
@@ -156,7 +161,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         # Manage facutly page
         # -------------------------------
         # uses database utils
-        self.manage_faculty_controller = ManageFacultyWidget(db)
+        # self.manage_faculty_controller = ManageFacultyWidget(db)
 
         # -------------------------------
         # Manage courses
