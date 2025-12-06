@@ -26,10 +26,10 @@ class ViewSectionsWidget(QWidget):
     واجهة عرض السكاشن للمواد اللي الطالب اختارها من صفحة RegisterCourses:
     - تستقبل student_id + semester + قائمة بأكواد المواد المختارة.
     - تجيب السكاشن من الداتا بيس (لكل كورس).
-    - ما تعرض السكاشن اللي الطالب مسجلها مسبقاً (حسب registrations) في نفس السمستر.
+    - ما تعرض السكاشن اللي الطالب مسجلها مسبقاً (حسب registrations).
     - اختيار السكاشن عن طريق CheckBox في عمود REGISTERATION:
         * يلون الصف بالأصفر لما يتحدد.
-    - تمنع تسجيل أكثر من شعبة لنفس الكورس في نفس السمستر.
+    - تمنع تسجيل أكثر من شعبة لنفس الكورس.
     - تفحص التعارض الزمني بين السكاشن المختارة.
     - تسجّل في جدول registrations عن طريق:
         StudentUtilities.register_section(section_id, course_code, semester)
@@ -44,7 +44,7 @@ class ViewSectionsWidget(QWidget):
 
         self.student_utils = StudentUtilities(db, student_id)
         self.student_id = student_id
-        self.semester = semester          # السمستر الحالي
+        self.semester = semester          # فقط تستخدم كفلتر أولي في get_sections_for_course (إذا احتجته)
         self.course_codes = list(course_codes)
 
         # list[dict]: كل سكشن معروض (غير مسجل مسبقاً)
@@ -77,12 +77,14 @@ class ViewSectionsWidget(QWidget):
         """
         يجيب السكاشن من الداتا بيس لكل كورس في course_codes:
         - يستخدم get_sections_for_course من StudentUtilities.
-        - يستثني السكاشن اللي الطالب مسجلها مسبقاً في نفس السمستر.
+        - يستثني السكاشن اللي الطالب مسجلها مسبقاً في نفس سمستر الشعبة نفسها.
         """
         self.sections = []
 
         for code in self.course_codes:
+            # حسب implementation عندك، ممكن تستخدم self.semester هنا كفلتر
             rows = self.student_utils.get_sections_for_course(code, self.semester)
+
             # rows: list of tuples من list_sections:
             # section_id, course_code, doctor_id, days, time_start, time_end,
             # room, capacity, enrolled, semester, state
@@ -96,15 +98,15 @@ class ViewSectionsWidget(QWidget):
                 room = sec[6] or ""
                 capacity = sec[7]
                 enrolled = sec[8]
-                semester = sec[9]
+                semester = sec[9]      # <-- سمستر الشعبة نفسها
                 state = sec[10] or ""
 
-                # نستثني السكاشن المسجّلة مسبقاً في نفس السمستر
+                # نستثني السكاشن المسجّلة مسبقاً في "نفس سمستر الشعبة"
                 try:
                     if self.student_utils.db.is_student_registered(
                         self.student_id,
                         section_id,
-                        self.semester
+                        semester          # <-- بدل self.semester
                     ):
                         continue
                 except AttributeError:
@@ -121,7 +123,7 @@ class ViewSectionsWidget(QWidget):
                     "room": room,
                     "capacity": capacity,
                     "enrolled": enrolled,
-                    "semester": semester,
+                    "semester": semester,   # <-- مهم نحتفظ فيه هنا
                     "state": state,
                 })
 
@@ -320,7 +322,7 @@ class ViewSectionsWidget(QWidget):
     def handle_confirm_registration(self):
         """
         1) تجمع السكاشن المختارة.
-        2) تمنع تسجيل أكثر من شعبة لنفس الكورس في نفس السمستر.
+        2) تمنع تسجيل أكثر من شعبة لنفس الكورس.
         3) تفحص التعارض الزمني.
         4) تسجّل في جدول registrations.
         5) تشيل الكورسات اللي تسجلت من الجدول.
@@ -331,7 +333,7 @@ class ViewSectionsWidget(QWidget):
             QMessageBox.warning(self, "No Sections", "Please select at least one section.")
             return
 
-        # منع تسجيل أكثر من شعبة لنفس الكورس في نفس السمستر
+        # منع تسجيل أكثر من شعبة لنفس الكورس
         code_counts = {}
         for sec in selected:
             code = sec["course_code"]
@@ -339,7 +341,7 @@ class ViewSectionsWidget(QWidget):
 
         duplicates = [c for c, n in code_counts.items() if n > 1]
         if duplicates:
-            msg = "لا يمكنك تسجيل أكثر من شعبة لنفس المادة في نفس السمستر:\n\n"
+            msg = "لا يمكنك تسجيل أكثر من شعبة لنفس المادة:\n\n"
             msg += "\n".join(f"- {c}" for c in duplicates)
             QMessageBox.warning(self, "Invalid Selection", msg)
             return
@@ -377,15 +379,17 @@ class ViewSectionsWidget(QWidget):
         for sec in sections:
             section_id = sec["section_id"]
             course_code = sec["course_code"]
+            semester = sec["semester"]   # <-- ناخذ سمستر الشعبة نفسها
 
-            # نحاول التسجيل (الداخلي ممكن يرجع True/False لكن بنأكد من الداتابيس)
-            ok = self.student_utils.register_section(section_id, course_code, self.semester)
+            # نحاول التسجيل بسـمـسـتـر الشعبة نفسها
+            ok = self.student_utils.register_section(section_id, course_code, semester)
 
-            # ✅ تأكيد فعلي من جدول التسجيلات
+            # ✅ تأكيد فعلي من جدول التسجيلات لنفس سمستر الشعبة
             try:
                 really_registered = self.student_utils.db.is_student_registered(
                     self.student_utils.student_id,
-                    section_id
+                    section_id,
+                    semester
                 )
             except Exception as e:
                 print(f"[WARN] is_student_registered failed: {e}")
@@ -422,14 +426,13 @@ class ViewSectionsWidget(QWidget):
             )
 
 
-
 # ===== تجربة سريعة من نفس الملف =====
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     # عدّل القيم حسب الداتا بيس عندك
     test_student_id = 2500001
-    test_semester = "First"
+    test_semester = "First"   # هنا بس فلتر أولي لو دالتك تحتاجه
     selected_course_codes = ["MATH204", "CIPT", "IE204", "A", "W"]
 
     w = ViewSectionsWidget(test_student_id, test_semester, selected_course_codes)
