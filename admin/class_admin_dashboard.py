@@ -6,7 +6,7 @@ from PyQt6 import QtWidgets
 from database_files.class_database_uitlities import DatabaseUtilities
 from database_files.initialize_database import initialize_database
 from admin.class_admin_utilities import AdminUtilities
-from admin.class_admin_utilities import admin
+from admin.class_admin_utilities import admin, db
 
 # Subpage UI & Controller imports
 from app_ui.admin_ui.ui_admin_dashboard import Ui_AdminDashboard
@@ -34,7 +34,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
     Handles page switching via a QStackedWidget and initializes all sub-pages.
     """
     
-    def __init__(self, db: DatabaseUtilities):
+    def __init__(self, db, user_info):
         super().__init__()
 
         # -------------------------------
@@ -43,6 +43,7 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.ui = Ui_AdminDashboard()
         self.ui.setupUi(self)
         self.db = db
+        self.user_id, self.name, self.email, self.program, self.state, self.account_status, self.hashed_pw = user_info
         self.admin = AdminUtilities(self.db)
 
         # ------------------------
@@ -203,11 +204,15 @@ class AdminDashboard(QtWidgets.QMainWindow):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
 
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    DB_PATH = os.path.join(BASE_DIR, "../university_database.db")
-    con, cur = initialize_database(DB_PATH)
-    db = DatabaseUtilities(con, cur)
+    user_id = None
+    user_name = None
+    user_email = None
+    user_program = None
+    state = None
+    account_status = None
+    hashed_pw = None
 
-    window = AdminDashboard(db)
+    user_info = user_id, user_name, user_email, user_program, state, account_status, hashed_pw
+    window = AdminDashboard(db, user_info)
     window.show()
     sys.exit(app.exec())

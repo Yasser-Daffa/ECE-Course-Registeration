@@ -144,7 +144,7 @@
                <number>4</number>
               </property>
               <item>
-               <widget class="QLabel" name="logoTitleLabel">
+               <widget class="QLabel" name="labelLogoTitle">
                 <property name="styleSheet">
                  <string notr="true">color: white; font-size: 23px; font-weight: 800; background: transparent;</string>
                 </property>
@@ -154,7 +154,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="logoSubtitleLabel">
+               <widget class="QLabel" name="labelLogoSubtitle">
                 <property name="styleSheet">
                  <string notr="true">color: rgba(255,255,255,0.95); font-size: 13px; background: transparent;</string>
                 </property>
@@ -249,7 +249,7 @@ border: transparent</string>
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="adminRole">
+                <widget class="QLabel" name="labelAdminRole">
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
@@ -307,7 +307,7 @@ background-color: transparent</string>
               </spacer>
              </item>
              <item row="0" column="0">
-              <widget class="QLabel" name="avatarLabel">
+              <widget class="QLabel" name="labelAvatar">
                <property name="minimumSize">
                 <size>
                  <width>60</width>
@@ -1067,7 +1067,7 @@ QPushButton:pressed {
           <item row="0" column="1">
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
-             <widget class="QLabel" name="pageTitleLabel">
+             <widget class="QLabel" name="labelPageTitle">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -1089,12 +1089,12 @@ QPushButton:pressed {
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="breadcrumbLabel">
+             <widget class="QLabel" name="labelLastLogin">
               <property name="styleSheet">
                <string notr="true">font-size: 14px; color: #718096; background: transparent;</string>
               </property>
               <property name="text">
-               <string>🏠 Home • Dashboard</string>
+               <string>🏠 Last Login {lastLogin}</string>
               </property>
              </widget>
             </item>

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Pending Requests</string>
+   <string/>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: #f5f7fa;</string>
@@ -96,6 +96,9 @@ border-radius: 20px;
       <enum>QFrame::Shape::StyledPanel</enum>
      </property>
      <layout class="QHBoxLayout" name="filterLayout">
+      <property name="spacing">
+       <number>15</number>
+      </property>
       <property name="leftMargin">
        <number>25</number>
       </property>
@@ -146,6 +149,128 @@ QLineEdit:disabled {
         <property name="placeholderText">
          <string>🔍  Search by student name or ID...</string>
         </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBoxSelectProgram">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>150</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>200</width>
+          <height>65</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">/* ----------------- QComboBox Base ----------------- */
+QComboBox {
+    border: 2px solid #E0E0E0;          /* main border */
+    border-radius: 10px;
+    padding: 8px 10px;                   /* Matches QLineEdit padding */
+    background: rgba(250, 250, 250, 200);
+    font-size: 11pt;
+    color: #111111;
+}
+
+/* Focused state */
+QComboBox:focus {
+    border: 2px solid #667EEA; 
+    background: rgba(250, 250, 250, 220);
+}
+
+/* ----------------- Drop-down Arrow ----------------- */
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 30px; 
+    border-left-width: 1px;
+    border-left-color: #E0E0E0;
+    border-left-style: solid;
+    border-top-right-radius: 12px;       /* rounder corners */
+    border-bottom-right-radius: 12px;    /* rounder corners */
+    background: transparent;
+}
+
+/* Remove ugly black border on hover/focus */
+QComboBox::drop-down:hover,
+QComboBox::drop-down:focus {
+    border-left-color: #667EEA;
+    background: transparent;
+    border: none;
+}
+
+/* Modern, visible arrow using simple chevron */
+QComboBox::down-arrow {
+    width: 10px;
+    height: 10px;
+    border: solid #667EEA;
+    border-width: 0 2px 2px 0;
+    margin-right: 6px;
+}
+
+/* ----------------- Dropdown Popup ----------------- */
+/* Dropdown Popup */
+QComboBox QAbstractItemView {
+    background-color: #fdfdfd;          /* slightly off-white */
+    border: 2px solid #E0E0E0;          /* subtle grey border */
+    border-radius: 8px;                  /* may not be perfect on Windows */
+    color: #111111;
+    font-size: 11pt;
+    padding: 5px;
+    selection-background-color: #667EEA;
+    selection-color: white;
+    outline: none;
+}
+
+/* Items hover/selection */
+QComboBox QAbstractItemView::item:hover {
+    background-color: rgba(102, 126, 234, 0.1);
+    color: #111111;
+}
+
+QComboBox QAbstractItemView::item:selected {
+    background-color: #667EEA;
+    color: white;
+}
+
+/* Error highlight for combo box */
+QComboBox[error=&quot;true&quot;] {
+    border: 2px solid #FF4A4A;
+}</string>
+        </property>
+        <property name="placeholderText">
+         <string>Filter Program...</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>Computer</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Communication</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Power</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Biomedical</string>
+         </property>
+        </item>
        </widget>
       </item>
       <item>
@@ -283,6 +408,47 @@ QPushButton:pressed {
           </spacer>
          </item>
          <item>
+          <widget class="QPushButton" name="buttonAddStudent_2">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>120</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+    background-color: #f5576c;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 20px;
+    transition: background-color 150ms;
+}
+QPushButton:hover {
+    background-color: #e5475c;
+}
+QPushButton:pressed {
+    background-color: #d43f52;
+}
+QPushButton:disabled {
+    background-color: #cccccc;  /* gray background for disabled */
+    color: #666666;             /* darker gray text */
+}</string>
+           </property>
+           <property name="text">
+            <string>📝 Add Grades</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="buttonAddStudent">
            <property name="enabled">
             <bool>false</bool>
@@ -362,7 +528,7 @@ QPushButton:disabled {
 }</string>
            </property>
            <property name="text">
-            <string>❌ Remove Selected</string>
+            <string>❌ Remove Student</string>
            </property>
           </widget>
          </item>
@@ -499,7 +665,10 @@ QScrollBar:horizontal { height: 12px; }
          <bool>true</bool>
         </property>
         <property name="selectionMode">
-         <enum>QAbstractItemView::SelectionMode::ContiguousSelection</enum>
+         <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+        </property>
+        <property name="selectionBehavior">
+         <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
         </property>
         <property name="verticalScrollMode">
          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
