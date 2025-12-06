@@ -59,7 +59,7 @@ def initialize_database(db_path="../university_database.db"):
         user_id integer primary key AUTOINCREMENT,  -- Auto-generated ID
         name text not null,                         -- User name
         email text not null,                        -- Email
-        program text check(program in ('PWM','BIO','COMM','COMP')), -- Program
+        program TEXT CHECK(program IN ('PWM','BIO','COMM','COMP') OR program IS NULL), -- Program
         password_h text not null,                   -- Password hash
         state text not null check (state in ('admin','student','instructor')), -- Role
         account_status text not null default 'inactive' check(account_status in ('active','inactive')),

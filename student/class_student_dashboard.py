@@ -29,7 +29,7 @@ class StudentDashboard(QtWidgets.QMainWindow):
     Handles page switching via a QStackedWidget and initializes all sub-pages.
     """
     
-    def __init__(self, db, user: tuple):
+    def __init__(self, db, user_info: tuple):
         super().__init__()
 
         # -------------------------------
@@ -38,7 +38,7 @@ class StudentDashboard(QtWidgets.QMainWindow):
         self.ui = Ui_StudentDashboard()
         self.ui.setupUi(self)
         self.db = db
-        self.user_id, self.name, self.email, self.program, self.state, self.account_status, self.hashed_pw = user
+        self.user_id, self.name, self.email, self.program, self.state, self.account_status, self.hashed_pw = user_info
         self.student = StudentUtilities(self.db, self.user_id)
 
         self.ui.labelStudentName.setText(self.name)
@@ -103,7 +103,9 @@ class StudentDashboard(QtWidgets.QMainWindow):
         # -------------------------------
         # this page sets up its own ui internally.
         self.current_schedule_page = CurrentScheduleWidget(self.user_id)
-        self.ui.stackedWidget.addWidget(self.current_schedule_page)
+
+        # # already added inside innit
+        # self.ui.stackedWidget.addWidget(self.current_schedule_page)
 
         # -------------------------------
         # Register Courses page
@@ -111,14 +113,14 @@ class StudentDashboard(QtWidgets.QMainWindow):
         # this page sets up its own ui internally.
 
         self.register_courses_page = RegisterCoursesWidget(self.user_id, semester=None)
-        self.ui.stackedWidget.addWidget(self.register_courses_page)
+        # self.ui.stackedWidget.addWidget(self.register_courses_page)
 
         # # -------------------------------
         # # Transcript courses
         # # -------------------------------
         # this page sets up its own ui internally.
         self.transcript_page = TranscriptWidget(self.user_id)
-        self.ui.stackedWidget.addWidget(self.transcript_page)
+        # self.ui.stackedWidget.addWidget(self.transcript_page)
 
 
     # -------------------------------

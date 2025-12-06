@@ -43,28 +43,29 @@ from helper_files.validators import (
 from database_files.class_database_uitlities import DatabaseUtilities
 from admin.class_admin_utilities import db
 
-# Placeholder imports for your future main windows
-# from student_dashboard.class_student_dashboard import StudentDashboard
-# from admin_dashboard.class_admin_dashboard import AdminDashboard
 
 
 class AuthenticationWindow(BaseLoginForm, EmailSender): 
     def __init__(self):
         super().__init__()
 
-
-        # --- 0. Initialize database and ensure all tables exist ---
-        # Import the function that sets up the database schema if not already present
-        from database_files.initialize_database import initialize_database
-
         # Call it to create/connect the database and return the connection and cursor
         # This ensures all required tables, triggers, and constraints exist
         # con, cur = initialize_database("university_database.db")  # runs the table creation if missing
 
-        # Wrap the connection and cursor in your DatabaseUtilities helper for easy DB operations
+        # For logout button
+        QApplication.instance().setQuitOnLastWindowClosed(True)
+        
+        # using the database we called from admin utils
         self.db = db
         # Email sender instance
         self.email_sender = EmailSender()
+
+        # mode is none by default because we integrated a confirm email check in user profiles
+        # it will be; mode = edit_profile for example
+        self.mode = None
+        self.profile_edit_email = None
+
 
         # --- 1. Load UI ---
         self.ui = Ui_AuthStackedWidget()
@@ -138,6 +139,26 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
         self.ui.stackedWidgetAuth.setCurrentIndex(3)
 
 
+    def start_profile_edit_verification(self, email):
+        """
+        Activates the email verification mode used when editing the profile.
+        Only verifies logged-in user's email, does NOT create accounts.
+        """
+        self.mode = "profile_edit"
+        self.profile_edit_email = email
+
+        # Clear inputs
+        self.confirm_email_page.ui.lineEditVerificationCode.clear()
+
+        # Generate & send a verification code
+        self.code_generators[email] = CodeGenerator(validity_minutes=5)
+        self.send_verification_code(email)
+
+        # Jump directly to confirmation page
+        self.ui.stackedWidgetAuth.setCurrentWidget(self.confirm_email_page)
+
+
+
     # =========================================================
     #                     LOGIN LOGIC
     # =========================================================
@@ -205,10 +226,10 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
             self.student_dash.show()
             
         elif state == "admin":
-            # from admin.class_admin_dashboard import AdminDashboard
-            # from admin.class_admin_dashboard import db 
-            # self.admin_dash = AdminDashboard(db)
-            # self.admin_dash.show()
+            from admin.class_admin_dashboard import AdminDashboard
+            from admin.class_admin_dashboard import db 
+            self.admin_dash = AdminDashboard(db, user)
+            self.admin_dash.show()
             pass
             
 
@@ -353,6 +374,17 @@ class AuthenticationWindow(BaseLoginForm, EmailSender):
             if reason != "Code cannot be empty.":
                 QMessageBox.warning(self, "Invalid Code", reason)
             return
+        
+        # ------------------------------
+        # NEW LOGIC FOR PROFILE EDIT MODE
+        # ------------------------------
+        if self.mode == "profile_edit":
+            QMessageBox.information(self, "Success", "Email verified!")
+            self.accept()   # ← This closes AuthenticationWindow and returns control to Profile Page
+            return
+        # ------------------------------
+
+        # ORIGINAL ACCOUNT CREATION LOGIC CONTINUES BELOW
 
         # Code valid – proceed to create account
         QMessageBox.information(self, "Code Verified", "Email verified successfully!")

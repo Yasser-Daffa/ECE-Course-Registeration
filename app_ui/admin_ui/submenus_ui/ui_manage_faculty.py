@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'register_courses.ui'
+# Form implementation generated from reading ui file 'manage_faculty.ui'
 #
 # Created by: PyQt6 UI code generator 6.10.0
 #
@@ -9,25 +9,35 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 
-class Ui_RegisterCourses(object):
-    def setupUi(self, RegisterCourses):
-        RegisterCourses.setObjectName("RegisterCourses")
-        RegisterCourses.resize(1200, 858)
-        RegisterCourses.setStyleSheet("background-color: #f5f7fa;")
-        self.mainLayout = QtWidgets.QVBoxLayout(RegisterCourses)
+class Ui_ManageFaculty(object):
+    def setupUi(self, ManageFaculty):
+        ManageFaculty.setObjectName("ManageFaculty")
+        ManageFaculty.resize(1200, 809)
+        ManageFaculty.setStyleSheet("background-color: #f5f7fa;")
+        self.mainLayout = QtWidgets.QVBoxLayout(ManageFaculty)
         self.mainLayout.setContentsMargins(40, 40, 40, 20)
         self.mainLayout.setSpacing(30)
         self.mainLayout.setObjectName("mainLayout")
         self.headerLayout = QtWidgets.QHBoxLayout()
         self.headerLayout.setObjectName("headerLayout")
-        self.labelTitle = QtWidgets.QLabel(parent=RegisterCourses)
+        self.labelTitle = QtWidgets.QLabel(parent=ManageFaculty)
         self.labelTitle.setStyleSheet("font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;")
         self.labelTitle.setObjectName("labelTitle")
         self.headerLayout.addWidget(self.labelTitle)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.headerLayout.addItem(spacerItem)
+        self.labelTotalCount = QtWidgets.QLabel(parent=ManageFaculty)
+        self.labelTotalCount.setStyleSheet("font-size: 16px;\n"
+"color: #1a73e8;               /* blue text for emphasis */\n"
+"font-weight: bold;\n"
+"background-color: #e8f0fe;    /* light blue background */\n"
+"padding: 8px 20px;\n"
+"border-radius: 20px;\n"
+"")
+        self.labelTotalCount.setObjectName("labelTotalCount")
+        self.headerLayout.addWidget(self.labelTotalCount)
         self.mainLayout.addLayout(self.headerLayout)
-        self.filterFrame = QtWidgets.QFrame(parent=RegisterCourses)
+        self.filterFrame = QtWidgets.QFrame(parent=ManageFaculty)
         self.filterFrame.setMinimumSize(QtCore.QSize(0, 70))
         self.filterFrame.setMaximumSize(QtCore.QSize(16777215, 70))
         self.filterFrame.setStyleSheet("background-color: white; border-radius: 12px;")
@@ -66,9 +76,9 @@ class Ui_RegisterCourses(object):
         self.buttonRefresh.setMinimumSize(QtCore.QSize(100, 40))
         self.buttonRefresh.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         self.buttonRefresh.setStyleSheet("QPushButton {\n"
-"    background-color: #f8f9fa;     /* light grey background */\n"
-"    color: #5a6c7d;               /* text color */\n"
-"    border: 2px solid #e0e0e0;    /* default border */\n"
+"    background-color: #f8f9fa;\n"
+"    color: #5a6c7d;\n"
+"    border: 2px solid #e0e0e0;\n"
 "    border-radius: 8px;\n"
 "    font-size: 14px;\n"
 "    font-weight: bold;\n"
@@ -76,20 +86,19 @@ class Ui_RegisterCourses(object):
 "}\n"
 "\n"
 "QPushButton:hover {\n"
-"    border-color: #6c5ce7;        /* purplish-blue border on hover */\n"
-"    color: #6c5ce7;               /* match text color to border */\n"
+"    border-color: #f5576c;\n"
+"    color: #f5576c;\n"
 "}\n"
 "\n"
 "QPushButton:pressed {\n"
-"    background-color: #e0e0e0;    /* slightly darker grey when pressed */\n"
-"    border-color: #6c5ce7;        /* keep border highlight */\n"
-"    color: #6c5ce7;               /* text color */\n"
-"}\n"
-"")
+"    background-color: #e0e0e0; /* darker grey for pressed feedback */\n"
+"    border-color: #f5576c;\n"
+"    color: #f5576c;\n"
+"}")
         self.buttonRefresh.setObjectName("buttonRefresh")
         self.filterLayout.addWidget(self.buttonRefresh)
         self.mainLayout.addWidget(self.filterFrame)
-        self.tableFrame = QtWidgets.QFrame(parent=RegisterCourses)
+        self.tableFrame = QtWidgets.QFrame(parent=ManageFaculty)
         self.tableFrame.setStyleSheet("background-color: white; border-radius: 12px;")
         self.tableFrame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.tableFrame.setObjectName("tableFrame")
@@ -112,41 +121,64 @@ class Ui_RegisterCourses(object):
         self.tableHeaderLayout.addWidget(self.tableTitle)
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.tableHeaderLayout.addItem(spacerItem2)
-        self.buttonViewSections = QtWidgets.QPushButton(parent=self.tableHeader)
-        self.buttonViewSections.setEnabled(True)
-        self.buttonViewSections.setMinimumSize(QtCore.QSize(120, 40))
-        self.buttonViewSections.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.buttonViewSections.setStyleSheet("QPushButton {\n"
-"    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #667EEA, stop:1 #764BA2);\n"
-"    color: #ffffff;\n"
+        self.buttonAddFaculty = QtWidgets.QPushButton(parent=self.tableHeader)
+        self.buttonAddFaculty.setEnabled(False)
+        self.buttonAddFaculty.setMinimumSize(QtCore.QSize(120, 40))
+        self.buttonAddFaculty.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonAddFaculty.setStyleSheet("/* ---- Approve Button ---- */\n"
+"QPushButton {\n"
+"    background-color: #d4edda;\n"
+"    color: #155724;\n"
 "    border: none;\n"
 "    border-radius: 8px;\n"
 "    font-size: 14px;\n"
 "    font-weight: bold;\n"
 "    padding: 10px 20px;\n"
-"    transition: background 150ms;\n"
 "}\n"
-"\n"
 "QPushButton:hover {\n"
-"    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #4F63C6, stop:1 #5D3F9E);\n"
+"    background-color: #28a745;\n"
+"    color: white;\n"
 "}\n"
-"\n"
 "QPushButton:pressed {\n"
-"    background-color: #3C4A99;\n"
+"    background-color: #1e7e34;  /* slightly darker for pressed feedback */\n"
 "}\n"
-"\n"
-"\n"
 "QPushButton:disabled {\n"
-"    background-color: #e0e0e0;\n"
-"    color: #999999;\n"
+"    background-color: #c1d9c3; /* more washed-out green */\n"
+"    color: #7a8b7a;\n"
+"}")
+        self.buttonAddFaculty.setObjectName("buttonAddFaculty")
+        self.tableHeaderLayout.addWidget(self.buttonAddFaculty)
+        self.buttonRemoveSelected = QtWidgets.QPushButton(parent=self.tableHeader)
+        self.buttonRemoveSelected.setEnabled(False)
+        self.buttonRemoveSelected.setMinimumSize(QtCore.QSize(120, 40))
+        self.buttonRemoveSelected.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buttonRemoveSelected.setStyleSheet("/* ---- Reject Button ---- */\n"
+"QPushButton {\n"
+"    background-color: #f8d7da;\n"
+"    color: #721c24;\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    font-size: 14px;\n"
+"    font-weight: bold;\n"
+"    padding: 10px 20px;\n"
 "}\n"
-"")
-        self.buttonViewSections.setObjectName("buttonViewSections")
-        self.tableHeaderLayout.addWidget(self.buttonViewSections)
+"QPushButton:hover {\n"
+"    background-color: #c82333;\n"
+"    color: white;\n"
+"}\n"
+"QPushButton:pressed {\n"
+"    background-color: #a71d2a;  /* slightly darker for pressed feedback */\n"
+"}\n"
+"QPushButton:disabled {\n"
+"    background-color: #d7bcbc; /* more washed-out red */\n"
+"    color: #5e3b3e;\n"
+"}")
+        self.buttonRemoveSelected.setObjectName("buttonRemoveSelected")
+        self.tableHeaderLayout.addWidget(self.buttonRemoveSelected)
         self.tableMainLayout.addWidget(self.tableHeader)
-        self.tableAllCourses = QtWidgets.QTableWidget(parent=self.tableFrame)
-        self.tableAllCourses.setMinimumSize(QtCore.QSize(0, 300))
-        self.tableAllCourses.setStyleSheet("QTableWidget {\n"
+        self.tableFaculty = QtWidgets.QTableWidget(parent=self.tableFrame)
+        self.tableFaculty.setMinimumSize(QtCore.QSize(0, 300))
+        self.tableFaculty.setStyleSheet("QTableWidget {\n"
 "    border: none;\n"
 "    background-color: white;\n"
 "    gridline-color: #e5e5e5;      /* slightly darker for visibility */\n"
@@ -259,56 +291,57 @@ class Ui_RegisterCourses(object):
 "QScrollBar:vertical { width: 12px; }\n"
 "QScrollBar:horizontal { height: 12px; }\n"
 "")
-        self.tableAllCourses.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.tableAllCourses.setAlternatingRowColors(True)
-        self.tableAllCourses.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.ContiguousSelection)
-        self.tableAllCourses.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
-        self.tableAllCourses.setCornerButtonEnabled(True)
-        self.tableAllCourses.setObjectName("tableAllCourses")
-        self.tableAllCourses.setColumnCount(6)
-        self.tableAllCourses.setRowCount(0)
+        self.tableFaculty.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.tableFaculty.setAlternatingRowColors(True)
+        self.tableFaculty.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.ContiguousSelection)
+        self.tableFaculty.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel)
+        self.tableFaculty.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel)
+        self.tableFaculty.setCornerButtonEnabled(True)
+        self.tableFaculty.setObjectName("tableFaculty")
+        self.tableFaculty.setColumnCount(6)
+        self.tableFaculty.setRowCount(0)
         item = QtWidgets.QTableWidgetItem()
-        self.tableAllCourses.setHorizontalHeaderItem(0, item)
+        self.tableFaculty.setHorizontalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
-        self.tableAllCourses.setHorizontalHeaderItem(1, item)
+        self.tableFaculty.setHorizontalHeaderItem(1, item)
         item = QtWidgets.QTableWidgetItem()
-        self.tableAllCourses.setHorizontalHeaderItem(2, item)
+        self.tableFaculty.setHorizontalHeaderItem(2, item)
         item = QtWidgets.QTableWidgetItem()
-        self.tableAllCourses.setHorizontalHeaderItem(3, item)
+        self.tableFaculty.setHorizontalHeaderItem(3, item)
         item = QtWidgets.QTableWidgetItem()
-        self.tableAllCourses.setHorizontalHeaderItem(4, item)
+        self.tableFaculty.setHorizontalHeaderItem(4, item)
         item = QtWidgets.QTableWidgetItem()
-        self.tableAllCourses.setHorizontalHeaderItem(5, item)
-        self.tableAllCourses.horizontalHeader().setHighlightSections(True)
-        self.tableAllCourses.horizontalHeader().setStretchLastSection(True)
-        self.tableAllCourses.verticalHeader().setVisible(False)
-        self.tableAllCourses.verticalHeader().setCascadingSectionResizes(True)
-        self.tableMainLayout.addWidget(self.tableAllCourses)
+        self.tableFaculty.setHorizontalHeaderItem(5, item)
+        self.tableFaculty.horizontalHeader().setStretchLastSection(True)
+        self.tableFaculty.verticalHeader().setVisible(False)
+        self.tableFaculty.verticalHeader().setCascadingSectionResizes(True)
+        self.tableMainLayout.addWidget(self.tableFaculty)
         self.mainLayout.addWidget(self.tableFrame)
         spacerItem3 = QtWidgets.QSpacerItem(20, 60, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Maximum)
         self.mainLayout.addItem(spacerItem3)
 
-        self.retranslateUi(RegisterCourses)
-        QtCore.QMetaObject.connectSlotsByName(RegisterCourses)
+        self.retranslateUi(ManageFaculty)
+        QtCore.QMetaObject.connectSlotsByName(ManageFaculty)
 
-    def retranslateUi(self, RegisterCourses):
+    def retranslateUi(self, ManageFaculty):
         _translate = QtCore.QCoreApplication.translate
-        RegisterCourses.setWindowTitle(_translate("RegisterCourses", "Course"))
-        self.labelTitle.setText(_translate("RegisterCourses", "Register Courses"))
-        self.lineEditSearch.setPlaceholderText(_translate("RegisterCourses", "🔍  Search by Course name or code..."))
-        self.buttonRefresh.setText(_translate("RegisterCourses", "🔄 Refresh"))
-        self.tableTitle.setText(_translate("RegisterCourses", "All Courses"))
-        self.buttonViewSections.setText(_translate("RegisterCourses", " View Availabe Sections"))
-        self.tableAllCourses.setSortingEnabled(True)
-        item = self.tableAllCourses.horizontalHeaderItem(0)
-        item.setText(_translate("RegisterCourses", "#"))
-        item = self.tableAllCourses.horizontalHeaderItem(1)
-        item.setText(_translate("RegisterCourses", "COURSE CODE"))
-        item = self.tableAllCourses.horizontalHeaderItem(2)
-        item.setText(_translate("RegisterCourses", "COURSE NAME"))
-        item = self.tableAllCourses.horizontalHeaderItem(3)
-        item.setText(_translate("RegisterCourses", "CREDIT HOURS"))
-        item = self.tableAllCourses.horizontalHeaderItem(4)
-        item.setText(_translate("RegisterCourses", "LEVEL"))
-        item = self.tableAllCourses.horizontalHeaderItem(5)
-        item.setText(_translate("RegisterCourses", "PREREQUISITES"))
+        ManageFaculty.setWindowTitle(_translate("ManageFaculty", "Pending Requests"))
+        self.labelTitle.setText(_translate("ManageFaculty", "Manage Faculty"))
+        self.labelTotalCount.setText(_translate("ManageFaculty", "200 Total Count"))
+        self.lineEditSearch.setPlaceholderText(_translate("ManageFaculty", "🔍  Search by Faculty name or ID..."))
+        self.buttonRefresh.setText(_translate("ManageFaculty", "🔄 Refresh"))
+        self.tableTitle.setText(_translate("ManageFaculty", "Registered Faculty"))
+        self.buttonAddFaculty.setText(_translate("ManageFaculty", "➕ Add Faculty"))
+        self.buttonRemoveSelected.setText(_translate("ManageFaculty", "❌ Remove Selected"))
+        item = self.tableFaculty.horizontalHeaderItem(0)
+        item.setText(_translate("ManageFaculty", "#"))
+        item = self.tableFaculty.horizontalHeaderItem(1)
+        item.setText(_translate("ManageFaculty", "ID"))
+        item = self.tableFaculty.horizontalHeaderItem(2)
+        item.setText(_translate("ManageFaculty", "NAME"))
+        item = self.tableFaculty.horizontalHeaderItem(3)
+        item.setText(_translate("ManageFaculty", "EMAIL"))
+        item = self.tableFaculty.horizontalHeaderItem(4)
+        item.setText(_translate("ManageFaculty", "STATE"))
+        item = self.tableFaculty.horizontalHeaderItem(5)
+        item.setText(_translate("ManageFaculty", "ACTION"))

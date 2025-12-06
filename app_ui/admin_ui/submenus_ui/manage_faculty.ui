@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CurrentSchedule</class>
- <widget class="QWidget" name="CurrentSchedule">
+ <class>ManageFaculty</class>
+ <widget class="QWidget" name="ManageFaculty">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string/>
+   <string>Pending Requests</string>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: #f5f7fa;</string>
@@ -40,7 +40,7 @@
         <string notr="true">font-size: 28px; font-weight: bold; color: #2c3e50; background: transparent;</string>
        </property>
        <property name="text">
-        <string>📅Current Schedule</string>
+        <string>Manage Faculty</string>
        </property>
       </widget>
      </item>
@@ -56,6 +56,22 @@
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelTotalCount">
+       <property name="styleSheet">
+        <string notr="true">font-size: 16px;
+color: #1a73e8;               /* blue text for emphasis */
+font-weight: bold;
+background-color: #e8f0fe;    /* light blue background */
+padding: 8px 20px;
+border-radius: 20px;
+</string>
+       </property>
+       <property name="text">
+        <string>200 Total Count</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -93,6 +109,46 @@
        <number>15</number>
       </property>
       <item>
+       <widget class="QLineEdit" name="lineEditSearch">
+        <property name="minimumSize">
+         <size>
+          <width>300</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>200</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QLineEdit {
+    padding: 10px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #f8f9fa;   /* light neutral background */
+    color: #5a6c7d;             /* text color similar to buttons */
+}
+
+QLineEdit:focus {
+    border-color: #f5576c;       /* accent border on focus */
+    background-color: #ffffff;   /* slightly lighter when active */
+}
+
+QLineEdit:disabled {
+    background-color: #ededed;   /* washed-out grey */
+    color: #a1a8b3;             /* faded text */
+}
+</string>
+        </property>
+        <property name="placeholderText">
+         <string>🔍  Search by Faculty name or ID...</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="filterSpacer">
         <property name="orientation">
          <enum>Qt::Orientation::Horizontal</enum>
@@ -118,9 +174,9 @@
         </property>
         <property name="styleSheet">
          <string notr="true">QPushButton {
-    background-color: #f8f9fa;     /* light grey background */
-    color: #5a6c7d;               /* text color */
-    border: 2px solid #e0e0e0;    /* default border */
+    background-color: #f8f9fa;
+    color: #5a6c7d;
+    border: 2px solid #e0e0e0;
     border-radius: 8px;
     font-size: 14px;
     font-weight: bold;
@@ -128,16 +184,15 @@
 }
 
 QPushButton:hover {
-    border-color: #6c5ce7;        /* purplish-blue border on hover */
-    color: #6c5ce7;               /* match text color to border */
+    border-color: #f5576c;
+    color: #f5576c;
 }
 
 QPushButton:pressed {
-    background-color: #e0e0e0;    /* slightly darker grey when pressed */
-    border-color: #6c5ce7;        /* keep border highlight */
-    color: #6c5ce7;               /* text color */
-}
-</string>
+    background-color: #e0e0e0; /* darker grey for pressed feedback */
+    border-color: #f5576c;
+    color: #f5576c;
+}</string>
         </property>
         <property name="text">
          <string>🔄 Refresh</string>
@@ -210,7 +265,7 @@ QPushButton:pressed {
             <string notr="true">font-size: 18px; font-weight: bold; color: #2c3e50; background: transparent;</string>
            </property>
            <property name="text">
-            <string>Current Courses registred</string>
+            <string>Registered Faculty</string>
            </property>
           </widget>
          </item>
@@ -226,6 +281,48 @@ QPushButton:pressed {
             </size>
            </property>
           </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="buttonAddFaculty">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>120</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">/* ---- Approve Button ---- */
+QPushButton {
+    background-color: #d4edda;
+    color: #155724;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 20px;
+}
+QPushButton:hover {
+    background-color: #28a745;
+    color: white;
+}
+QPushButton:pressed {
+    background-color: #1e7e34;  /* slightly darker for pressed feedback */
+}
+QPushButton:disabled {
+    background-color: #c1d9c3; /* more washed-out green */
+    color: #7a8b7a;
+}</string>
+           </property>
+           <property name="text">
+            <string>➕ Add Faculty</string>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QPushButton" name="buttonRemoveSelected">
@@ -273,7 +370,7 @@ QPushButton:disabled {
        </widget>
       </item>
       <item>
-       <widget class="QTableWidget" name="tableCourses">
+       <widget class="QTableWidget" name="tableFaculty">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -404,17 +501,11 @@ QScrollBar:horizontal { height: 12px; }
         <property name="selectionMode">
          <enum>QAbstractItemView::SelectionMode::ContiguousSelection</enum>
         </property>
-        <property name="selectionBehavior">
-         <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
-        </property>
         <property name="verticalScrollMode">
          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
         </property>
         <property name="horizontalScrollMode">
          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
-        </property>
-        <property name="sortingEnabled">
-         <bool>true</bool>
         </property>
         <property name="cornerButtonEnabled">
          <bool>true</bool>
@@ -435,37 +526,27 @@ QScrollBar:horizontal { height: 12px; }
         </column>
         <column>
          <property name="text">
-          <string>COURSE ID</string>
+          <string>ID</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>CREDIT</string>
+          <string>NAME</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>SECTION</string>
+          <string>EMAIL</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>DAYS</string>
+          <string>STATE</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>TIME</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>ROOM</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>INSTRUCTOR</string>
+          <string>ACTION</string>
          </property>
         </column>
        </widget>
