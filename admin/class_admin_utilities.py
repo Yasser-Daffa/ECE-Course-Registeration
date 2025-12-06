@@ -14,7 +14,6 @@ con, cur = initialize_database(DB_PATH)
 db = DatabaseUtilities(con, cur)
 
 
-
 class AdminUtilities:
 
     def __init__(self, db):
@@ -103,6 +102,9 @@ class AdminUtilities:
         """
         يضيف سكشن واحد للكورس المحدد.
         كل القيم تيجي جاهزة من الـ GUI (ما فيه input هنا).
+        
+        Adds a single section to the selected course.
+        All values come directly from the GUI (no manual input here).
         """
         msg = self.db.add_section(
             course_code=course_code,
@@ -186,6 +188,7 @@ class AdminUtilities:
         rows = self.db.list_transcript(student_id)
         if not rows:
             print("No transcript records for this student.")  # هذا بيكون بكلاس الطالب
+            # This will be handled inside the student class
             return
 
         print(f"Transcript for student {student_id}:")
@@ -207,11 +210,14 @@ class AdminUtilities:
     def admin_add_course_to_plan(self, program: str, course_code: str, level: int) -> str:
         """
         يضيف كورس إلى الخطة الدراسية لبرنامج معيّن ولمستوى معيّن.
+        
+        Adds a course to the study plan of a specific program and level.
         """
         msg = self.db.add_course_to_plan(program, course_code, level)
         return msg
 
         # داخل class AdminUtilities في class_admin_utilities.py
+        # Inside class AdminUtilities in class_admin_utilities.py
 
     def admin_delete_course_from_plan(self, program: str, course_code: str) -> str:
         """
@@ -220,6 +226,12 @@ class AdminUtilities:
         - program: كود البرنامج 'PWM','BIO','COMM','COMP'
         - course_code: رمز المادة المراد حذفها من الخطة
         ويرجع رسالة نصية من طبقة الداتابيس.
+        
+        Deletes a course from the study plan of a specific program.
+        Receives:
+        - program: program code 'PWM','BIO','COMM','COMP'
+        - course_code: the course code to remove from the plan
+        Returns a text message from the database layer.
         """
         msg = self.db.delete_course_from_plan(program, course_code)
         return msg
@@ -227,8 +239,11 @@ class AdminUtilities:
     def admin_show_plans(self):
         """
         يعرض كل الخطط وكل المواد داخل كل خطة.
+        
+        Displays all study plans and the courses inside each plan.
         """
         rows = self.db.list_plan_courses()  # نعرض كل الخطط
+        # We display all study plans
 
         if not rows:
             print("No plans found.")
@@ -236,21 +251,23 @@ class AdminUtilities:
 
         current_program = None
 
-        # كل صف يحتوي:
+        # every row has:
         # (program, course_code, course_name, credits, level)
         for program, code, name, credits, level in rows:
 
             # إذا تغيّر التخصص نبدأ عنوان جديد
+            # If the program changes, start a new header
             if program != current_program:
                 current_program = program
                 print(f"\n===== Plan: {program} =====")
 
             # نعرض المادة والمستوى
+            # Display the course and its level
             print(f"Level {level}: {code} - {name} ({credits} credits)")
 
 
 
-    # إدارة التسجيل
+    # registeration manager
     def manage_registration_period(self):
         print("1. Open Registration")
         print("2. Close Registration")
@@ -273,6 +290,11 @@ class AdminUtilities:
         - تستقبل القيم القديمة والجديدة
         - تنادي دالة الـ DB update_course_in_plan
         - ترجع الرسالة كنص
+        
+        Simple GUI interface:
+        - Receives old and new values
+        - Calls the DB function update_course_in_plan
+        - Returns the message as text
         """
         return self.db.update_course_in_plan(
             old_program=old_program,
@@ -282,11 +304,15 @@ class AdminUtilities:
             new_course_code=new_course_code,
             new_level=new_level,
         )
+
     # ================ Pending Students Management ================
     def admin_list_pending_students(self):
         """
         ترجع قائمة الطلاب اللي حسابهم inactive
         على شكل list[dict] عشان الواجهة تستخدمها بسهولة.
+        
+        Returns a list of students whose accounts are inactive
+        in the form of list[dict] so the UI can use it easily.
         """
         rows = self.db.list_inactive_users()
         students = []
@@ -303,6 +329,8 @@ class AdminUtilities:
     def admin_approve_student(self, user_id: int) -> str:
         """
         تفعيل حساب طالب واحد.
+        
+        Activate a single student account.
         """
         self.db.update_user(user_id, account_status="active")
         return f"Student {user_id} approved."
@@ -310,6 +338,8 @@ class AdminUtilities:
     def admin_reject_student(self, user_id: int) -> str:
         """
         رفض (وحذف) طالب واحد.
+        
+        Reject (and delete) a single student.
         """
         self.db.delete_user(user_id)
         return f"Student {user_id} rejected and deleted."
@@ -317,6 +347,8 @@ class AdminUtilities:
     def admin_approve_all_pending_students(self) -> str:
         """
         تفعيل كل الطلاب pending.
+        
+        Activate all pending students.
         """
         self.db.approve_all_inactive_users()
         return "All pending students have been approved."
@@ -324,6 +356,8 @@ class AdminUtilities:
     def admin_reject_all_pending_students(self) -> str:
         """
         حذف كل الطلاب pending.
+        
+        Delete all pending students.
         """
         self.db.delete_all_inactive_users()
         return "All pending students have been rejected and deleted."
@@ -331,6 +365,8 @@ class AdminUtilities:
     def admin_delete_student(self, user_id: int) -> str:
         """
         حذف طالب (أو مستخدم) واحد نهائيًا من النظام.
+        
+        Permanently delete a single student (or user) from the system.
         """
         self.db.delete_user(user_id)
         return f"Student {user_id} removed."
@@ -338,6 +374,8 @@ class AdminUtilities:
     def admin_delete_all_students(self) -> str:
         """
         حذف جميع الطلاب/المستخدمين من جدول users.
+        
+        Delete all students/users from the users table.
         """
         self.db.delete_all_users()
         return "All students removed."
@@ -346,10 +384,15 @@ class AdminUtilities:
         """
         يعرض كل الخطط الدراسية لكل برنامج،
         ويعرض المواد الموجودة داخل كل خطة مرتبة حسب المستوى.
+        
+        Displays all study plans for each program,
+        and shows the courses inside each plan sorted by level.
         """
 
         rows = self.db.list_plan_courses()
         # يرجّع صفوف بالشكل:
+        # (program, course_code, course_name, credits, level)
+        # Returns rows in the following format:
         # (program, course_code, course_name, credits, level)
 
         if not rows:
@@ -363,11 +406,13 @@ class AdminUtilities:
         for program, code, name, level in rows:
 
             # إذا دخلنا برنامج جديد نطبع عنوان جديد
+            # If we enter a new program, print a new header
             if program != current_program:
                 current_program = program
                 print(f"\n====== Program: {program} ======")
 
             # عرض المادة
+            # Display the course
             print(f"  Level {level}: {code} - {name} ")    
 
         # ---------------- ADMIN MANAGEMENT ----------------
@@ -391,14 +436,20 @@ class AdminUtilities:
 
 
 admin = AdminUtilities(db)
+
 def admin_show_plans(self):
     """
     يعرض كل الخطط الدراسية لكل برنامج،
     ويعرض المواد الموجودة داخل كل خطة مرتبة حسب المستوى.
+    
+    Displays all study plans for each program,
+    and shows the courses inside each plan sorted by level.
     """
 
     rows = self.db.list_plan_courses()
     # يرجّع صفوف بالشكل:
+    # (program, course_code, course_name, credits, level)
+    # Returns rows in the following format:
     # (program, course_code, course_name, credits, level)
 
     if not rows:
@@ -412,11 +463,13 @@ def admin_show_plans(self):
     for program, code, name, level in rows:
 
         # إذا دخلنا برنامج جديد نطبع عنوان جديد
+        # If we enter a new program, print a new header
         if program != current_program:
             current_program = program
             print(f"\n====== Program: {program} ======")
 
         # عرض المادة
+        # Display the course
         print(f"  Level {level}: {code} - {name} ")
 
 
@@ -428,4 +481,6 @@ if __name__ == "__main__":
     admin = AdminUtilities(db)
 
     admin.admin_show_plans()
+
+
 
