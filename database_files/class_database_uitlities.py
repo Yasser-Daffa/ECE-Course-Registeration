@@ -511,31 +511,68 @@ class DatabaseUtilities:
         تسجيل طالب في سكشن معيّن في سمستر معيّن.
 
         - يمنع التسجيل المكرر لنفس (student_id, course_code, semester)
-          بسبب الـ PRIMARY KEY في جدول registrations.
+        - يتحقق من حالة السكشن (open/closed) والسعة (capacity/enrolled)
+        - يحدّث عمود enrolled في جدول sections
         """
         try:
-            cur = self.con.cursor()
+            # 1) نجيب بيانات السكشن (السعة والحالة والعدد الحالي)
+            self.cur.execute("""
+                SELECT capacity, enrolled, state
+                FROM sections
+                WHERE section_id = ?
+            """, (section_id,))
+            row = self.cur.fetchone()
+            if not row:
+                print(f"[DB] Section {section_id} not found")
+                return False
 
-            # نتأكد أولاً إنه مو مسجل نفس الكورس في نفس السمستر
-            cur.execute(
+            capacity, enrolled, state = row
+            capacity = capacity or 0
+            enrolled = enrolled or 0
+            state_str = (state or "").lower()
+
+            # 2) لو السكشن مقفول
+            if state_str == "closed":
+                print("[DB] Section is closed.")
+                return False
+
+            # 3) لو السكشن فل
+            if capacity > 0 and enrolled >= capacity:
+                print("[DB] Section is full.")
+                return False
+
+            # 4) نتأكد أنه مو مسجل نفس الكورس في نفس السمستر
+            self.cur.execute(
                 """
                 SELECT 1 FROM registrations
                 WHERE student_id = ? AND course_code = ? AND semester = ?
                 """,
                 (student_id, course_code, semester)
             )
-            if cur.fetchone():
-                # مسجل مسبقاً في نفس الكورس ونفس السمستر
+            if self.cur.fetchone():
+                # مسجل مسبقًا في نفس الكورس ونفس السمستر
+                print("[DB] Already registered for this course in this semester.")
                 return False
 
-            # ندخل الصف الجديد
-            cur.execute(
+            # 5) ندخل الصف الجديد في registrations
+            self.cur.execute(
                 """
                 INSERT INTO registrations (student_id, section_id, course_code, semester)
                 VALUES (?, ?, ?, ?)
                 """,
                 (student_id, section_id, course_code, semester)
             )
+
+            # 6) نحدّث عدد المسجلين في sections
+            self.cur.execute(
+                """
+                UPDATE sections
+                SET enrolled = COALESCE(enrolled, 0) + 1
+                WHERE section_id = ?
+                """,
+                (section_id,)
+            )
+
             self.con.commit()
             return True
 
@@ -544,34 +581,66 @@ class DatabaseUtilities:
             return False
 
 
+
     # ------------------- Remove student registration -------------------
     def remove_student_registration(self, student_id: int, course_code: str) -> bool:
         """
         Deletes a student's registration for a specific course.
+        - يحذف من جدول registrations
+        - ينقص enrolled في جدول sections لنفس السكشن/الشعبة
         Returns True if a row was deleted, False otherwise.
         """
         try:
-            # Get all section_ids for this course that the student is registered in
+            # 1) نجيب كل section_id اللي الطالب مسجل فيها هذا الكورس
             self.cur.execute(
-                "SELECT section_id FROM registrations "
-                "WHERE student_id = ? AND course_code = ?",
+                """
+                SELECT section_id
+                FROM registrations
+                WHERE student_id = ? AND course_code = ?
+                """,
                 (student_id, course_code)
             )
             rows = self.cur.fetchall()
             if not rows:
                 return False  # student not registered for this course
 
-            # Delete all registrations for this course (usually only one per course)
             section_ids = [r[0] for r in rows]
+
+            # 2) نحذف التسجيلات
             self.cur.execute(
-                f"DELETE FROM registrations WHERE student_id = ? AND section_id IN ({','.join(['?']*len(section_ids))})",
+                f"""
+                DELETE FROM registrations
+                WHERE student_id = ?
+                  AND section_id IN ({','.join(['?'] * len(section_ids))})
+                """,
                 [student_id, *section_ids]
             )
+
+            if self.cur.rowcount == 0:
+                self.con.commit()
+                return False
+
+            # 3) ننقص enrolled لكل سكشن (إذا أقل من 0 نخليه 0)
+            self.cur.execute(
+                f"""
+                UPDATE sections
+                SET enrolled = CASE
+                    WHEN enrolled IS NULL THEN 0
+                    WHEN enrolled - 1 < 0 THEN 0
+                    ELSE enrolled - 1
+                END
+                WHERE section_id IN ({','.join(['?'] * len(section_ids))})
+                """,
+                section_ids
+            )
+
             self.con.commit()
             return True
+
         except Exception as e:
             print(f"[ERROR] remove_student_registration failed: {e}")
             return False
+
 
     # ================= PENDING USERS (INACTIVE ACCOUNTS) =================
     def list_inactive_users(self):

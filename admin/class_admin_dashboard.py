@@ -47,11 +47,20 @@ class AdminDashboard(QtWidgets.QMainWindow):
         self.user_id, self.name, self.email, self.program, self.state, self.account_status, self.hashed_pw = user_info
         self.admin = AdminUtilities(self.db)
 
+        # نجيب آخر تسجيل دخول من قاعدة البيانات
+        last_login = self.db.get_last_login(self.user_id)
+
+        if last_login:
+            self.ui.labelLastLogin.setText(f"Last Login: {last_login}")
+        else:
+            self.ui.labelLastLogin.setText("Last Login: First Time")
+
         # ------------------------
         # 1. Initialize all pages
         # ------------------------
         self.init_sub_pages()
         # نجيب آخر تسجيل دخول من قاعدة البيانات
+
 
 
         # ------------------------
